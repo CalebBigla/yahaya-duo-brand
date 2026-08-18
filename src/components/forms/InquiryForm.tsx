@@ -60,7 +60,7 @@ export function InquiryForm({
   const onSubmit = (values: Record<string, string>) => {
     const lines = fields
       .filter((f) => values[f.name]?.trim())
-      .map((f) => `${f.label}: ${values[f.name].trim()}`);
+      .map((f) => `${f.label}: ${(values[f.name] ?? "").trim()}`);
     const message = `${intro}\n\n${lines.join("\n")}`;
     window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
     setSent(true);
