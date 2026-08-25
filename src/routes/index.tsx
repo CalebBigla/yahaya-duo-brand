@@ -745,29 +745,29 @@ function Index() {
           src={fullWidthBannerImg}
           alt="Global logistics"
           loading="lazy"
-          className="h-96 w-full object-cover lg:h-[32rem]"
+          className="h-64 w-full object-cover sm:h-80 md:h-96 lg:h-[32rem]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/80 to-transparent" />
         <div className="absolute inset-0 flex items-center">
           <div className="container-page">
             <AnimatedSection animation="fade-up">
               <div className="max-w-2xl">
-                <h2 className="text-3xl font-extrabold text-primary-foreground sm:text-5xl">
+                <h2 className="text-2xl font-extrabold text-primary-foreground sm:text-3xl md:text-4xl lg:text-5xl">
                   One partner for trade and travel
                 </h2>
-                <p className="mt-5 text-lg leading-relaxed text-primary-foreground/80">
+                <p className="mt-3 text-sm leading-relaxed text-primary-foreground/80 sm:mt-4 sm:text-base md:mt-5 md:text-lg">
                   From sourcing products internationally to arranging complete travel packages — we manage logistics, documentation, and coordination. Oil & gas trading with refinery connections, import/export with full clearing, and visa processing with appointment booking all under one roof.
                 </p>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
                   <Link
                     to="/quote"
-                    className="btn-interactive inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
+                    className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground sm:px-6 sm:py-3.5"
                   >
                     Request a Quote <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     to="/about"
-                    className="btn-interactive inline-flex items-center gap-2 rounded-full border-2 border-primary-foreground/30 px-6 py-3.5 text-sm font-bold text-primary-foreground hover:border-accent"
+                    className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-5 py-3 text-sm font-bold text-primary-foreground hover:border-accent sm:px-6 sm:py-3.5"
                   >
                     Learn Our Story
                   </Link>
