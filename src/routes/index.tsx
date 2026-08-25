@@ -586,8 +586,8 @@ function Index() {
                     Complete visa processing, flight bookings, hotel reservations, and tour packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
                   </p>
 
-                  {/* Expandable details */}
-                  <div className="mt-6 max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-96">
+                  {/* Expandable details - visible on mobile, hover on desktop */}
+                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
                     <div className="border-t border-border pt-4">
                       <h4 className="text-sm font-bold text-primary mb-3">What We Offer</h4>
                       <ul className="space-y-2">
@@ -611,8 +611,8 @@ function Index() {
                     </div>
                   </div>
 
-                  {/* Hover indicator */}
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-accent">
+                  {/* Hover indicator - desktop only */}
+                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
                     <span>Hover to explore</span>
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
@@ -643,8 +643,8 @@ function Index() {
                     Direct sourcing of new products from our international partners at lowest prices. We find suppliers, verify credentials, and manage complete delivery.
                   </p>
 
-                  {/* Expandable details */}
-                  <div className="mt-6 max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-96">
+                  {/* Expandable details - visible on mobile, hover on desktop */}
+                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
                     <div className="border-t border-border pt-4">
                       <h4 className="text-sm font-bold text-primary mb-3">Our Process</h4>
                       <ul className="space-y-2">
@@ -668,8 +668,8 @@ function Index() {
                     </div>
                   </div>
 
-                  {/* Hover indicator */}
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-accent">
+                  {/* Hover indicator - desktop only */}
+                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
                     <span>Hover to explore</span>
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
@@ -700,8 +700,8 @@ function Index() {
                     Trade and travel consultation services plus referral commission opportunities for connecting us with new clients.
                   </p>
 
-                  {/* Expandable details */}
-                  <div className="mt-6 max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-96">
+                  {/* Expandable details - visible on mobile, hover on desktop */}
+                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
                     <div className="border-t border-border pt-4">
                       <h4 className="text-sm font-bold text-primary mb-3">Advisory Services</h4>
                       <ul className="space-y-2">
@@ -727,8 +727,8 @@ function Index() {
                     </div>
                   </div>
 
-                  {/* Hover indicator */}
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-accent">
+                  {/* Hover indicator - desktop only */}
+                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
                     <span>Hover to explore</span>
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
@@ -745,10 +745,10 @@ function Index() {
           src={fullWidthBannerImg}
           alt="Global logistics"
           loading="lazy"
-          className="h-64 w-full object-cover sm:h-80 md:h-96 lg:h-[32rem]"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/80 to-transparent" />
-        <div className="absolute inset-0 flex items-center">
+        <div className="relative z-10 py-16 sm:py-20 md:py-24 lg:py-32">
           <div className="container-page">
             <AnimatedSection animation="fade-up">
               <div className="max-w-2xl">
