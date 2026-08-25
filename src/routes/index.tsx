@@ -758,16 +758,16 @@ function Index() {
                 <p className="mt-3 text-sm leading-relaxed text-primary-foreground/80 sm:mt-4 sm:text-base md:mt-5 md:text-lg">
                   From sourcing products internationally to arranging complete travel packages — we manage logistics, documentation, and coordination. Oil & gas trading with refinery connections, import/export with full clearing, and visa processing with appointment booking all under one roof.
                 </p>
-                <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
+                <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4">
                   <Link
                     to="/quote"
-                    className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground sm:px-6 sm:py-3.5"
+                    className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-sm font-bold text-accent-foreground sm:w-auto sm:px-6 sm:py-3.5"
                   >
                     Request a Quote <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     to="/about"
-                    className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-5 py-3 text-sm font-bold text-primary-foreground hover:border-accent sm:px-6 sm:py-3.5"
+                    className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-4 py-3 text-sm font-bold text-primary-foreground hover:border-accent sm:w-auto sm:px-6 sm:py-3.5"
                   >
                     Learn Our Story
                   </Link>
