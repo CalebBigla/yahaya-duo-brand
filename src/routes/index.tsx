@@ -355,12 +355,12 @@ function Index() {
             </div>
           </AnimatedSection>
 
-          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-5xl mx-auto">
+          <div className="mt-12 grid gap-6 sm:gap-8 md:grid-cols-2 max-w-5xl mx-auto">
             {/* Travel and Tour - Large Featured */}
             <AnimatedSection animation="scale" delay={0}>
               <Link
                 to="/travel"
-                className="card-interactive group relative overflow-hidden rounded-3xl"
+                className="card-interactive group relative overflow-hidden rounded-2xl sm:rounded-3xl"
               >
                 <div className="aspect-[3/4]">
                   <img
@@ -370,14 +370,14 @@ function Index() {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-10 text-primary-foreground">
-                    <Plane className="h-12 w-12 text-accent" />
-                    <h3 className="mt-5 text-4xl font-bold">Travel and Tour</h3>
-                    <p className="mt-4 text-lg leading-relaxed text-primary-foreground/85">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10 text-primary-foreground">
+                    <Plane className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-accent" />
+                    <h3 className="mt-3 sm:mt-4 md:mt-5 text-2xl sm:text-3xl md:text-4xl font-bold">Travel and Tour</h3>
+                    <p className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-primary-foreground/85">
                       Complete visa processing, flight bookings, hotel reservations, and tour packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
                     </p>
-                    <div className="mt-8 inline-flex items-center gap-2 text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-5 w-5" />
+                    <div className="mt-4 sm:mt-6 md:mt-8 inline-flex items-center gap-2 text-sm sm:text-base font-bold text-accent">
+                      Learn more <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                   </div>
                 </div>
@@ -389,7 +389,7 @@ function Index() {
               <Link
                 to="/trade"
                 hash="sourcing-procurement"
-                className="card-interactive group relative overflow-hidden rounded-3xl"
+                className="card-interactive group relative overflow-hidden rounded-2xl sm:rounded-3xl"
               >
                 <div className="aspect-[3/4]">
                   <img
@@ -399,14 +399,14 @@ function Index() {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-10 text-primary-foreground">
-                    <PackageSearch className="h-12 w-12 text-accent" />
-                    <h3 className="mt-5 text-4xl font-bold">Sourcing and Procurement</h3>
-                    <p className="mt-4 text-lg leading-relaxed text-primary-foreground/85">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10 text-primary-foreground">
+                    <PackageSearch className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-accent" />
+                    <h3 className="mt-3 sm:mt-4 md:mt-5 text-2xl sm:text-3xl md:text-4xl font-bold">Sourcing and Procurement</h3>
+                    <p className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-primary-foreground/85">
                       Direct sourcing of new products from Chinese, Egyptian, and Saudi companies at lowest prices. We find suppliers, verify credentials, and manage complete delivery.
                     </p>
-                    <div className="mt-8 inline-flex items-center gap-2 text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-5 w-5" />
+                    <div className="mt-4 sm:mt-6 md:mt-8 inline-flex items-center gap-2 text-sm sm:text-base font-bold text-accent">
+                      Learn more <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                   </div>
                 </div>
