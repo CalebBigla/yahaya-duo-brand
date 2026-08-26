@@ -4,9 +4,9 @@ import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
 
 // Company story image
-import companyStoryImg from "@/assets/download (25).jpg";
+import companyStoryImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
 // CEO image
-import ceoImg from "@/assets/CEO.jpeg";
+import ceoImg from "@/assets/YAHAYA.jpg";
 
 const title = "About Yahaya Travel and Trade Co Ltd | RC 9295358, Jimeta-Yola";
 const description =
@@ -34,7 +34,7 @@ const team = [
     name: "Yahaya Muhammad Umar", 
     role: "Chief Executive Officer", 
     image: ceoImg,
-    bio: "Founder and CEO of Yahaya Travel and Trade Co Ltd, leading both travel services and trade operations since 2020."
+    bio: "Founder/CEO, leading both travel services and trade operations since 2020."
   },
 ];
 

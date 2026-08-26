@@ -14,9 +14,7 @@ export function Logo({ variant = "light" }: { variant?: "light" | "dark" }) {
       />
       <span className="leading-none">
         <span
-          className={`block font-display text-base sm:text-lg md:text-xl font-extrabold tracking-[0.18em] ${
-            variant === "dark" ? "text-primary-foreground" : "text-primary"
-          }`}
+          className="block font-display text-base sm:text-lg md:text-xl font-extrabold tracking-[0.18em] text-black"
         >
           YAHAYA
         </span>

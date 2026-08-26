@@ -403,7 +403,7 @@ function Index() {
                     <PackageSearch className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-accent" />
                     <h3 className="mt-3 sm:mt-4 md:mt-5 text-2xl sm:text-3xl md:text-4xl font-bold">Sourcing and Procurement</h3>
                     <p className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-primary-foreground/85">
-                      Direct sourcing of new products from Chinese, Egyptian, and Saudi companies at lowest prices. We find suppliers, verify credentials, and manage complete delivery.
+                     Direct international sourcing from trusted global suppliers — competitive pricing, verified credentials, complete delivery management.
                     </p>
                     <div className="mt-4 sm:mt-6 md:mt-8 inline-flex items-center gap-2 text-sm sm:text-base font-bold text-accent">
                       Learn more <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />

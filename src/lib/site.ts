@@ -12,7 +12,7 @@ export const site = {
   addressLine: "B.M Yelwa Plaza, Opp. Bachure Junction, Jimeta-Yola, Adamawa State",
   phones: ["+234 806 343 6192", "+234 912 765 0968"],
   whatsappNumber: "2348063436192",
-  email: "yahayageneralcontracts@gmail.com",
+  email: "yahayatraveltradecoltd@yahoo.com",
   hours: [
     { days: "Monday – Friday", time: "8:00 AM – 6:00 PM" },
     { days: "Saturday", time: "9:00 AM – 4:00 PM" },
