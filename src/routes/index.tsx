@@ -298,7 +298,7 @@ function Index() {
                 <span className="text-accent">Trade</span>
               </h1>
               <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
-                From oil & gas trading and import/export logistics to visa processing and flight bookings — we connect suppliers, manage supply chains, and coordinate complete travel itineraries. Direct sourcing from China, Egypt, and Saudi Arabia with 50% deposit on first order.
+             We connect suppliers, manage supply chains, and coordinate complete itineraries — direct sourcing available with 50% deposit on first orders.
               </p>
               <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link

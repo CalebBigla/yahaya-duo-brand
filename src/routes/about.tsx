@@ -32,9 +32,9 @@ export const Route = createFileRoute("/about")({
 const team = [
   { 
     name: "Yahaya Muhammad Umar", 
-    role: "Chief Executive Officer", 
+    role: "Founder/Chief Executive Officer", 
     image: ceoImg,
-    bio: "Founder/CEO, leading both travel services and trade operations since 2020."
+    bio: "leading both travel services and trade operations since 2020."
   },
 ];
 

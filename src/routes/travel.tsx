@@ -454,7 +454,7 @@ function TravelPage() {
               {/* Hotel Gallery - Only for Hotel Reservations section */}
               {service.slug === "hotel-reservations" && (
                 <div className="mt-10">
-                  <h3 className="text-xl font-bold text-primary">Our hotel partners</h3>
+                  <h3 className="text-xl font-bold text-primary">Premium hotels</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     We work with trusted hotel partners to provide quality accommodations for our travelers
                   </p>

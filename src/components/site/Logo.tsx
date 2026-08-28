@@ -18,7 +18,7 @@ export function Logo({ variant = "light" }: { variant?: "light" | "dark" }) {
         >
           YAHAYA
         </span>
-        <span className="mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+        <span className="mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-semibold uppercase tracking-[0.22em] text-black">
           Travel &amp; Trade Co LTD
         </span>
       </span>
