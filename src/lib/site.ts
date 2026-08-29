@@ -12,7 +12,7 @@ export const site = {
   addressLine: "B.M Yelwa Plaza, Opp. Bachure Junction, Jimeta-Yola, Adamawa State",
   phones: ["+234 806 343 6192"],
   whatsappNumber: "2349127650968",
-  email: "yahayatraveltradecoltd@yahoo.com",
+  email: "yahayageneralcontracts@gmail.com",
   hours: [
     { days: "Monday – Friday", time: "8:00 AM – 6:00 PM" },
     { days: "Saturday", time: "9:00 AM – 4:00 PM" },
@@ -80,7 +80,7 @@ export const tradeServices = [
     title: "Import and Export Wholesalers",
     summary: "Import-export facilitation and wholesale trade.",
     detail:
-      "Supplier identification, shipping and clearing coordination, and wholesale supply of goods into Adamawa and the wider North East.",
+      "We connect suppliers across the globe, manage international shipping and customs clearance, and deliver wholesale goods to markets worldwide.",
   },
   {
     slug: "sourcing-procurement",

@@ -21,12 +21,6 @@ import travelImg from "@/assets/travel.jpg";
 // Page hero image
 import heroImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
 
-// Hotel gallery images (for Hotel Reservations section)
-import hotel1Img from "@/assets/24 Small Guest Room Ideas for Compact Comfort and___.jpg";
-import hotel2Img from "@/assets/Borges 2129 I by depptö.jpg";
-import hotel3Img from "@/assets/Best Hotel Room in Jaipur.jpg";
-import hotel4Img from "@/assets/Akasha Beach Hotel.jpg";
-
 const title = "Travel Services — Visa Processing & Flight Bookings in Yola | Yahaya";
 const description =
   "Visa processing Yola, flight bookings Adamawa, hotel reservations, tour packages and travel consultancy from Yahaya Travel and Trade Co Ltd.";
@@ -448,40 +442,6 @@ function TravelPage() {
                 <div className="mt-6 rounded-xl border-2 border-accent/20 bg-accent-soft/30 p-6">
                   <p className="text-xs font-bold uppercase tracking-wider text-accent-foreground/70">Example Scenario</p>
                   <p className="mt-3 text-sm leading-relaxed text-foreground/80">{details.example}</p>
-                </div>
-              )}
-
-              {/* Hotel Gallery - Only for Hotel Reservations section */}
-              {service.slug === "hotel-reservations" && (
-                <div className="mt-10">
-                  <h3 className="text-xl font-bold text-primary">Premium hotels</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    We work with trusted hotel partners to provide quality accommodations for our travelers
-                  </p>
-                  <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                    {[
-                      { img: hotel1Img, title: "City Green Hotel", desc: "Comfortable accommodations in Jimeta-Yola with modern amenities and professional service" },
-                      { img: hotel2Img, title: "Merat Hotel", desc: "Quality lodging with excellent facilities for business and leisure travelers" },
-                    ].map((hotel, idx) => (
-                      <div
-                        key={idx}
-                        className="card-interactive group overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-                      >
-                        <div className="relative aspect-[4/3] overflow-hidden">
-                          <img
-                            src={hotel.img}
-                            alt={hotel.title}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                        </div>
-                        <div className="p-5">
-                          <h4 className="font-bold text-primary">{hotel.title}</h4>
-                          <p className="mt-2 text-sm text-muted-foreground">{hotel.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
             </div>
