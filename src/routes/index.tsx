@@ -299,6 +299,7 @@ function Index() {
               </h1>
               <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
             We design complete travel experiences — sourcing trusted suppliers, coordinating full itineraries, and managing every detail of your journey. Direct sourcing available.
+              </p>
               <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   to="/travel"
