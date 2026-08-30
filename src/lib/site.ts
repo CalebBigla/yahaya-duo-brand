@@ -16,7 +16,7 @@ export const site = {
   hours: [
     { days: "Monday – Friday", time: "8:00 AM – 6:00 PM" },
     { days: "Saturday", time: "9:00 AM – 4:00 PM" },
-    { days: "Sunday", time: "Closed" },
+    { days: "Sunday", time: "9:00 AM – 4:00 PM" },
   ],
   mapQuery: "B.M+Yelwa+Plaza,+Bachure+Junction,+Jimeta-Yola,+Adamawa+State,+Nigeria",
 } as const;

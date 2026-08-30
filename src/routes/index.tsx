@@ -293,12 +293,12 @@ function Index() {
                 RC {site.rcNumber} · Jimeta-Yola, Adamawa
               </p>
               <h1 className="animate-fade-up stagger-2 mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-6xl">
-            Your Trusted Partner in{" "}
-                <span className="text-accent">Travel</span> and {" "}
+                Your Trusted Partner in{" "}
+                <span className="text-accent">Travel</span> and{" "}
                 <span className="text-accent">Trade</span>
               </h1>
               <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
-            We design complete travel experiences — sourcing trusted suppliers, coordinating full itineraries, and managing every detail of your journey. Direct sourcing available.
+                We design complete travel experiences — sourcing trusted suppliers, coordinating full itineraries, and managing every detail of your journey. Direct sourcing available.
               </p>
               <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
