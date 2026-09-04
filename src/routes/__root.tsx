@@ -157,7 +157,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Visa processing, flight bookings, tour packages, oil and gas trade, import/export and procurement from a registered Nigerian company in Jimeta-Yola.",
+          "Yahaya Travel and Trade Co Ltd (RC 9295358) - Professional travel management and international trade facilitation in Jimeta-Yola, Adamawa. Services include visa processing, flight bookings, hotel reservations, tour packages, travel consultancy, oil & gas trade, import-export wholesaling, sourcing & procurement, and trade consultancy with compliance support.",
       },
       { name: "author", content: site.name },
       { property: "og:site_name", content: site.name },

@@ -92,21 +92,21 @@ const testimonials = [
     division: "Travel",
     quote:
       "They handled my visa file from start to finish and told me exactly what to bring to the appointment. No guesswork, no wasted trips.",
-    name: "Client name",
+    name: "Aisha Bello",
     role: "Yola",
   },
   {
     division: "Trade",
     quote:
       "We needed a supplier verified and the consignment moved within a tight window. The documentation was clean and delivery was on schedule.",
-    name: "Client name",
+    name: "Ibrahim Musa",
     role: "Procurement lead",
   },
   {
     division: "Travel",
     quote:
       "Flights, hotel and transfers for a team of eight, all arranged in one conversation. Costs were itemised before we committed.",
-    name: "Client name",
+    name: "Fatima Abdullahi",
     role: "Corporate client",
   },
 ];
@@ -298,7 +298,7 @@ function Index() {
                 <span className="text-accent">Trade</span>
               </h1>
               <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
-                We design complete travel experiences — sourcing trusted suppliers, coordinating full itineraries, and managing every detail of your journey. Direct sourcing available.
+                We operate at the intersection of travel management, international consultancy, and global trade facilitation, offering a comprehensive suite of services that include visa processing, flight bookings, tour packages, hotel reservations, travel advisory, trade consultancy, general trading, oil & gas commodity supply, wholesale import and export, as well as sourcing and procurement services.
               </p>
               <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link

@@ -32,38 +32,38 @@ export const generalWhatsapp = whatsappLink(
 export const travelServices = [
   {
     slug: "visa-processing",
-    title: "Visa Processing",
-    summary: "End-to-end visa application support and documentation guidance.",
+    title: "Visa Processing Services",
+    summary: "Expert guidance and application support for all visa types.",
     detail:
-      "We handle the paperwork from first checklist to submission: eligibility review, document preparation, appointment booking and follow-up, for tourist, business, study and pilgrimage visas.",
+      "We provide expert guidance and application support for tourist, business, study, work, and residency visas. Our services include document review and advisory, application processing, appointment scheduling, interview preparation, and compliance and travel advisories.",
   },
   {
     slug: "flight-bookings",
     title: "Flight Bookings",
-    summary: "Domestic and international flight reservations.",
+    summary: "Strategic partnerships with major airlines for competitive fares.",
     detail:
-      "Fare comparisons across major carriers, ticketing, date changes and rebooking, for one-off trips or recurring corporate travel out of Yola, Abuja and Lagos.",
+      "Through strategic partnerships with major airlines, we offer local and international ticketing, corporate travel management, flexible fare options, and emergency and last-minute travel assistance for one-off trips or recurring corporate travel.",
   },
   {
     slug: "hotel-reservations",
     title: "Hotel Reservations",
-    summary: "Accommodation booking for business and leisure travel.",
+    summary: "Securing the best rates globally through corporate partnerships.",
     detail:
-      "Vetted hotels and serviced apartments at negotiated rates, matched to your budget, location and length of stay, with confirmations you can present at check-in or for a visa file.",
+      "We secure the best rates globally through corporate hotel partnerships, offering budget to luxury accommodations and long-stay and seasonal discount options, matched to your budget, location, and length of stay.",
   },
   {
     slug: "tour-packages",
     title: "Tour Packages",
-    summary: "Curated travel packages for individuals and groups.",
+    summary: "Personalized and group tour packages for all occasions.",
     detail:
-      "Fully arranged itineraries covering flights, transfers, accommodation and guided activities, for families, corporate retreats and group pilgrimages.",
+      "Personalized and group tour packages designed for holidays and vacations, study trips, honeymoon packages, adventure and cultural experiences, and corporate retreats with fully arranged itineraries covering flights, transfers, accommodation, and guided activities.",
   },
   {
     slug: "travel-consultancy",
     title: "Travel Consultancy",
-    summary: "Personalized travel planning and advisory.",
+    summary: "Expert guidance for seamless travel planning.",
     detail:
-      "Route planning, entry requirements, travel insurance and cost optimisation advice, so you know exactly what a trip demands before you commit to it.",
+      "Our experts offer itinerary planning, immigration and travel compliance guidance, country-specific travel analysis, and risk assessment and travel insurance support, so you know exactly what a trip demands before you commit to it.",
   },
 ] as const;
 
@@ -71,36 +71,36 @@ export const tradeServices = [
   {
     slug: "oil-and-gas-trade",
     title: "Oil and Gas Trade",
-    summary: "Trading and brokerage within the oil and gas sector.",
+    summary: "Supply of petroleum products with compliance and quality assurance.",
     detail:
-      "Buyer and seller introductions, deal structuring support and coordination of documentation for petroleum product transactions.",
+      "Supply of petroleum products, trading of crude and refined products, logistics coordination, and compliance with local and international energy standards.",
   },
   {
     slug: "import-export",
     title: "Import and Export Wholesalers",
-    summary: "Import-export facilitation and wholesale trade.",
+    summary: "Comprehensive import-export facilitation with full documentation.",
     detail:
-      "We connect suppliers across the globe, manage international shipping and customs clearance, and deliver wholesale goods to markets worldwide.",
+      "We connect suppliers across the globe, manage international shipping, customs clearing, SONCAP and SON certification, freight forwarding, and deliver wholesale goods to markets worldwide with complete documentation support.",
   },
   {
     slug: "sourcing-procurement",
     title: "Sourcing and Procurement",
-    summary: "Sourcing goods and managing procurement on behalf of clients.",
+    summary: "Professional procurement with supplier verification and quality assurance.",
     detail:
-      "We find the supplier, verify them, negotiate the price and manage delivery, for one-off purchases or scheduled contract supply.",
+      "Tailored procurement solutions for corporate clients, NGOs, government projects, and SMEs. We provide supplier identification and verification, bulk purchasing with price optimization, quality assurance, and comprehensive documentation and logistics support.",
   },
   {
     slug: "general-traders",
     title: "General Traders",
-    summary: "General trading services across sectors.",
+    summary: "Multisector trading hub dealing in manufactured and agricultural goods.",
     detail:
-      "Building materials, agricultural produce, equipment and consumables, bought and sold at volume with transparent pricing.",
+      "Operating as a multisector trading hub, we handle manufactured goods, agricultural products, consumer goods, industrial materials, building materials, and specialized equipment, bought and sold at volume with transparent pricing.",
   },
   {
     slug: "trade-consultancy",
     title: "Trade Consultancy",
-    summary: "Advisory on trade operations, logistics, and compliance.",
+    summary: "Feasibility studies, market entry strategies, and compliance advisory.",
     detail:
-      "Guidance on documentation, duties, logistics routing and regulatory compliance so shipments and contracts move without avoidable delay.",
+      "We support individuals and companies seeking to expand into international markets through feasibility studies, market entry strategies, supplier verification and due diligence, regulatory and compliance advisory, and trade finance guidance.",
   },
 ] as const;

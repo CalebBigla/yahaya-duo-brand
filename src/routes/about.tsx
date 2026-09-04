@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plane, Ship, ShieldCheck, Award, FileCheck, Handshake, Target, Users } from "lucide-react";
+import { Plane, Ship, ShieldCheck, Award, FileCheck, Handshake, Target, Users, Eye, Lightbulb, Shield, Clock, Zap, Heart, CheckCircle, DollarSign, Briefcase, Package, Fuel, Globe } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
 
@@ -34,7 +34,10 @@ const team = [
     name: "Yahaya Muhammad Umar", 
     role: "Founder/Chief Executive Officer", 
     image: ceoImg,
-    bio: "leading both travel services and trade operations since 2020."
+    bio: "Yahaya is a dedicated Nigerian civil servant and accomplished businessman whose professional journey blends public sector discipline with private sector innovation. With years of experience serving within government systems, he has developed a deep understanding of regulatory frameworks, compliance standards, and institutional operations expertise that now empowers our operations with integrity, order, and strategic foresight.",
+    bio2: "Driven by a passion for entrepreneurship and national development, he ventured into business with the vision of creating an enterprise that connects people, products, and opportunities across borders. His hands-on experience in trade, procurement, and travel facilitation has positioned him as a versatile leader capable of navigating both administrative procedures and commercial demands.",
+    bio3: "A strong advocate for accountability, capacity building, and sustainable growth, Yahaya ensures that the company maintains transparent processes, client-centered services, and long-term value creation. His leadership reflects a rare balance of disciplined governance, business acumen, and unwavering commitment to operational excellence.",
+    bio4: "Under his guidance, the company continues to build a reputation as a dependable partner in travel management, international trade, procurement, and global commerce."
   },
 ];
 
@@ -64,24 +67,34 @@ const milestones = [
 
 const values = [
   {
-    icon: FileCheck,
-    title: "Transparency in documentation",
-    description: "Every transaction, whether a visa application or a procurement order, is backed by clear paperwork you can verify. Itemized quotes, purchase orders, delivery notes — nothing is left to memory or verbal promises. We document because that's how trust is built and maintained.",
+    icon: Shield,
+    title: "Integrity",
+    description: "We uphold honesty and transparency across all client interactions and transactions, building trust through consistent ethical conduct and clear communication.",
   },
   {
-    icon: Handshake,
-    title: "Reliability in delivery",
-    description: "When we commit to a timeline, we track it and communicate proactively if anything shifts. Visas processed on schedule, goods delivered as agreed, flights booked when promised. Our reputation depends on doing what we said we'd do, when we said we'd do it.",
+    icon: Award,
+    title: "Professionalism",
+    description: "Our processes are structured, compliant, and executed with expert precision, ensuring quality and reliability in every service delivery.",
   },
   {
-    icon: Target,
-    title: "Accountability from start to finish",
-    description: "You don't get handed off between departments or left wondering who's responsible. One point of contact manages your file from first enquiry to final delivery, so there's always someone who knows your case and can answer your questions.",
+    icon: Clock,
+    title: "Reliability",
+    description: "We deliver what we promise, on time, every time. Our commitment to deadlines and quality standards is unwavering across all service lines.",
   },
   {
-    icon: Users,
-    title: "Responsiveness across channels",
-    description: "Call, WhatsApp, email — we respond on the channel that works for you, and we respond promptly. For urgent cases (tight visa deadlines, time-sensitive procurement), we prioritize and keep you updated in real time.",
+    icon: Zap,
+    title: "Innovation",
+    description: "Technology-driven solutions power our operations, ensuring speed, efficiency, and global reach in an increasingly connected world.",
+  },
+  {
+    icon: Heart,
+    title: "Customer Satisfaction",
+    description: "Every service is tailored to the unique needs of our clients, with continuous innovation driving long-term satisfaction and service excellence.",
+  },
+  {
+    icon: CheckCircle,
+    title: "Compliance",
+    description: "We maintain strict adherence to regulatory requirements, international standards, and industry best practices in all our operations.",
   },
 ];
 
@@ -93,6 +106,43 @@ function AboutPage() {
         title="A registered Nigerian company built on getting things done"
         subtitle="Two divisions, one standard of service: visas processed, cargo moved, deals sourced."
       />
+
+      {/* Mission, Vision, Philosophy */}
+      <section className="bg-gradient-to-br from-primary via-primary-deep to-primary py-16 text-primary-foreground">
+        <div className="container-page">
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
+                <Target className="h-8 w-8 text-accent" />
+              </div>
+              <h2 className="mb-3 text-xl font-bold">Our Mission</h2>
+              <p className="text-sm leading-relaxed text-primary-foreground/80">
+                To deliver efficient, reliable, and customer-centric travel and trade solutions that enhance mobility, unlock business opportunities, and facilitate global connections.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
+                <Eye className="h-8 w-8 text-accent" />
+              </div>
+              <h2 className="mb-3 text-xl font-bold">Our Vision</h2>
+              <p className="text-sm leading-relaxed text-primary-foreground/80">
+                To become a leading global partner in travel management and international trade facilitation, recognized for excellence, integrity, and operational efficiency.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
+                <Lightbulb className="h-8 w-8 text-accent" />
+              </div>
+              <h2 className="mb-3 text-xl font-bold">Corporate Philosophy</h2>
+              <p className="text-sm leading-relaxed text-primary-foreground/80">
+                We believe that excellence is not a destination but a continuous journey of refinement, ensuring our services remain aligned with international standards and emerging market trends.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="py-16">
         <div className="container-page grid gap-12 lg:grid-cols-[1.6fr_1fr]">
@@ -246,13 +296,13 @@ function AboutPage() {
       <section className="py-16">
         <div className="container-page">
           <div className="max-w-2xl">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">How we work</h2>
+            <h2 className="text-2xl font-bold text-primary sm:text-3xl">Core Values</h2>
             <p className="mt-3 text-muted-foreground">
-              These aren't aspirational buzzwords — they're the operational principles that guide every visa file we process and every procurement order we handle.
+              The principles that guide every aspect of our operations, from visa processing to trade facilitation, ensuring consistent excellence in service delivery.
             </p>
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {values.map((value) => (
               <div key={value.title} className="rounded-xl border border-border bg-card p-6 shadow-card">
                 <value.icon className="h-7 w-7 text-accent" />
@@ -260,6 +310,110 @@ function AboutPage() {
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{value.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Strategic Objectives */}
+      <section className="border-y border-border bg-secondary/30 py-16">
+        <div className="container-page">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold text-primary sm:text-4xl">Strategic Objectives</h2>
+            <p className="mt-3 text-muted-foreground">
+              Our operational principles define how we deliver consistent and exceptional results across travel and trade divisions
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
+                  <Plane className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-bold text-primary">Simplify Global Travel</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    To simplify global travel through fast, transparent, and compliant visa and reservation services.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
+                  <DollarSign className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-bold text-primary">Competitive Pricing</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    To deliver competitively priced flight, tour, and hotel solutions tailored to client needs.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
+                  <Briefcase className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-bold text-primary">Trusted Trade Platform</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    To build a trusted platform for trade consultancy, guiding businesses into global markets.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
+                  <Package className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-bold text-primary">End-to-End Logistics Support</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    To provide end-to-end sourcing, procurement, and logistics support for companies of all sizes.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
+                  <Fuel className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-bold text-primary">Oil & Gas Value Chain</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    To establish a solid presence in the oil & gas commodity value chain with consistent, reliable supply.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
+                  <Globe className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-bold text-primary">Import/Export Wholesaler</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    To grow into a leading import/export wholesaler for high-demand international products.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-xl border-2 border-primary/20 bg-primary/5 p-6 text-center">
+            <p className="text-sm font-medium leading-relaxed text-foreground">
+              Our commitment to excellence, innovation, compliance, and long-term value creation guides every aspect of our operations, ensuring our services remain aligned with client expectations, international standards, and emerging market trends.
+            </p>
           </div>
         </div>
       </section>
@@ -272,17 +426,29 @@ function AboutPage() {
           </p>
           <div className="mt-8 flex justify-center">
             {team.map((m, i) => (
-              <div key={i} className="max-w-sm rounded-xl border border-border bg-card p-8 text-center shadow-card">
-                <div className="mx-auto h-32 w-32 overflow-hidden rounded-full">
-                  <img 
-                    src={m.image} 
-                    alt={m.name}
-                    className="h-full w-full object-cover"
-                  />
+              <div key={i} className="flex max-w-5xl flex-col items-center gap-6 md:flex-row md:items-start">
+                {/* Image outside the card */}
+                <div className="shrink-0">
+                  <div className="h-48 w-48 overflow-hidden rounded-2xl shadow-elevated">
+                    <img 
+                      src={m.image} 
+                      alt={m.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
-                <h3 className="mt-6 text-xl font-bold text-primary">{m.name}</h3>
-                <p className="mt-1 text-sm font-semibold text-accent">{m.role}</p>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.bio}</p>
+                
+                {/* Bio card */}
+                <div className="flex-1 rounded-xl border border-border bg-card p-8 shadow-card">
+                  <h3 className="text-2xl font-bold text-primary">{m.name}</h3>
+                  <p className="mt-1 text-sm font-semibold text-accent">{m.role}</p>
+                  <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
+                    <p>{m.bio}</p>
+                    {m.bio2 && <p>{m.bio2}</p>}
+                    {m.bio3 && <p>{m.bio3}</p>}
+                    {m.bio4 && <p className="font-medium text-foreground">{m.bio4}</p>}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

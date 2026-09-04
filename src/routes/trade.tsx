@@ -14,9 +14,9 @@ import oilGasImg from "@/assets/The Last Bow at Dusk.jpg";
 import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
 import procurementImg from "@/assets/petroleum engineering.jpg";
 
-const title = "Trade & General Contracts — Oil and Gas, Import Export Yola | Yahaya";
+const title = "Trade, Procurement & General Commerce — Oil & Gas, Import Export | Yahaya";
 const description =
-  "Oil and gas trade Nigeria, import export Yola, sourcing and procurement, general trading and trade consultancy from Yahaya Travel and Trade Co Ltd.";
+  "Multisector trading hub: Oil and gas with compliance, import-export with full documentation, sourcing and procurement with quality assurance, general trading, and trade consultancy including feasibility studies and market entry strategies. Serving corporate, NGO, and government clients across Nigeria.";
 
 export const Route = createFileRoute("/trade")({
   head: () => ({
@@ -46,63 +46,78 @@ const icons: Record<string, LucideIcon> = {
 const serviceDetails = {
   "oil-and-gas-trade": {
     categories: [
-      "Petroleum products (PMS, AGO, DPK)",
-      "Crude oil brokerage and facilitation",
-      "LPG (cooking gas) supply",
-      "Lubricants and industrial oils",
+      "Supply of petroleum products (PMS, AGO, DPK, LPG)",
+      "Trading of crude and refined products",
+      "Logistics coordination and depot management",
+      "Compliance with local and international energy standards",
+      "Quality assurance and product testing",
       "Trading relationships with refineries and depots",
     ],
-    process: "You specify product type, volume, delivery location, and timeline. We identify vetted suppliers or off-takers, negotiate pricing aligned with current market rates, coordinate quality inspections where needed, handle documentation (purchase orders, PPPRA licenses if applicable, delivery notes), and track delivery to your designated location or depot.",
-    leadTime: "Depends on product and volume. Small volumes (trucks) can be arranged within 3-5 days. Large consignments (multiple trucks or depot allocations) require 1-2 weeks for supply coordination and documentation.",
-    example: "Need 10,000 liters of AGO delivered to your construction site in Yola? We source from a verified depot, provide a transparent quote (product cost + logistics + our margin), coordinate the delivery trucks, ensure the product meets specs, and provide all documentation for your records and accounting.",
+    process: "You specify product type, volume, delivery location, and timeline. We identify vetted suppliers or off-takers, negotiate pricing aligned with current market rates, coordinate quality inspections where needed, handle documentation (purchase orders, PPPRA licenses if applicable, delivery notes), ensure compliance with energy regulations, and track delivery to your designated location or depot.",
+    leadTime: "Depends on product and volume. Small volumes (trucks) can be arranged within 3-5 days. Large consignments (multiple trucks or depot allocations) require 1-2 weeks for supply coordination, compliance verification, and documentation.",
+    example: "Need 10,000 liters of AGO delivered to your construction site in Yola? We source from a verified depot, ensure compliance with energy standards, provide a transparent quote (product cost + logistics + our margin), coordinate quality-tested delivery trucks, and provide all documentation for your records and regulatory compliance.",
   },
   "import-export": {
     categories: [
       "Import of machinery, equipment, and spare parts",
       "Export of agricultural produce (grains, sesame, ginger, hibiscus)",
-      "Wholesale distribution into Adamawa and North East markets",
+      "Electronics and industrial machinery imports",
+      "Food commodities and household goods",
+      "Building materials and automotive parts",
       "Customs clearing and freight forwarding coordination",
-      "Documentation: Bill of Lading, FORM M, SONCAP, others as required",
+      "Documentation: Bill of Lading, FORM M, SONCAP, SON certification",
+      "Delivery coordination to final destination",
     ],
-    process: "Tell us what you want to import (or export) and the destination. We identify reliable suppliers (or buyers), provide FOB/CIF pricing, coordinate shipping and clearing, manage customs documentation, and arrange final delivery to your warehouse or designated location. For exports, we handle quality inspection, packaging, and shipping coordination.",
-    leadTime: "Import lead times: 4-8 weeks depending on origin country and shipping method (sea vs. air). Clearing at Nigerian ports typically adds 1-2 weeks. Export arrangements: 2-4 weeks from order to shipment, depending on product availability and buyer requirements.",
-    example: "Importing 2 containers of building materials from China? We source the supplier, negotiate pricing, arrange shipping to Lagos (Apapa or Tin Can), handle customs clearing and SONCAP certification, and coordinate haulage to your warehouse in Yola — with transparent itemized costs at every stage.",
+    process: "Tell us what you want to import (or export) and the destination. We identify reliable suppliers (or buyers), provide FOB/CIF pricing, coordinate shipping and clearing, manage customs documentation including SONCAP and SON certification, arrange freight forwarding, and organize final delivery to your warehouse or designated location. For exports, we handle quality inspection, packaging standards, export documentation, and shipping coordination.",
+    leadTime: "Import lead times: 4-8 weeks depending on origin country and shipping method (sea vs. air). Clearing at Nigerian ports typically adds 1-2 weeks for documentation and customs processing. Export arrangements: 2-4 weeks from order to shipment, depending on product availability, quality inspection, and buyer requirements.",
+    example: "Importing 2 containers of building materials from China? We source the supplier, negotiate competitive pricing, arrange shipping to Lagos (Apapa or Tin Can), handle customs clearing with SONCAP and SON certification, coordinate freight forwarding, and arrange haulage to your warehouse in Yola — with transparent itemized costs and documentation at every stage.",
   },
   "sourcing-procurement": {
     categories: [
+      "Supplier identification and verification",
+      "Bulk purchasing and volume negotiations",
+      "Negotiation and price optimization",
+      "Quality assurance and product inspection",
+      "Documentation and logistics support",
+      "Delivery coordination to project sites",
       "Building materials (cement, iron rods, roofing sheets, tiles)",
       "Agricultural inputs (fertilizer, seeds, pesticides)",
       "Office and industrial equipment",
-      "Consumables and supplies for businesses and projects",
-      "Vendor verification and due diligence",
     ],
-    process: "You provide product specifications, quantity, quality requirements, and delivery timeline. We identify 2-3 vetted suppliers, present comparative quotes with our recommendation, coordinate payment terms (we can facilitate escrow or milestone payments), manage logistics, inspect goods before delivery where feasible, and provide all documentation (invoices, waybills, delivery confirmations).",
-    leadTime: "Local sourcing (Nigerian suppliers): 1-2 weeks for most products. International sourcing: 4-8 weeks depending on origin and shipping. Urgent requests can be fast-tracked where suppliers allow, but may carry premium costs.",
-    example: "Need 500 bags of cement delivered to a project site in Mubi? We source from verified dealers, negotiate bulk rates, arrange haulage, confirm delivery to site, and provide the invoice and waybill. For recurring needs, we set up a supply schedule so cement arrives as your project progresses.",
+    process: "You provide product specifications, quantity, quality requirements, and delivery timeline. We identify 2-3 vetted suppliers through our verification process, present comparative quotes with our recommendation, negotiate optimal pricing, coordinate payment terms (we can facilitate escrow or milestone payments), manage logistics and freight, conduct quality inspection before delivery where feasible, provide comprehensive documentation (invoices, waybills, delivery confirmations, quality certificates), and ensure on-time delivery coordination.",
+    leadTime: "Local sourcing (Nigerian suppliers): 1-2 weeks for most products with quality verification. International sourcing: 4-8 weeks depending on origin, shipping method, and customs clearance. Urgent requests can be fast-tracked where suppliers allow, though premium costs may apply for expedited sourcing and logistics.",
+    example: "Need 500 bags of cement delivered to a project site in Mubi? We identify verified dealers, conduct supplier due diligence, negotiate bulk rates with price optimization, arrange quality-inspected haulage, confirm delivery to site with documentation, and provide the invoice, waybill, and quality certificate. For recurring needs, we set up a scheduled supply program so cement arrives as your project progresses with consistent quality.",
   },
   "general-traders": {
     categories: [
-      "Grains and food commodities (rice, maize, millet, beans)",
-      "Construction materials at wholesale volumes",
+      "Manufactured goods and industrial products",
+      "Agricultural products (grains, sesame, hibiscus)",
       "Consumer goods and retail supplies",
+      "Industrial materials and specialized equipment",
+      "Construction materials at wholesale volumes",
+      "Grains and food commodities (rice, maize, millet, beans)",
       "Seasonal and bulk trading (harvest procurement, festive stock)",
       "Cross-border trade facilitation within West Africa",
     ],
-    process: "We buy and sell goods at volume, either on our own account or as intermediaries connecting buyers and sellers. Pricing is transparent and negotiable based on volume, payment terms, and delivery requirements. We handle logistics, quality assurance, and documentation to ensure smooth transactions.",
-    leadTime: "Depends on product and market conditions. Commodity trades (grains, materials) can close within days if stock is available. Seasonal procurement (e.g., harvest-time buying) requires advance planning and commitment.",
-    example: "Looking to buy 100 tonnes of maize during harvest season? We coordinate with farmers or aggregators, arrange quality inspection, provide warehousing if needed, and deliver to your mill or storage facility at an agreed schedule. Alternatively, if you're a farmer with produce to sell, we connect you with vetted buyers and manage the transaction.",
+    process: "Operating as a multisector trading hub, we buy and sell goods at volume, either on our own account or as intermediaries connecting buyers and sellers. We handle manufactured goods, agricultural products, consumer goods, and industrial materials. Pricing is transparent and negotiable based on volume, payment terms, and delivery requirements. We manage complete logistics, quality assurance, comprehensive documentation, and delivery coordination to ensure smooth transactions.",
+    leadTime: "Depends on product type and market conditions. Commodity trades (grains, materials) can close within days if stock is available in our network. Seasonal procurement (e.g., harvest-time buying of agricultural products) requires advance planning and commitment. Industrial and manufactured goods: 1-3 weeks depending on supplier availability.",
+    example: "Looking to buy 100 tonnes of maize during harvest season? We coordinate with farmers or aggregators across the region, arrange quality inspection and grading, provide warehousing if needed, and deliver to your mill or storage facility at an agreed schedule. Alternatively, if you're a farmer with produce to sell, we connect you with vetted buyers and manage the complete transaction with transparent pricing.",
   },
   "trade-consultancy": {
     categories: [
+      "Feasibility studies for market entry and expansion",
+      "Market entry strategies and regulatory guidance",
+      "Supplier verification and comprehensive due diligence",
+      "Regulatory and compliance advisory services",
       "Import/export documentation and compliance guidance",
       "Duty and tariff calculation for imports",
-      "Logistics routing (sea, air, or land freight options)",
-      "Supplier verification and due diligence",
+      "Logistics routing optimization (sea, air, or land freight)",
       "Trade finance and payment structure advice",
+      "Risk assessment and mitigation strategies",
     ],
-    process: "You describe your trade challenge or question — we provide specific advice, documentation templates, regulatory guidance, or connect you with the right service providers (clearing agents, freight forwarders, banks). Consultancy can be one-off (single question) or ongoing (retained advisory for a business).",
-    leadTime: "Immediate responses for straightforward queries. For complex advisory (e.g., setting up an import operation or evaluating a cross-border trade deal), we schedule a detailed consultation within 2-3 business days.",
-    example: "Planning to start importing electronics from Dubai but unsure of the documentation and duties? We walk you through FORM M requirements, calculate estimated customs duties and levies, advise on SONCAP certification, recommend clearing agents in Lagos, and provide a step-by-step checklist so you know what to expect before you commit.",
+    process: "We support individuals and companies seeking to expand into international markets through comprehensive consultancy services. You describe your trade challenge, expansion plans, or compliance questions — we provide specific feasibility studies, market entry strategies, regulatory guidance, documentation templates, supplier verification reports, or connect you with the right service providers (clearing agents, freight forwarders, banks, legal advisors). Consultancy can be one-off (single question or project) or ongoing (retained advisory for business expansion and operations).",
+    leadTime: "Immediate responses for straightforward queries and general guidance. For feasibility studies and detailed market entry strategies: 1-2 weeks for comprehensive analysis. Complex advisory projects (e.g., setting up an import operation, evaluating cross-border trade deals, regulatory compliance assessment): 2-3 weeks with detailed reports and recommendations.",
+    example: "Planning to start importing electronics from Dubai but unsure of the documentation, duties, and market viability? We conduct a feasibility study, walk you through FORM M requirements, calculate estimated customs duties and levies, advise on SONCAP and SON certification, assess market entry strategies, recommend vetted clearing agents in Lagos, provide supplier verification services, and deliver a comprehensive step-by-step checklist with regulatory compliance guidance so you know exactly what to expect and can make informed decisions before committing capital.",
   },
 };
 
@@ -179,10 +194,10 @@ function TradePage() {
                 Trade Division · General Contracts
               </p>
               <h1 className="mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-                Trade & General Contracts
+                Trade, Procurement & General Commerce
               </h1>
               <p className="mt-5 text-lg leading-relaxed text-primary-foreground/85">
-                Oil and gas trading, import and export facilitation, sourcing and procurement — delivered with documentation handled and timelines respected.
+                Multisector trading hub specializing in oil and gas, import-export facilitation, sourcing and procurement, and trade consultancy — delivered with verified suppliers, regulatory compliance, and comprehensive documentation.
               </p>
             </div>
           </div>
@@ -192,24 +207,26 @@ function TradePage() {
       <section className="border-b border-border bg-primary text-primary-foreground">
         <div className="container-page grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
           <div>
-            <h2 className="text-2xl font-bold sm:text-3xl">Procurement without the guesswork</h2>
+            <h2 className="text-2xl font-bold sm:text-3xl">Comprehensive trade solutions without the guesswork</h2>
             <p className="mt-4 text-primary-foreground/75">
-              We work with buyers, suppliers and contractors across Nigeria. Whether it is a single
-              consignment or a running supply contract, we verify the counterparty, agree the terms
-              in writing and keep the paperwork clean from purchase order to delivery.
+              Operating as a multisector trading hub, we work with buyers, suppliers, contractors, and institutions across Nigeria and internationally. From feasibility studies to final delivery, we verify counterparties, provide regulatory compliance guidance, negotiate optimal terms in writing, and maintain comprehensive documentation from purchase order to delivery.
             </p>
             <ul className="mt-6 space-y-2 text-sm font-medium text-primary-foreground/85">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Verified suppliers and transparent pricing
+                Verified suppliers with due diligence and transparent pricing
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Logistics, clearing and documentation coordinated
+                Logistics, clearing, regulatory compliance and documentation coordinated
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Registered company, RC 9295358 — contract-ready
+                Trade consultancy: feasibility studies, market entry strategies, compliance advisory
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                Registered company, RC 9295358 — contract-ready for corporate, NGO, and government clients
               </li>
             </ul>
           </div>
@@ -294,9 +311,9 @@ function TradePage() {
               {service.slug === "oil-and-gas-trade" && (
                 <div className="mt-8 grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
                   <div>
-                    <h3 className="text-lg font-bold text-primary">Energy sector expertise</h3>
+                    <h3 className="text-lg font-bold text-primary">Energy sector expertise with compliance</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      From depot allocations to offshore operations, we facilitate petroleum product trading with transparent documentation and verified supply chains. Our relationships span refineries, depots, and industrial off-takers across the region.
+                      From depot allocations to offshore operations, we facilitate petroleum product trading with transparent documentation, quality assurance, and verified supply chains. Our operations ensure compliance with local and international energy standards. Our relationships span refineries, depots, and industrial off-takers across the region, backed by logistics coordination and regulatory adherence.
                     </p>
                   </div>
                   <div className="relative">
@@ -321,9 +338,9 @@ function TradePage() {
                     />
                   </div>
                   <div className="lg:order-2">
-                    <h3 className="text-lg font-bold text-primary">Global logistics, local accountability</h3>
+                    <h3 className="text-lg font-bold text-primary">Global logistics with comprehensive documentation</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      Whether you're importing machinery from Asia or exporting agricultural produce to international markets, we coordinate the complete supply chain — from supplier verification and freight booking to customs clearing and final delivery to your warehouse.
+                      Whether you're importing machinery, electronics, or industrial equipment from Asia, or exporting agricultural produce to international markets, we coordinate the complete supply chain. Our services include supplier verification, freight booking and forwarding, customs clearing with SONCAP and SON certification, documentation support (Bill of Lading, FORM M), and final delivery coordination to your warehouse. We handle the complexity so you can focus on your business.
                     </p>
                   </div>
                 </div>
@@ -332,9 +349,9 @@ function TradePage() {
               {service.slug === "sourcing-procurement" && (
                 <div className="mt-8 grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
                   <div>
-                    <h3 className="text-lg font-bold text-primary">Verified suppliers, transparent terms</h3>
+                    <h3 className="text-lg font-bold text-primary">Professional procurement with quality assurance</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      We source building materials, industrial equipment, agricultural inputs, and project consumables from vetted suppliers. Every procurement is backed by comparative quotes, clear payment terms, and documented delivery — so you know exactly what you're getting and when.
+                      We provide tailored procurement solutions for corporate clients, NGOs, government projects, and SMEs. Our services include supplier identification and verification, bulk purchasing with price optimization, negotiation and quality assurance, comprehensive documentation and logistics support, and reliable delivery coordination. We source building materials, industrial equipment, agricultural inputs, and project consumables from vetted suppliers. Every procurement is backed by comparative quotes, transparent payment terms, quality inspection, and documented delivery — ensuring you receive exactly what you ordered, when you need it.
                     </p>
                   </div>
                   <div className="relative">
