@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -19,6 +20,7 @@ import { Route as TestEnvRouteImport } from './routes/test-env'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminDebugRouteImport } from './routes/admin/debug'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 
 const IndexRoute = IndexRouteImport.update({
@@ -34,6 +36,11 @@ const AboutRoute = AboutRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -71,6 +78,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDebugRoute = AdminDebugRouteImport.update({
+  id: '/admin/debug',
+  path: '/admin/debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -81,12 +93,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/health': typeof HealthRoute
   '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRoute
   '/terms': typeof TermsRoute
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/debug': typeof AdminDebugRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -94,12 +108,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/health': typeof HealthRoute
   '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRoute
   '/terms': typeof TermsRoute
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/debug': typeof AdminDebugRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin': typeof AdminIndexRoute
 }
@@ -108,12 +124,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/health': typeof HealthRoute
   '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRoute
   '/terms': typeof TermsRoute
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/debug': typeof AdminDebugRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -123,12 +141,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/health'
     | '/privacy'
     | '/quote'
     | '/terms'
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/debug'
     | '/admin/login'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -136,12 +156,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/health'
     | '/privacy'
     | '/quote'
     | '/terms'
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/debug'
     | '/admin/login'
     | '/admin'
   id:
@@ -149,12 +171,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/health'
     | '/privacy'
     | '/quote'
     | '/terms'
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/debug'
     | '/admin/login'
     | '/admin/'
   fileRoutesById: FileRoutesById
@@ -163,12 +187,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  HealthRoute: typeof HealthRoute
   PrivacyRoute: typeof PrivacyRoute
   QuoteRoute: typeof QuoteRoute
   TermsRoute: typeof TermsRoute
   TestEnvRoute: typeof TestEnvRoute
   TradeRoute: typeof TradeRoute
   TravelRoute: typeof TravelRoute
+  AdminDebugRoute: typeof AdminDebugRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -194,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -245,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/debug': {
+      id: '/admin/debug'
+      path: '/admin/debug'
+      fullPath: '/admin/debug'
+      preLoaderRoute: typeof AdminDebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -259,12 +299,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  HealthRoute: HealthRoute,
   PrivacyRoute: PrivacyRoute,
   QuoteRoute: QuoteRoute,
   TermsRoute: TermsRoute,
   TestEnvRoute: TestEnvRoute,
   TradeRoute: TradeRoute,
   TravelRoute: TravelRoute,
+  AdminDebugRoute: AdminDebugRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
