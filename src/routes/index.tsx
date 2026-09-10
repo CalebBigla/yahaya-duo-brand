@@ -283,7 +283,7 @@ function Index() {
   return (
     <>
       {/* Hero with Floating Collage */}
-      <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-24 sm:py-32">
+      <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-24 sm:py-32 lg:py-40 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-deep via-primary to-primary-deep/90" />
         
         <div className="container-page relative z-10">
@@ -342,7 +342,7 @@ function Index() {
       </section>
 
       {/* Core Objectives - Two Large Featured Cards */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
             <div className="text-center">
@@ -417,8 +417,60 @@ function Index() {
         </div>
       </section>
 
+      {/* Travels & Tours - Compact Section */}
+      <section className="border-y border-border bg-secondary/40 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
+        <div className="container-page">
+          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+            <AnimatedSection animation="fade-up">
+              <div>
+                <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
+                  Supporting Service
+                </span>
+                <h2 className="mt-4 text-2xl font-bold text-primary sm:text-3xl">
+                  Travels & Tours
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  Complete visa processing and travel packages for tourist, business, medical, Hajj, Umrah, work, and study visas to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more. Flight bookings, hotel reservations, airport transfers, and guided tours.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-4">
+                  <div className="flex items-center gap-2 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                    <span>Multiple Visa Types</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                    <span>Complete Travel Packages</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                    <span>Referral Commission Program</span>
+                  </div>
+                </div>
+                <Link
+                  to="/travel"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent-foreground underline underline-offset-4"
+                >
+                  View travel services <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection animation="scale" delay={100}>
+              <div className="relative overflow-hidden rounded-2xl">
+                <img
+                  src={bentoTravelCoupleImg}
+                  alt="Travel services"
+                  loading="lazy"
+                  className="h-64 w-full object-cover lg:h-80"
+                />
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
       {/* Sourcing & Procurement Highlight */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="fade-up">
@@ -493,60 +545,8 @@ function Index() {
         </div>
       </section>
 
-      {/* Travels & Tours - Compact Section */}
-      <section className="border-y border-border bg-secondary/40 py-16">
-        <div className="container-page">
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-            <AnimatedSection animation="fade-up">
-              <div>
-                <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
-                  Supporting Service
-                </span>
-                <h2 className="mt-4 text-2xl font-bold text-primary sm:text-3xl">
-                  Travels & Tours
-                </h2>
-                <p className="mt-4 text-muted-foreground">
-                  Complete visa processing and travel packages for tourist, business, medical, Hajj, Umrah, work, and study visas to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more. Flight bookings, hotel reservations, airport transfers, and guided tours.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-4">
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                    <span>Multiple Visa Types</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                    <span>Complete Travel Packages</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                    <span>Referral Commission Program</span>
-                  </div>
-                </div>
-                <Link
-                  to="/travel"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent-foreground underline underline-offset-4"
-                >
-                  View travel services <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection animation="scale" delay={100}>
-              <div className="relative overflow-hidden rounded-2xl">
-                <img
-                  src={bentoTravelCoupleImg}
-                  alt="Travel services"
-                  loading="lazy"
-                  className="h-64 w-full object-cover lg:h-80"
-                />
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
       {/* Premium Services Showcase - Flip Cards */}
-      <section className="py-20 sm:py-24">
+      <section className="py-20 sm:py-24 lg:py-28 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
             <div className="text-center">
@@ -779,7 +779,7 @@ function Index() {
       </section>
 
       {/* Stats Section - Business Scale */}
-      <section className="gradient-mesh py-16 sm:py-20">
+      <section className="gradient-mesh py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="fade-up">
@@ -821,7 +821,7 @@ function Index() {
       </section>
 
       {/* How It Works - Interactive Journey */}
-      <section className="border-y border-border bg-secondary/30 py-16 sm:py-20">
+      <section className="border-y border-border bg-secondary/30 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-primary sm:text-4xl">
@@ -881,7 +881,7 @@ function Index() {
       </section>
 
       {/* Key Features with Composite Images */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
@@ -949,7 +949,7 @@ function Index() {
       </section>
 
       {/* Trust Section with Worker Photo */}
-      <section className="border-y border-border bg-primary py-16 text-primary-foreground sm:py-20">
+      <section className="border-y border-border bg-primary py-16 text-primary-foreground sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="scale" delay={0}>
@@ -984,7 +984,7 @@ function Index() {
       </section>
 
       {/* Explore by Category Strip */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
             <h2 className="text-center text-3xl font-bold text-primary sm:text-4xl">
@@ -1096,7 +1096,7 @@ function Index() {
       </section>
 
       {/* Testimonials */}
-      <section className="border-y border-border bg-secondary/50 py-16 sm:py-20">
+      <section className="border-y border-border bg-secondary/50 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
             <h2 className="text-3xl font-bold text-primary sm:text-4xl">What clients say</h2>
@@ -1131,7 +1131,7 @@ function Index() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page max-w-3xl">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-primary sm:text-4xl">
@@ -1181,7 +1181,7 @@ function Index() {
       </section>
 
       {/* Closing CTA */}
-      <section className="bg-primary-deep py-16">
+      <section className="bg-primary-deep py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <div>
             <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">

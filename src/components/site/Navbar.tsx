@@ -94,7 +94,7 @@ export function Navbar() {
               Trade Division
             </p>
             <Link to="/trade" onClick={close} className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
-              <Ship className="h-4 w-4 text-accent" /> Trade &amp; General Contracts
+              <Ship className="h-4 w-4 text-accent" /> Trade Activities
             </Link>
             <div className="mt-3 h-px bg-border" />
             <Link to="/about" onClick={close} className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
