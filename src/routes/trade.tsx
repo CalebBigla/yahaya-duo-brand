@@ -14,7 +14,7 @@ import oilGasImg from "@/assets/The Last Bow at Dusk.jpg";
 import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
 import procurementImg from "@/assets/petroleum engineering.jpg";
 
-const title = "Trade, Procurement & General Commerce — Oil & Gas, Import Export | Yahaya";
+const title = "Trade activities — Oil & Gas, Import Export | Yahaya";
 const description =
   "Multisector trading hub: Oil and gas with compliance, import-export with full documentation, sourcing and procurement with quality assurance, general trading, and trade consultancy including feasibility studies and market entry strategies. Serving corporate, NGO, and government clients across Nigeria.";
 
@@ -194,7 +194,7 @@ function TradePage() {
                 Trade Division · General Contracts
               </p>
               <h1 className="mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-                Trade, Procurement & General Commerce
+                Trade activities
               </h1>
               <p className="mt-5 text-lg leading-relaxed text-primary-foreground/85">
                 Multisector trading hub specializing in oil and gas, import-export facilitation, sourcing and procurement, and trade consultancy — delivered with verified suppliers, regulatory compliance, and comprehensive documentation.
