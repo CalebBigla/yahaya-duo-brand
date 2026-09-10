@@ -9,4 +9,4 @@ Disallow: /admin/
 Disallow: /admin/*
 
 # Sitemap location
-Sitemap: https://yahayatravelandtrade.com/sitemap.xml
+Sitemap: https://www.yahayatravelandtradecoltd.com/sitemap.xml

@@ -8,9 +8,9 @@ import companyStoryImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting 
 // CEO image
 import ceoImg from "@/assets/YAHAYA.jpg";
 
-const title = "About Yahaya Travel and Trade Co Ltd | RC 9295358, Jimeta-Yola";
+const title = "About Yahaya Travel & Trade | Travel Agency in Yola, Adamawa";
 const description =
-  "Yahaya Travel and Trade Co Ltd is a registered Nigerian company (RC 9295358) in Jimeta-Yola operating a travel services division and a trade and general contracts division.";
+  "Yahaya Travel and Trade Co Ltd (RC 9295358) is a registered Nigerian company based in Jimeta-Yola, Adamawa State, providing professional travel services and trade solutions since 2020.";
 
 export const Route = createFileRoute("/about")({
   head: () => ({

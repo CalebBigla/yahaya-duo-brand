@@ -14,9 +14,9 @@ import oilGasImg from "@/assets/The Last Bow at Dusk.jpg";
 import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
 import procurementImg from "@/assets/petroleum engineering.jpg";
 
-const title = "Trade activities — Oil & Gas, Import Export | Yahaya";
+const title = "Procurement & Trading Services in Yola | Yahaya Travel & Trade";
 const description =
-  "Multisector trading hub: Oil and gas with compliance, import-export with full documentation, sourcing and procurement with quality assurance, general trading, and trade consultancy including feasibility studies and market entry strategies. Serving corporate, NGO, and government clients across Nigeria.";
+  "Procurement company in Yola, Adamawa: sourcing and procurement, import-export, oil and gas trade, and trade consultancy. Serving corporate, NGO, and government clients across Nigeria from our Jimeta-Yola office.";
 
 export const Route = createFileRoute("/trade")({
   head: () => ({

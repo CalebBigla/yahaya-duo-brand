@@ -21,9 +21,9 @@ import travelImg from "@/assets/travel.jpg";
 // Page hero image
 import heroImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
 
-const title = "Travel Services — Visa Processing & Flight Bookings in Yola | Yahaya";
+const title = "Visa Processing & Travel Services in Yola | Yahaya Travel & Trade";
 const description =
-  "Visa processing Yola, flight bookings Adamawa, hotel reservations, tour packages and travel consultancy from Yahaya Travel and Trade Co Ltd.";
+  "Visa processing in Yola, Adamawa: tourist, business, study, and work visas. Flight bookings, hotel reservations, tour packages, and travel consultancy from Yahaya Travel and Trade Co Ltd, Jimeta-Yola.";
 
 export const Route = createFileRoute("/travel")({
   head: () => ({

@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 
 // Hero - Oil & Gas / Industrial focus
 import heroPetroleumImg from "@/assets/petroleum engineering.jpg";
@@ -59,9 +60,9 @@ import trustWorkerImg from "@/assets/Off shore rig worker.jpg";
 
 import { site, travelServices, tradeServices } from "@/lib/site";
 
-const title = "Yahaya Travel and Trade Co Ltd | Oil & Gas, Sourcing & Procurement Services";
+const title = "Travel Agency in Yola, Adamawa | Yahaya Travel & Trade Co Ltd";
 const description =
-  "Oil and gas trade, filling stations, sourcing and procurement services. Import/export logistics and travel services. Registered Nigerian company RC 9295358 in Jimeta-Yola, Adamawa.";
+  "Professional travel and trade services in Yola, Jimeta, Adamawa State. Visa processing, flight bookings, hotel reservations, tour packages, procurement, and import-export services. RC 9295358.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1207,6 +1208,9 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {/* Structured Data for Local SEO */}
+      <LocalBusinessSchema />
     </>
   );
 }
