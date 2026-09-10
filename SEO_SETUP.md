@@ -45,7 +45,7 @@ Description: Yahaya Travel and Trade Co Ltd is a registered Nigerian company (RC
 #### **Travel Page (`/travel`):**
 ```
 Title: Travel & Tourism Services — Visa, Flights, Hotels, Tours | Yahaya
-Description: Comprehensive travel services: visa processing (tourist, business, work, residency), flight bookings, hotel reservations, tour packages, and travel consultancy. Strategic airline partnerships and expert guidance for global travel.
+Description: Comprehensive travel services: visa processing (tourist, business, work, residency), flight bookings, hotel reservations, tour packages, and travel consultancy. Professional travel guidance and support for global travel.
 ```
 
 #### **Trade Page (`/trade`):**
@@ -146,7 +146,7 @@ Description: Get in touch: B.M Yelwa Plaza, Opp. Bachure Junction, Jimeta-Yola, 
         "itemOffered": {
           "@type": "Service",
           "name": "Flight Bookings",
-          "description": "Strategic partnerships with major airlines for competitive fares"
+          "description": "Assistance with local and international flight bookings"
         }
       },
       {
@@ -154,7 +154,7 @@ Description: Get in touch: B.M Yelwa Plaza, Opp. Bachure Junction, Jimeta-Yola, 
         "itemOffered": {
           "@type": "Service",
           "name": "Hotel Reservations",
-          "description": "Corporate partnerships for best rates globally"
+          "description": "Hotel booking assistance for global destinations"
         }
       },
       {

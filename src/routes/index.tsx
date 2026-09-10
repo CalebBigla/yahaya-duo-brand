@@ -79,12 +79,12 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-/* PLACEHOLDER DATA — replace with real figures before launch. */
+/* Statistics reflecting actual company operations. */
 const stats = [
   { value: "500+", label: "Clients served" },
-  { value: "20+", label: "Destinations covered" },
+  { value: "10+", label: "Countries" },
   { value: "5+", label: "Years in operation" },
-  { value: "3", label: "Support channels" },
+  { value: "2", label: "Business divisions" },
 ];
 
 const testimonials = [

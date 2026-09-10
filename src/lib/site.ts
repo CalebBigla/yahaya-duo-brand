@@ -40,16 +40,16 @@ export const travelServices = [
   {
     slug: "flight-bookings",
     title: "Flight Bookings",
-    summary: "Strategic partnerships with major airlines for competitive fares.",
+    summary: "Assistance with local and international flight arrangements.",
     detail:
-      "Through strategic partnerships with major airlines, we offer local and international ticketing, corporate travel management, flexible fare options, and emergency and last-minute travel assistance for one-off trips or recurring corporate travel.",
+      "We assist clients with local and international flight bookings, corporate travel arrangements, flexible fare options, and emergency and last-minute travel assistance for one-off trips or recurring corporate travel needs.",
   },
   {
     slug: "hotel-reservations",
     title: "Hotel Reservations",
-    summary: "Securing the best rates globally through corporate partnerships.",
+    summary: "Assistance with hotel bookings suited to your travel needs.",
     detail:
-      "We secure the best rates globally through corporate hotel partnerships, offering budget to luxury accommodations and long-stay and seasonal discount options, matched to your budget, location, and length of stay.",
+      "We assist with hotel reservations worldwide, offering budget to luxury accommodation options and long-stay and seasonal discount coordination, matched to your budget, location, and length of stay.",
   },
   {
     slug: "tour-packages",

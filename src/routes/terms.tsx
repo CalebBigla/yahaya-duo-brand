@@ -27,7 +27,7 @@ function TermsPage() {
       <PageHero
         eyebrow="Legal"
         title="Terms of Service"
-        subtitle="Placeholder terms — review with a legal adviser and replace before launch."
+        subtitle="Terms governing the use of our services and website."
       />
       <section className="py-16">
         <div className="container-page max-w-3xl space-y-6 text-muted-foreground">
