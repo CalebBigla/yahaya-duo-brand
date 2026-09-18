@@ -6,7 +6,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { checkAdminAccess, InactivityManager } from '@/lib/auth';
-import { LoadingState } from '@/components/site/LoadingState';
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -14,8 +13,6 @@ interface AdminGuardProps {
 }
 
 export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) {
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -28,7 +25,6 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
       // Handle database errors separately
       if (result.error === 'DATABASE_ERROR') {
         setError('Database connection error. Please try refreshing the page or contact support.');
-        setIsChecking(false);
         return;
       }
 
@@ -39,12 +35,9 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
 
       // If owner role is required, check that too
       if (requireOwner && result.user?.role !== 'owner') {
-        navigate({ to: '/admin' }); // Redirect to dashboard, show access denied
+        navigate({ to: '/admin' }); // Redirect to dashboard
         return;
       }
-
-      setIsAuthorized(true);
-      setIsChecking(false);
 
       // Start inactivity timer for auto-logout
       inactivityManager = new InactivityManager();
@@ -59,24 +52,21 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
     };
   }, [navigate, requireOwner]);
 
-  if (isChecking) {
-    return <LoadingState />;
-  }
-
+  // Show error if database fails
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary-deep via-primary to-primary-deep/90 px-4">
-        <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-card p-8 shadow-elevated">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+        <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-white dark:bg-gray-800 p-8 shadow-xl">
           <div className="mb-4 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
               <span className="text-3xl">⚠️</span>
             </div>
-            <h1 className="font-display text-xl font-bold text-foreground">Database Error</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Database Error</h1>
           </div>
-          <p className="text-center text-sm text-muted-foreground">{error}</p>
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-6 w-full rounded-lg bg-accent py-3 font-bold text-accent-foreground transition-opacity hover:opacity-90"
+            className="mt-6 w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition-opacity hover:opacity-90"
           >
             Reload Page
           </button>
@@ -85,9 +75,6 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
     );
   }
 
-  if (!isAuthorized) {
-    return null; // Navigation will happen via useEffect
-  }
-
+  // Render children immediately - auth check happens in background
   return <>{children}</>;
 }

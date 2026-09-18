@@ -20,8 +20,17 @@ import { Route as TestEnvRouteImport } from './routes/test-env'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminClientsRouteImport } from './routes/admin/clients'
 import { Route as AdminDebugRouteImport } from './routes/admin/debug'
+import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
+import { Route as AdminForgotPasswordRouteImport } from './routes/admin/forgot-password'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminQuotesRouteImport } from './routes/admin/quotes'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin/reset-password'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminTeamRouteImport } from './routes/admin/team'
+import { Route as AdminWebsiteRouteImport } from './routes/admin/website'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -78,14 +87,59 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminClientsRoute = AdminClientsRouteImport.update({
+  id: '/admin/clients',
+  path: '/admin/clients',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDebugRoute = AdminDebugRouteImport.update({
   id: '/admin/debug',
   path: '/admin/debug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
+  id: '/admin/enquiries',
+  path: '/admin/enquiries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminForgotPasswordRoute = AdminForgotPasswordRouteImport.update({
+  id: '/admin/forgot-password',
+  path: '/admin/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/admin/media',
+  path: '/admin/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminQuotesRoute = AdminQuotesRouteImport.update({
+  id: '/admin/quotes',
+  path: '/admin/quotes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/admin/reset-password',
+  path: '/admin/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin/team',
+  path: '/admin/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWebsiteRoute = AdminWebsiteRouteImport.update({
+  id: '/admin/website',
+  path: '/admin/website',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -100,8 +154,17 @@ export interface FileRoutesByFullPath {
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/quotes': typeof AdminQuotesRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/website': typeof AdminWebsiteRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -115,8 +178,17 @@ export interface FileRoutesByTo {
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/quotes': typeof AdminQuotesRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/website': typeof AdminWebsiteRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -131,8 +203,17 @@ export interface FileRoutesById {
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/quotes': typeof AdminQuotesRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/website': typeof AdminWebsiteRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -148,8 +229,17 @@ export interface FileRouteTypes {
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/clients'
     | '/admin/debug'
+    | '/admin/enquiries'
+    | '/admin/forgot-password'
     | '/admin/login'
+    | '/admin/media'
+    | '/admin/quotes'
+    | '/admin/reset-password'
+    | '/admin/settings'
+    | '/admin/team'
+    | '/admin/website'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -163,8 +253,17 @@ export interface FileRouteTypes {
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/clients'
     | '/admin/debug'
+    | '/admin/enquiries'
+    | '/admin/forgot-password'
     | '/admin/login'
+    | '/admin/media'
+    | '/admin/quotes'
+    | '/admin/reset-password'
+    | '/admin/settings'
+    | '/admin/team'
+    | '/admin/website'
     | '/admin'
   id:
     | '__root__'
@@ -178,8 +277,17 @@ export interface FileRouteTypes {
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/clients'
     | '/admin/debug'
+    | '/admin/enquiries'
+    | '/admin/forgot-password'
     | '/admin/login'
+    | '/admin/media'
+    | '/admin/quotes'
+    | '/admin/reset-password'
+    | '/admin/settings'
+    | '/admin/team'
+    | '/admin/website'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -194,8 +302,17 @@ export interface RootRouteChildren {
   TestEnvRoute: typeof TestEnvRoute
   TradeRoute: typeof TradeRoute
   TravelRoute: typeof TravelRoute
+  AdminClientsRoute: typeof AdminClientsRoute
   AdminDebugRoute: typeof AdminDebugRoute
+  AdminEnquiriesRoute: typeof AdminEnquiriesRoute
+  AdminForgotPasswordRoute: typeof AdminForgotPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMediaRoute: typeof AdminMediaRoute
+  AdminQuotesRoute: typeof AdminQuotesRoute
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTeamRoute: typeof AdminTeamRoute
+  AdminWebsiteRoute: typeof AdminWebsiteRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -278,6 +395,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/clients': {
+      id: '/admin/clients'
+      path: '/admin/clients'
+      fullPath: '/admin/clients'
+      preLoaderRoute: typeof AdminClientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/debug': {
       id: '/admin/debug'
       path: '/admin/debug'
@@ -285,11 +409,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDebugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/enquiries': {
+      id: '/admin/enquiries'
+      path: '/admin/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/forgot-password': {
+      id: '/admin/forgot-password'
+      path: '/admin/forgot-password'
+      fullPath: '/admin/forgot-password'
+      preLoaderRoute: typeof AdminForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/admin/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/quotes': {
+      id: '/admin/quotes'
+      path: '/admin/quotes'
+      fullPath: '/admin/quotes'
+      preLoaderRoute: typeof AdminQuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/admin/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/admin/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/website': {
+      id: '/admin/website'
+      path: '/admin/website'
+      fullPath: '/admin/website'
+      preLoaderRoute: typeof AdminWebsiteRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -306,8 +486,17 @@ const rootRouteChildren: RootRouteChildren = {
   TestEnvRoute: TestEnvRoute,
   TradeRoute: TradeRoute,
   TravelRoute: TravelRoute,
+  AdminClientsRoute: AdminClientsRoute,
   AdminDebugRoute: AdminDebugRoute,
+  AdminEnquiriesRoute: AdminEnquiriesRoute,
+  AdminForgotPasswordRoute: AdminForgotPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMediaRoute: AdminMediaRoute,
+  AdminQuotesRoute: AdminQuotesRoute,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTeamRoute: AdminTeamRoute,
+  AdminWebsiteRoute: AdminWebsiteRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport

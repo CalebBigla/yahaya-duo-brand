@@ -91,7 +91,7 @@ function ContactPage() {
           <InquiryForm
             title="Send us a message"
             description="Tell us which division you need and we will respond promptly."
-            intro="Hello Yahaya! I would like to make an enquiry."
+            formType="contact"
             fields={[
               { name: "name", label: "Full name", required: true },
               { name: "phone", label: "Phone number", type: "tel", required: true },
@@ -109,11 +109,11 @@ function ContactPage() {
 
           {/* What happens next explainer */}
           <div className="mt-6 rounded-xl border border-primary-foreground/20 bg-primary-deep p-5">
-            <h3 className="font-bold text-primary-foreground">What happens after you send</h3>
+            <h3 className="font-bold text-primary-foreground">What happens after you submit</h3>
             <ul className="mt-3 space-y-2 text-sm text-primary-foreground/75">
               <li className="flex items-start gap-2">
                 <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                Your message opens in WhatsApp — review it and press send. Nothing is stored on this website.
+                Your enquiry is securely stored in our system and our team is immediately notified.
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />

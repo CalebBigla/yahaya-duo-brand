@@ -29,14 +29,14 @@ function QuotePage() {
       <PageHero
         eyebrow="Get a quote"
         title="Tell us what you need"
-        subtitle="One form for both divisions. Fill it in, review the WhatsApp message and send — we will come back with requirements, timelines and pricing."
+        subtitle="One form for both divisions. Fill it in and submit — we will come back with requirements, timelines and pricing within 24 hours."
       />
 
       <section className="bg-secondary/50 py-16">
         <div className="container-page max-w-3xl">
           <InquiryForm
             title="Request a quote"
-            intro="Hello Yahaya! I would like to request a quote."
+            formType="contact"
             fields={[
               {
                 name: "division",

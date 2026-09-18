@@ -204,7 +204,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  
+  // Check if current route is admin route
+  const isAdminRoute = router.state.location.pathname.startsWith('/admin');
 
+  // Admin routes should not have public site navbar/footer
+  if (isAdminRoute) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    );
+  }
+
+  // Public routes get navbar and footer
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col">

@@ -402,7 +402,7 @@ function TradePage() {
           <InquiryForm
             title="Trade enquiry"
             description="Share what you need supplied, sourced or shipped and we will respond with terms."
-            intro="Hello Yahaya! I have a trade enquiry."
+            formType="trade"
             fields={getFormFields()}
           />
         </div>

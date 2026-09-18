@@ -455,7 +455,7 @@ function TravelPage() {
           <InquiryForm
             title="Travel enquiry"
             description="Tell us about your trip and we will come back with requirements and pricing."
-            intro="Hello Yahaya! I have a travel enquiry."
+            formType="travel"
             fields={[
               { name: "name", label: "Full name", required: true },
               { name: "phone", label: "Phone number", type: "tel", required: true },
