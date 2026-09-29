@@ -371,14 +371,14 @@ function Index() {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10 text-primary-foreground">
-                    <Plane className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-accent" />
-                    <h3 className="mt-3 sm:mt-4 md:mt-5 text-2xl sm:text-3xl md:text-4xl font-bold">Travel and Tour</h3>
-                    <p className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-primary-foreground/85">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
+                    <Plane className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
+                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">Travel and Tour</h3>
+                    <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
                       Complete visa processing, flight bookings, hotel reservations, and tour packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
                     </p>
-                    <div className="mt-4 sm:mt-6 md:mt-8 inline-flex items-center gap-2 text-sm sm:text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
+                      Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                     </div>
                   </div>
                 </div>
@@ -400,14 +400,14 @@ function Index() {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10 text-primary-foreground">
-                    <PackageSearch className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-accent" />
-                    <h3 className="mt-3 sm:mt-4 md:mt-5 text-2xl sm:text-3xl md:text-4xl font-bold">Sourcing and Procurement</h3>
-                    <p className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-primary-foreground/85">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
+                    <PackageSearch className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
+                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">Sourcing and Procurement</h3>
+                    <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
                      Direct international sourcing from trusted global suppliers — competitive pricing, verified credentials, complete delivery management.
                     </p>
-                    <div className="mt-4 sm:mt-6 md:mt-8 inline-flex items-center gap-2 text-sm sm:text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
+                      Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                     </div>
                   </div>
                 </div>
