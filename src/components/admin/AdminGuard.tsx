@@ -13,6 +13,7 @@ interface AdminGuardProps {
 }
 
 export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) {
+  const [authState, setAuthState] = useState<'checking' | 'authenticated' | 'error'>('checking');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -24,6 +25,7 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
 
       // Handle database errors separately
       if (result.error === 'DATABASE_ERROR') {
+        setAuthState('error');
         setError('Database connection error. Please try refreshing the page or contact support.');
         return;
       }
@@ -39,6 +41,9 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
         return;
       }
 
+      // Only set authenticated state after all checks pass
+      setAuthState('authenticated');
+
       // Start inactivity timer for auto-logout
       inactivityManager = new InactivityManager();
     };
@@ -52,8 +57,20 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
     };
   }, [navigate, requireOwner]);
 
+  // Show loading state while checking authentication
+  if (authState === 'checking') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600 dark:border-gray-600 dark:border-t-blue-400" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show error if database fails
-  if (error) {
+  if (authState === 'error') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
         <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-white dark:bg-gray-800 p-8 shadow-xl">
@@ -75,6 +92,6 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
     );
   }
 
-  // Render children immediately - auth check happens in background
+  // Only render children after authentication is confirmed
   return <>{children}</>;
 }

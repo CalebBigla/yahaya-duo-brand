@@ -15,6 +15,8 @@ import {
 import { useState } from "react";
 import { PageHero } from "@/components/site/PageHero";
 import { InquiryForm } from "@/components/forms/InquiryForm";
+import { CountryCarousel } from "@/components/travel/CountryCarousel";
+import { TourPackagesCards } from "@/components/travel/TourPackagesCards";
 import { travelServices, site } from "@/lib/site";
 import travelImg from "@/assets/travel.jpg";
 
@@ -84,8 +86,8 @@ const serviceDetails = {
       "Application tracking and follow-up throughout the process",
     ],
     required: "Valid passport (6+ months validity), passport photos, proof of funds (bank statements), travel itinerary, accommodation booking, invitation letter (if applicable), employment letter or business registration.",
-    timeline: "UK visitor visa: 3 weeks average. Schengen visa: 15 working days. US visa: variable, 2-8 weeks depending on interview availability. Dubai visa: 3-5 working days. We provide specific timelines when you enquire.",
-    example: "Applying for a UK visitor visa? We provide your document checklist, review your bank statements and invitation letter, help you complete the online application, book your VFS appointment in Abuja, and track the application until your passport is returned with the visa sticker.",
+    timeline: "Cyprus Visa: Processing time varies depending on application requirements and embassy processing. Turkey Visa: Processing time varies depending on application type and processing conditions. Schengen Visa: Approximately 15 working days, depending on the consulate and application. Dubai Visa: Approximately 3–5 working days. We provide specific timelines when you enquire.",
+    example: "Applying for a Schengen visa? We provide your document checklist, review your bank statements and invitation letter, help you complete the online application, book your appointment at the visa application center, and track the application until your passport is returned with the visa sticker.",
   },
   "flight-bookings": {
     included: [
@@ -140,52 +142,52 @@ const serviceDetails = {
 // Visa destination quick reference
 const visaDestinations = [
   {
-    country: "Germany",
-    types: "Schengen Visitor, Business, Study",
-    timeline: "15 working days",
-    notes: "Apply at German embassy. Travel insurance mandatory (€30k coverage). Biometrics required.",
-  },
-  {
     country: "Saudi Arabia",
-    types: "Hajj, Umrah, Business, Visit",
+    types: "Umrah, Hajj, Tourism, Business",
     timeline: "Variable by season",
-    notes: "Vaccination certificate mandatory. Pilgrimage visas through licensed agents (we coordinate).",
+    notes: "Vaccination certificate mandatory. Pilgrimage visas through licensed agents.",
   },
   {
     country: "Qatar",
-    types: "Tourist, Business, Visit",
+    types: "Tourism, Business, Work, Transit",
     timeline: "3-5 working days",
     notes: "Sponsor or hotel booking required. Fast processing available.",
   },
   {
-    country: "Turkey",
-    types: "Tourist, Business",
-    timeline: "3-7 working days",
-    notes: "E-visa available online. Hotel confirmation and travel insurance recommended.",
-  },
-  {
-    country: "UAE (Dubai)",
-    types: "Tourist, Visit, Business",
-    timeline: "3-5 working days",
-    notes: "Sponsor or hotel booking required. Fast-track options available for urgent cases.",
-  },
-  {
     country: "China",
-    types: "Tourist, Business, Work",
+    types: "Tourism, Business, Study, Work",
     timeline: "4-7 working days",
     notes: "Invitation letter often required. Apply at Chinese Visa Application Center.",
   },
   {
+    country: "Turkey",
+    types: "Tourism, Business, Work, Transit",
+    timeline: "3-7 working days",
+    notes: "E-visa available online. Hotel confirmation and travel insurance recommended.",
+  },
+  {
+    country: "Dubai (UAE)",
+    types: "Tourism, Business, Work, Transit",
+    timeline: "3-5 working days",
+    notes: "Sponsor or hotel booking required. Fast-track options available for urgent cases.",
+  },
+  {
     country: "Egypt",
-    types: "Tourist, Business",
+    types: "Tourism, Business",
     timeline: "5-7 working days",
     notes: "Hotel booking and return ticket confirmation required. E-visa available for some nationalities.",
   },
   {
     country: "Cyprus",
-    types: "Tourist, Business",
+    types: "Tourism, Business",
     timeline: "5-10 working days",
-    notes: "Travel insurance and hotel confirmation required. Schengen-type application process.",
+    notes: "Travel insurance and hotel confirmation required.",
+  },
+  {
+    country: "Schengen Countries",
+    types: "Tourism, Business, Study, Work",
+    timeline: "15 working days",
+    notes: "Travel insurance mandatory. Biometrics required. Multiple entry options available.",
   },
 ];
 
@@ -235,6 +237,44 @@ function TravelPage() {
                 Visas, flights, hotels and full itineraries handled end to end — from our office in Jimeta-Yola to wherever you are going.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visa Types We Process */}
+      <section className="border-b border-border bg-background py-12 md:py-16">
+        <div className="container-page">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <h2 className="text-2xl font-bold text-primary sm:text-3xl">
+              Visa Processing Services
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Expert guidance and application support for all visa categories
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: 'Umrah Visas', icon: '🕌' },
+              { name: 'Study Visas', icon: '🎓' },
+              { name: 'Tourism Visas', icon: '✈️' },
+              { name: 'Hajj Visas', icon: '🕋' },
+              { name: 'Schengen Visas', icon: '🇪🇺' },
+              { name: 'Work Visas', icon: '💼' },
+              { name: 'Business Visas', icon: '🤝' },
+              { name: 'Transit Visas', icon: '🌍' },
+            ].map((visa, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 text-center transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="text-4xl mb-3">{visa.icon}</div>
+                <h3 className="font-bold text-primary group-hover:text-accent transition-colors">
+                  {visa.name}
+                </h3>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-accent transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -338,6 +378,21 @@ function TravelPage() {
         </div>
       </section>
 
+      {/* Destination Carousel */}
+      <section className="border-b border-border bg-background py-12 md:py-16">
+        <div className="container-page">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-primary sm:text-3xl">
+              Explore Our Popular Destinations
+            </h2>
+            <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+              Discover the countries we serve most frequently. From visa processing to complete travel packages, we handle all the details for your journey.
+            </p>
+          </div>
+          <CountryCarousel />
+        </div>
+      </section>
+
       {/* Document Checklist for Visa Applicants */}
       <section className="border-y border-border bg-secondary/30 py-12 md:py-16">
         <div className="container-page max-w-3xl">
@@ -383,6 +438,23 @@ function TravelPage() {
       {travelServices.map((service, i) => {
         const Icon = icons[service.slug] ?? Plane;
         const details = serviceDetails[service.slug as keyof typeof serviceDetails];
+        
+        // Special handling for tour packages - use card layout
+        if (service.slug === 'tour-packages') {
+          return (
+            <section
+              key={service.slug}
+              id={service.slug}
+              className={`scroll-mt-24 py-14 sm:py-16 ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
+            >
+              <div className="container-page">
+                <TourPackagesCards />
+              </div>
+            </section>
+          );
+        }
+        
+        // Original layout for other services
         return (
           <section
             key={service.slug}
