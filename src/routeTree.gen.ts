@@ -31,6 +31,13 @@ import { Route as AdminResetPasswordRouteImport } from './routes/admin/reset-pas
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminTeamRouteImport } from './routes/admin/team'
 import { Route as AdminWebsiteRouteImport } from './routes/admin/website'
+import { Route as AdminWebsiteCompanyInfoRouteImport } from './routes/admin/website/company-info'
+import { Route as AdminWebsiteFaqsRouteImport } from './routes/admin/website/faqs'
+import { Route as AdminWebsiteGalleryRouteImport } from './routes/admin/website/gallery'
+import { Route as AdminWebsiteHomepageRouteImport } from './routes/admin/website/homepage'
+import { Route as AdminWebsiteSeoRouteImport } from './routes/admin/website/seo'
+import { Route as AdminWebsiteServicesRouteImport } from './routes/admin/website/services'
+import { Route as AdminWebsiteTestimonialsRouteImport } from './routes/admin/website/testimonials'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -142,6 +149,42 @@ const AdminWebsiteRoute = AdminWebsiteRouteImport.update({
   path: '/admin/website',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminWebsiteCompanyInfoRoute = AdminWebsiteCompanyInfoRouteImport.update({
+  id: '/company-info',
+  path: '/company-info',
+  getParentRoute: () => AdminWebsiteRoute,
+} as any)
+const AdminWebsiteFaqsRoute = AdminWebsiteFaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
+  getParentRoute: () => AdminWebsiteRoute,
+} as any)
+const AdminWebsiteGalleryRoute = AdminWebsiteGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => AdminWebsiteRoute,
+} as any)
+const AdminWebsiteHomepageRoute = AdminWebsiteHomepageRouteImport.update({
+  id: '/homepage',
+  path: '/homepage',
+  getParentRoute: () => AdminWebsiteRoute,
+} as any)
+const AdminWebsiteSeoRoute = AdminWebsiteSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => AdminWebsiteRoute,
+} as any)
+const AdminWebsiteServicesRoute = AdminWebsiteServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => AdminWebsiteRoute,
+} as any)
+const AdminWebsiteTestimonialsRoute =
+  AdminWebsiteTestimonialsRouteImport.update({
+    id: '/testimonials',
+    path: '/testimonials',
+    getParentRoute: () => AdminWebsiteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -164,8 +207,15 @@ export interface FileRoutesByFullPath {
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
-  '/admin/website': typeof AdminWebsiteRoute
+  '/admin/website': typeof AdminWebsiteRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/admin/website/company-info': typeof AdminWebsiteCompanyInfoRoute
+  '/admin/website/faqs': typeof AdminWebsiteFaqsRoute
+  '/admin/website/gallery': typeof AdminWebsiteGalleryRoute
+  '/admin/website/homepage': typeof AdminWebsiteHomepageRoute
+  '/admin/website/seo': typeof AdminWebsiteSeoRoute
+  '/admin/website/services': typeof AdminWebsiteServicesRoute
+  '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -188,8 +238,15 @@ export interface FileRoutesByTo {
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
-  '/admin/website': typeof AdminWebsiteRoute
+  '/admin/website': typeof AdminWebsiteRouteWithChildren
   '/admin': typeof AdminIndexRoute
+  '/admin/website/company-info': typeof AdminWebsiteCompanyInfoRoute
+  '/admin/website/faqs': typeof AdminWebsiteFaqsRoute
+  '/admin/website/gallery': typeof AdminWebsiteGalleryRoute
+  '/admin/website/homepage': typeof AdminWebsiteHomepageRoute
+  '/admin/website/seo': typeof AdminWebsiteSeoRoute
+  '/admin/website/services': typeof AdminWebsiteServicesRoute
+  '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -213,8 +270,15 @@ export interface FileRoutesById {
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
-  '/admin/website': typeof AdminWebsiteRoute
+  '/admin/website': typeof AdminWebsiteRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/admin/website/company-info': typeof AdminWebsiteCompanyInfoRoute
+  '/admin/website/faqs': typeof AdminWebsiteFaqsRoute
+  '/admin/website/gallery': typeof AdminWebsiteGalleryRoute
+  '/admin/website/homepage': typeof AdminWebsiteHomepageRoute
+  '/admin/website/seo': typeof AdminWebsiteSeoRoute
+  '/admin/website/services': typeof AdminWebsiteServicesRoute
+  '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +305,13 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/website'
     | '/admin/'
+    | '/admin/website/company-info'
+    | '/admin/website/faqs'
+    | '/admin/website/gallery'
+    | '/admin/website/homepage'
+    | '/admin/website/seo'
+    | '/admin/website/services'
+    | '/admin/website/testimonials'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +336,13 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/website'
     | '/admin'
+    | '/admin/website/company-info'
+    | '/admin/website/faqs'
+    | '/admin/website/gallery'
+    | '/admin/website/homepage'
+    | '/admin/website/seo'
+    | '/admin/website/services'
+    | '/admin/website/testimonials'
   id:
     | '__root__'
     | '/'
@@ -289,6 +367,13 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/website'
     | '/admin/'
+    | '/admin/website/company-info'
+    | '/admin/website/faqs'
+    | '/admin/website/gallery'
+    | '/admin/website/homepage'
+    | '/admin/website/seo'
+    | '/admin/website/services'
+    | '/admin/website/testimonials'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -312,7 +397,7 @@ export interface RootRouteChildren {
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTeamRoute: typeof AdminTeamRoute
-  AdminWebsiteRoute: typeof AdminWebsiteRoute
+  AdminWebsiteRoute: typeof AdminWebsiteRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -472,8 +557,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/website/company-info': {
+      id: '/admin/website/company-info'
+      path: '/company-info'
+      fullPath: '/admin/website/company-info'
+      preLoaderRoute: typeof AdminWebsiteCompanyInfoRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
+    '/admin/website/faqs': {
+      id: '/admin/website/faqs'
+      path: '/faqs'
+      fullPath: '/admin/website/faqs'
+      preLoaderRoute: typeof AdminWebsiteFaqsRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
+    '/admin/website/gallery': {
+      id: '/admin/website/gallery'
+      path: '/gallery'
+      fullPath: '/admin/website/gallery'
+      preLoaderRoute: typeof AdminWebsiteGalleryRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
+    '/admin/website/homepage': {
+      id: '/admin/website/homepage'
+      path: '/homepage'
+      fullPath: '/admin/website/homepage'
+      preLoaderRoute: typeof AdminWebsiteHomepageRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
+    '/admin/website/seo': {
+      id: '/admin/website/seo'
+      path: '/seo'
+      fullPath: '/admin/website/seo'
+      preLoaderRoute: typeof AdminWebsiteSeoRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
+    '/admin/website/services': {
+      id: '/admin/website/services'
+      path: '/services'
+      fullPath: '/admin/website/services'
+      preLoaderRoute: typeof AdminWebsiteServicesRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
+    '/admin/website/testimonials': {
+      id: '/admin/website/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/website/testimonials'
+      preLoaderRoute: typeof AdminWebsiteTestimonialsRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
   }
 }
+
+interface AdminWebsiteRouteChildren {
+  AdminWebsiteCompanyInfoRoute: typeof AdminWebsiteCompanyInfoRoute
+  AdminWebsiteFaqsRoute: typeof AdminWebsiteFaqsRoute
+  AdminWebsiteGalleryRoute: typeof AdminWebsiteGalleryRoute
+  AdminWebsiteHomepageRoute: typeof AdminWebsiteHomepageRoute
+  AdminWebsiteSeoRoute: typeof AdminWebsiteSeoRoute
+  AdminWebsiteServicesRoute: typeof AdminWebsiteServicesRoute
+  AdminWebsiteTestimonialsRoute: typeof AdminWebsiteTestimonialsRoute
+}
+
+const AdminWebsiteRouteChildren: AdminWebsiteRouteChildren = {
+  AdminWebsiteCompanyInfoRoute: AdminWebsiteCompanyInfoRoute,
+  AdminWebsiteFaqsRoute: AdminWebsiteFaqsRoute,
+  AdminWebsiteGalleryRoute: AdminWebsiteGalleryRoute,
+  AdminWebsiteHomepageRoute: AdminWebsiteHomepageRoute,
+  AdminWebsiteSeoRoute: AdminWebsiteSeoRoute,
+  AdminWebsiteServicesRoute: AdminWebsiteServicesRoute,
+  AdminWebsiteTestimonialsRoute: AdminWebsiteTestimonialsRoute,
+}
+
+const AdminWebsiteRouteWithChildren = AdminWebsiteRoute._addFileChildren(
+  AdminWebsiteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -496,7 +654,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTeamRoute: AdminTeamRoute,
-  AdminWebsiteRoute: AdminWebsiteRoute,
+  AdminWebsiteRoute: AdminWebsiteRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
