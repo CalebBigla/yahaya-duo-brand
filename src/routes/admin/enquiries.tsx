@@ -24,6 +24,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { CreateQuoteFromEnquiry } from '@/components/quotes/CreateQuoteFromEnquiry';
 
 export const Route = createFileRoute('/admin/enquiries')({
   component: () => (
@@ -618,20 +619,31 @@ function EnquiriesPage() {
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => updateStatus(selectedEnquiry.id, 'responded')}
-                    disabled={selectedEnquiry.status === 'responded'}
-                    className="flex-1 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {selectedEnquiry.status === 'responded' ? 'Marked as Responded' : 'Mark as Responded'}
-                  </button>
-                  <a
-                    href={`mailto:${selectedEnquiry.email}?subject=Re: Your enquiry&body=Dear ${selectedEnquiry.name},%0D%0A%0D%0A`}
-                    className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  >
-                    Reply via Email
-                  </a>
+                <div className="space-y-3">
+                  {/* Create Quote Button */}
+                  <CreateQuoteFromEnquiry 
+                    enquiry={selectedEnquiry} 
+                    onClose={() => setSelectedEnquiry(null)}
+                  />
+
+                  {/* Other Actions */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => updateStatus(selectedEnquiry.id, 'responded')}
+                      disabled={selectedEnquiry.status === 'responded'}
+                      className="flex-1 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {selectedEnquiry.status === 'responded' ? 'Marked as Responded' : 'Mark as Responded'}
+                    </button>
+                    {selectedEnquiry.email && (
+                      <a
+                        href={`mailto:${selectedEnquiry.email}?subject=Re: Your enquiry&body=Dear ${selectedEnquiry.name},%0D%0A%0D%0A`}
+                        className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        Reply via Email
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

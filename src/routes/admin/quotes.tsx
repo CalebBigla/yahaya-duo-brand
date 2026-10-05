@@ -7,6 +7,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { queueQuery } from '@/lib/queryQueue';
 import { generateQuotePDF } from '@/lib/pdfGenerator';
+import { QuoteEnquiryLink } from '@/components/quotes/QuoteEnquiryLink';
+import { QuoteVersionBadge } from '@/components/quotes/QuoteVersionBadge';
+import { SendQuoteModal } from '@/components/quotes/SendQuoteModal';
 import {
   Search,
   Filter,
@@ -27,6 +30,8 @@ import {
   Clock,
   XCircle,
   Building2,
+  MessageSquare,
+  Send,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -46,6 +51,7 @@ interface Quote {
   client_id: string | null;
   client_name: string;
   client_email: string | null;
+  enquiry_id: string | null;
   title: string;
   description: string | null;
   service_type: 'travel' | 'trade' | 'both';
@@ -54,10 +60,16 @@ interface Quote {
   tax_rate: number;
   tax_amount: number;
   total_amount: number;
-  status: 'draft' | 'pending' | 'accepted' | 'rejected' | 'expired';
+  status: 'draft' | 'sent' | 'pending' | 'accepted' | 'rejected' | 'expired' | 'revision_requested';
   valid_until: string | null;
   notes: string | null;
   terms: string | null;
+  version_number: number;
+  is_current_version: boolean;
+  parent_quote_id: string | null;
+  superseded_by_quote_id: string | null;
+  sent_at: string | null;
+  sent_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -76,12 +88,26 @@ interface Client {
   company: string | null;
 }
 
-type FilterStatus = 'all' | 'draft' | 'pending' | 'accepted' | 'rejected' | 'expired';
+interface Enquiry {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  form_type: 'travel' | 'trade' | 'contact';
+  service: string | null;
+  destination: string | null;
+  division: string | null;
+  message: string | null;
+  created_at: string;
+}
+
+type FilterStatus = 'all' | 'draft' | 'sent' | 'pending' | 'accepted' | 'rejected' | 'expired' | 'revision_requested';
 
 function QuotesPage() {
   const [adminUser, setAdminUser] = useState<any>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [filteredQuotes, setFilteredQuotes] = useState<Quote[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
@@ -90,11 +116,13 @@ function QuotesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showSendModal, setShowSendModal] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
+    enquiry_id: '',
     client_id: '',
     client_name: '',
     client_email: '',
@@ -115,7 +143,10 @@ function QuotesPage() {
     const loadData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
-      await Promise.all([loadQuotes(), loadClients()]);
+      await Promise.all([loadQuotes(), loadClients(), loadEnquiries()]);
+      
+      // Check if coming from enquiry (quote creation from enquiry)
+      checkForPrefilledData();
     };
 
     loadData();
@@ -182,6 +213,44 @@ function QuotesPage() {
     }
   };
 
+  const loadEnquiries = async () => {
+    try {
+      const data = await queueQuery(async () => {
+        const { data, error } = await supabase
+          .from('submissions')
+          .select('*')
+          .in('status', ['new', 'read']) // Only show unprocessed enquiries
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (error) throw error;
+        return data || [];
+      });
+
+      setEnquiries(data);
+    } catch (error) {
+      console.error('Error loading enquiries:', error);
+    }
+  };
+
+  const checkForPrefilledData = () => {
+    // Check sessionStorage for pre-filled quote data from enquiry
+    const prefilledData = sessionStorage.getItem('quote_from_enquiry');
+    if (prefilledData) {
+      try {
+        const data = JSON.parse(prefilledData);
+        setFormData((prev) => ({
+          ...prev,
+          ...data,
+        }));
+        sessionStorage.removeItem('quote_from_enquiry');
+        setShowAddModal(true); // Auto-open the modal
+      } catch (error) {
+        console.error('Error parsing prefilled data:', error);
+      }
+    }
+  };
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await loadQuotes();
@@ -190,6 +259,7 @@ function QuotesPage() {
 
   const resetForm = () => {
     setFormData({
+      enquiry_id: '',
       client_id: '',
       client_name: '',
       client_email: '',
@@ -212,6 +282,7 @@ function QuotesPage() {
   const handleEdit = (quote: Quote) => {
     setSelectedQuote(quote);
     setFormData({
+      enquiry_id: quote.enquiry_id || '',
       client_id: quote.client_id || '',
       client_name: quote.client_name,
       client_email: quote.client_email || '',
@@ -230,6 +301,18 @@ function QuotesPage() {
   const handleView = (quote: Quote) => {
     setSelectedQuote(quote);
     setShowViewModal(true);
+  };
+
+  const handleSendQuote = (quote: Quote) => {
+    setSelectedQuote(quote);
+    setShowSendModal(true);
+  };
+
+  const handleQuoteSent = () => {
+    // Reload quotes to reflect the 'sent' status
+    loadQuotes();
+    setShowSendModal(false);
+    setShowViewModal(false);
   };
 
   const calculateLineItemAmount = (quantity: number, unitPrice: number) => {
@@ -285,6 +368,26 @@ function QuotesPage() {
     }
   };
 
+  const handleEnquirySelect = (enquiryId: string) => {
+    if (!enquiryId) {
+      setFormData((prev) => ({ ...prev, enquiry_id: '' }));
+      return;
+    }
+
+    const enquiry = enquiries.find((e) => e.id === enquiryId);
+    if (enquiry) {
+      setFormData((prev) => ({
+        ...prev,
+        enquiry_id: enquiryId,
+        client_name: enquiry.name,
+        client_email: enquiry.email || '',
+        service_type: enquiry.form_type === 'trade' ? 'trade' : 'travel',
+        title: prev.title || `${enquiry.service || enquiry.destination || 'Service'} - ${enquiry.name}`,
+        description: prev.description || enquiry.message || '',
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -293,6 +396,7 @@ function QuotesPage() {
       const totals = calculateTotals();
 
       const quoteData = {
+        enquiry_id: formData.enquiry_id || null,
         client_id: formData.client_id || null,
         client_name: formData.client_name,
         client_email: formData.client_email || null,
@@ -424,13 +528,16 @@ function QuotesPage() {
   const getStatusBadge = (status: string) => {
     const badges = {
       draft: { label: 'Draft', class: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', icon: Circle },
+      sent: { label: 'Sent', class: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400', icon: CheckCircle },
       pending: { label: 'Pending', class: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400', icon: Clock },
       accepted: { label: 'Accepted', class: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400', icon: CheckCircle },
       rejected: { label: 'Rejected', class: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400', icon: XCircle },
       expired: { label: 'Expired', class: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400', icon: Calendar },
+      revision_requested: { label: 'Changes Requested', class: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400', icon: MessageSquare },
     };
     
     const badge = badges[status as keyof typeof badges];
+    if (!badge) return null;
     const Icon = badge.icon;
     
     return (
@@ -444,6 +551,7 @@ function QuotesPage() {
   const stats = {
     total: quotes.length,
     draft: quotes.filter(q => q.status === 'draft').length,
+    sent: quotes.filter(q => q.status === 'sent').length,
     pending: quotes.filter(q => q.status === 'pending').length,
     accepted: quotes.filter(q => q.status === 'accepted').length,
     totalValue: quotes.reduce((sum, q) => sum + Number(q.total_amount), 0),
@@ -580,7 +688,7 @@ function QuotesPage() {
             <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
               <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
               <div className="flex flex-wrap gap-2">
-                {(['all', 'draft', 'pending', 'accepted', 'rejected', 'expired'] as FilterStatus[]).map((status) => (
+                {(['all', 'draft', 'sent', 'pending', 'accepted', 'rejected', 'expired', 'revision_requested'] as FilterStatus[]).map((status) => (
                   <button
                     key={status}
                     onClick={() => setFilterStatus(status)}
@@ -763,6 +871,32 @@ function QuotesPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              {/* Enquiry Selection (Optional) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Link to Enquiry (Optional)
+                </label>
+                <select
+                  value={formData.enquiry_id}
+                  onChange={(e) => handleEnquirySelect(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                >
+                  <option value="">No linked enquiry</option>
+                  {enquiries.map((enquiry) => (
+                    <option key={enquiry.id} value={enquiry.id}>
+                      {enquiry.name} - {enquiry.service || enquiry.destination || 'Enquiry'} 
+                      {' '}({format(new Date(enquiry.created_at), 'MMM d, yyyy')})
+                    </option>
+                  ))}
+                </select>
+                {formData.enquiry_id && (
+                  <p className="mt-2 flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400">
+                    <MessageSquare className="h-3 w-3" />
+                    Client details will be auto-filled from this enquiry
+                  </p>
+                )}
+              </div>
+
               {/* Client Selection */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
@@ -1022,7 +1156,13 @@ function QuotesPage() {
           <div className="w-full max-w-4xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 z-10">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedQuote.quote_number}</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedQuote.quote_number}</h2>
+                  <QuoteVersionBadge 
+                    versionNumber={selectedQuote.version_number || 1}
+                    isCurrent={selectedQuote.is_current_version !== false}
+                  />
+                </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Created {format(new Date(selectedQuote.created_at), 'MMM d, yyyy')}
                 </p>
@@ -1039,6 +1179,11 @@ function QuotesPage() {
             </div>
 
             <div className="p-6 space-y-6">
+              {/* Linked Enquiry */}
+              {selectedQuote.enquiry_id && (
+                <QuoteEnquiryLink enquiryId={selectedQuote.enquiry_id} />
+              )}
+
               {/* Status Actions */}
               <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 p-4">
                 <div className="flex items-center gap-3">
@@ -1182,6 +1327,14 @@ function QuotesPage() {
               {/* Actions */}
               <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
                 <button
+                  onClick={() => handleSendQuote(selectedQuote)}
+                  disabled={selectedQuote.status === 'sent'}
+                  className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="h-4 w-4" />
+                  {selectedQuote.status === 'sent' ? 'Already Sent' : 'Send Quote'}
+                </button>
+                <button
                   onClick={() => generateQuotePDF(selectedQuote)}
                   className="flex items-center gap-2 rounded-lg border border-blue-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 >
@@ -1207,6 +1360,15 @@ function QuotesPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Send Quote Modal */}
+      {showSendModal && selectedQuote && (
+        <SendQuoteModal
+          quote={selectedQuote}
+          onClose={() => setShowSendModal(false)}
+          onSent={handleQuoteSent}
+        />
       )}
     </AdminLayout>
   );
