@@ -9,6 +9,7 @@ import {
   Inbox,
   Users as UsersIcon,
   FileText,
+  DollarSign,
   Globe,
   Image,
   Settings,
@@ -62,6 +63,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
         { name: 'Enquiries', path: '/admin/enquiries', icon: Inbox, badge: 24 },
         { name: 'Clients', path: '/admin/clients', icon: UsersIcon },
         { name: 'Quotes', path: '/admin/quotes', icon: FileText },
+        { name: 'Finance', path: '/admin/finance', icon: DollarSign },
       ],
     },
   ];
@@ -117,7 +119,9 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
           </div>
           {isSidebarOpen && (
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-bold text-gray-900 dark:text-white truncate">Yahaya Travel</p>
+              <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                Yahaya Travel
+              </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">Admin Console</p>
             </div>
           )}
@@ -149,11 +153,13 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
                       <>
                         <span className="flex-1">{item.name}</span>
                         {item.badge && (
-                          <span className={`flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
-                            isActive(item.path)
-                              ? 'bg-white/20 text-white'
-                              : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
-                          }`}>
+                          <span
+                            className={`flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
+                              isActive(item.path)
+                                ? 'bg-white/20 text-white'
+                                : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                            }`}
+                          >
                             {item.badge}
                           </span>
                         )}
@@ -376,7 +382,10 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
       {/* Mobile Sidebar */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
           <aside className="absolute left-0 top-0 bottom-0 w-64 bg-white dark:bg-gray-800 shadow-xl">
             {/* Mobile menu header */}
             <div className="flex h-16 items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4">
@@ -419,11 +428,13 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
                         <item.icon className="h-5 w-5" />
                         <span className="flex-1">{item.name}</span>
                         {item.badge && (
-                          <span className={`flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
-                            isActive(item.path)
-                              ? 'bg-white/20 text-white'
-                              : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
-                          }`}>
+                          <span
+                            className={`flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
+                              isActive(item.path)
+                                ? 'bg-white/20 text-white'
+                                : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                            }`}
+                          >
                             {item.badge}
                           </span>
                         )}
@@ -432,6 +443,52 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
                   </div>
                 </div>
               ))}
+
+              <div>
+                <p className="mb-2 px-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                  {siteNav.title}
+                </p>
+                <div className="space-y-1">
+                  {siteNav.items.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                        isActive(item.path)
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="flex-1">{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 px-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                  {generalNav.title}
+                </p>
+                <div className="space-y-1">
+                  {generalNav.items.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                        isActive(item.path)
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="flex-1">{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </nav>
           </aside>
         </div>

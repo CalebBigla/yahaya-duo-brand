@@ -296,3 +296,4 @@ INSERT INTO financial_categories (type, division, name, description, display_ord
 ('expense', 'company', 'Transportation & Fuel', 'Company vehicles, fuel', 9),
 ('expense', 'company', 'Other Company Expenses', 'Miscellaneous company expenses', 99)
 ON CONFLICT (type, division, name) DO NOTHING;
+
