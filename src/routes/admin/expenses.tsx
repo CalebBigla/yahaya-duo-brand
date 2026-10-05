@@ -244,12 +244,14 @@ function ExpensesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading expenses...</p>
+      <AdminLayout adminUser={adminUser}>
+        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading expenses...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
