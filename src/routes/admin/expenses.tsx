@@ -4,7 +4,6 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { queueQuery } from '@/lib/queryQueue';
 import type { 
@@ -48,7 +47,6 @@ export const Route = createFileRoute('/admin/expenses')({
 });
 
 function ExpensesPage() {
-  const { user } = useAuth();
   const [expenses, setExpenses] = useState<ExpenseTransaction[]>([]);
   const [filteredExpenses, setFilteredExpenses] = useState<ExpenseTransaction[]>([]);
   const [categories, setCategories] = useState<FinancialCategory[]>([]);
@@ -588,7 +586,6 @@ function RecordExpenseModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ExpenseTransactionFormData>({
     amount: expense?.amount || 0,
@@ -608,6 +605,9 @@ function RecordExpenseModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     setLoading(true);
