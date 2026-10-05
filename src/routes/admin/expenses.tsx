@@ -536,7 +536,6 @@ function ExpensesPage() {
           }}
         />
       )}
-      </div>
     </AdminLayout>
   );
 }
