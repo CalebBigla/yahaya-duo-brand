@@ -33,20 +33,14 @@ export const Route = createFileRoute('/admin/expenses')({
   component: () => (
     <ThemeProvider>
       <AdminGuard>
-        {(adminUser) => (
-          <AdminLayout adminUser={adminUser}>
-            <ExpensesPage />
-          </AdminLayout>
-        )}
+        <ExpensesPage />
       </AdminGuard>
     </ThemeProvider>
   ),
-  beforeLoad: async () => {
-    await checkAdminAccess();
-  },
 });
 
 function ExpensesPage() {
+  const [adminUser, setAdminUser] = useState<any>(null);
   const [expenses, setExpenses] = useState<ExpenseTransaction[]>([]);
   const [filteredExpenses, setFilteredExpenses] = useState<ExpenseTransaction[]>([]);
   const [categories, setCategories] = useState<FinancialCategory[]>([]);
@@ -72,6 +66,9 @@ function ExpensesPage() {
 
   useEffect(() => {
     const loadData = async () => {
+      const { user } = await checkAdminAccess();
+      setAdminUser(user);
+      
       setLoading(true);
       await Promise.all([
         loadExpenses(),
@@ -257,32 +254,27 @@ function ExpensesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <TrendingDown className="w-7 h-7 text-red-600" />
-                Expenses Management
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Track and manage business expenses across all divisions
-              </p>
-            </div>
-            <Button onClick={() => {
-              setSelectedExpense(null);
-              setShowRecordModal(true);
-            }}>
-              <Plus className="w-4 h-4 mr-2" />
-              Record Expense
-            </Button>
+    <AdminLayout adminUser={adminUser}>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <TrendingDown className="w-6 h-6 text-red-600" />
+              Expenses Management
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Track and manage business expenses across all divisions
+            </p>
           </div>
+          <Button onClick={() => {
+            setSelectedExpense(null);
+            setShowRecordModal(true);
+          }}>
+            <Plus className="w-4 h-4 mr-2" />
+            Record Expense
+          </Button>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
@@ -542,7 +534,8 @@ function ExpensesPage() {
           }}
         />
       )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
 
