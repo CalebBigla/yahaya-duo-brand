@@ -10,6 +10,7 @@ import {
   Users as UsersIcon,
   FileText,
   DollarSign,
+  TrendingDown,
   Globe,
   Image,
   Settings,
@@ -64,6 +65,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
         { name: 'Clients', path: '/admin/clients', icon: UsersIcon },
         { name: 'Quotes', path: '/admin/quotes', icon: FileText },
         { name: 'Finance', path: '/admin/finance', icon: DollarSign },
+        { name: 'Expenses', path: '/admin/expenses', icon: TrendingDown },
       ],
     },
   ];

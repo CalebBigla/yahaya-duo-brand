@@ -1,10 +1,21 @@
 import { MessageCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { generalWhatsapp } from "@/lib/site";
+import { getPublishedSettings } from "@/lib/queries/website";
 
 export function WhatsAppFab() {
+  const { data: settings } = useQuery({
+    queryKey: ["website", "settings"],
+    queryFn: getPublishedSettings,
+    staleTime: 60_000,
+  });
+  const whatsapp = settings?.whatsapp_number
+    ? `https://wa.me/${settings.whatsapp_number}?text=${encodeURIComponent("Hello Yahaya! I would like to make an enquiry.")}`
+    : generalWhatsapp;
+
   return (
     <a
-      href={generalWhatsapp}
+      href={whatsapp}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

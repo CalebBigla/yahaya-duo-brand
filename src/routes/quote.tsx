@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useRouterState } from "@tanstack/react-router";
 import { PageHero } from "@/components/site/PageHero";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { travelServices, tradeServices } from "@/lib/site";
@@ -24,6 +24,12 @@ export const Route = createFileRoute("/quote")({
 });
 
 function QuotePage() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  if (pathname.startsWith("/quote/view/")) {
+    return <Outlet />;
+  }
+
   return (
     <>
       <PageHero

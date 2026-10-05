@@ -19,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
@@ -58,7 +59,13 @@ import featuresLogisticsImg from "@/assets/Vietnam needs to nurture efficient lo
 // Trust section
 import trustWorkerImg from "@/assets/Off shore rig worker.jpg";
 
-import { site, travelServices, tradeServices } from "@/lib/site";
+import { site } from "@/lib/site";
+import {
+  getFeaturedTestimonials,
+  getPublishedFAQs,
+  getPublishedHomepage,
+  getPublishedSettings,
+} from "@/lib/queries/website";
 
 const title = "Travel Agency in Yola, Adamawa | Yahaya Travel & Trade Co Ltd";
 const description =
@@ -116,17 +123,20 @@ const travelSteps = [
   {
     number: 1,
     title: "Tell us your destination",
-    description: "Call, WhatsApp, or fill our form with your travel dates and visa type — tourist, business, medical, Hajj, Umrah, work, or study. We process visas for Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.",
+    description:
+      "Call, WhatsApp, or fill our form with your travel dates and visa type — tourist, business, medical, Hajj, Umrah, work, or study. We process visas for Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.",
   },
   {
     number: 2,
     title: "We handle everything",
-    description: "Complete travel package: visa application documentation, flight bookings with flexible fares, hotel reservations, airport transfers, market and tourist site connections. 50% deposit required on services.",
+    description:
+      "Complete travel package: visa application documentation, flight bookings with flexible fares, hotel reservations, airport transfers, market and tourist site connections. 50% deposit required on services.",
   },
   {
     number: 3,
     title: "You travel with confidence",
-    description: "Receive your visa, confirmed tickets, and accommodation details with emergency travel assistance. Earn referral commission by connecting us with travelers — percentage paid after each transaction.",
+    description:
+      "Receive your visa, confirmed tickets, and accommodation details with emergency travel assistance. Earn referral commission by connecting us with travelers — percentage paid after each transaction.",
   },
 ];
 
@@ -134,44 +144,53 @@ const tradeSteps = [
   {
     number: 1,
     title: "Share your requirement",
-    description: "Tell us what products you need, target quantities, and delivery location. We identify manufacturers in China, Egypt, or Saudi Arabia offering the best prices for your specification.",
+    description:
+      "Tell us what products you need, target quantities, and delivery location. We identify manufacturers in China, Egypt, or Saudi Arabia offering the best prices for your specification.",
   },
   {
     number: 2,
     title: "We source and negotiate",
-    description: "We verify suppliers, negotiate transparent pricing, and place orders directly. First order requires 50% deposit; oil & gas deals require 60% initial deposit. We handle all documentation.",
+    description:
+      "We verify suppliers, negotiate transparent pricing, and place orders directly. First order requires 50% deposit; oil & gas deals require 60% initial deposit. We handle all documentation.",
   },
   {
     number: 3,
     title: "Delivery and support",
-    description: "Complete logistics coordination — shipping, customs clearing, and delivery to your location. Referral commission program available for clients who connect us with new business.",
+    description:
+      "Complete logistics coordination — shipping, customs clearing, and delivery to your location. Referral commission program available for clients who connect us with new business.",
   },
 ];
 
 const faqs = [
   {
     question: "What visa types do you process?",
-    answer: "We process Tourist Visas, Business Visas, Medical Visas, Transit Visas, Hajj Visas, Umrah Visas, Work Visas, and Study Visas. We also handle Schengen Visas. Destination countries include Germany, Saudi Arabia, Qatar, Turkey, United Arab Emirates, China, Egypt, Cyprus and others. Contact us with your specific destination for processing timelines and document requirements.",
+    answer:
+      "We process Tourist Visas, Business Visas, Medical Visas, Transit Visas, Hajj Visas, Umrah Visas, Work Visas, and Study Visas. We also handle Schengen Visas. Destination countries include Germany, Saudi Arabia, Qatar, Turkey, United Arab Emirates, China, Egypt, Cyprus and others. Contact us with your specific destination for processing timelines and document requirements.",
   },
   {
     question: "How do your trade deposits work?",
-    answer: "For general sourcing and procurement, we require 50% deposit on the first order to initiate the procurement process. For oil and gas deals (buying, selling, supplying petroleum products), we require 60% initial deposit. Subsequent orders may have different payment terms based on established business relationship. All deposits are applied toward the total cost with transparent itemized invoicing.",
+    answer:
+      "For general sourcing and procurement, we require 50% deposit on the first order to initiate the procurement process. For oil and gas deals (buying, selling, supplying petroleum products), we require 60% initial deposit. Subsequent orders may have different payment terms based on established business relationship. All deposits are applied toward the total cost with transparent itemized invoicing.",
   },
   {
     question: "Do you source products internationally?",
-    answer: "Yes. We source new products directly from manufacturers in China, Egypt, and Saudi Arabia at the lowest prices based on your order specifications. We handle supplier identification, price negotiation, order placement, shipping coordination, customs clearing, and delivery to your location in Nigeria. This includes building materials, equipment, consumables, and goods across sectors.",
+    answer:
+      "Yes. We source new products directly from manufacturers in China, Egypt, and Saudi Arabia at the lowest prices based on your order specifications. We handle supplier identification, price negotiation, order placement, shipping coordination, customs clearing, and delivery to your location in Nigeria. This includes building materials, equipment, consumables, and goods across sectors.",
   },
   {
     question: "What's included in your travel packages?",
-    answer: "Complete travel packages include: visa application support and documentation, airline ticket bookings (local and international with flexible fare options), hotel reservations, airport pick-up and drop-off, connections to affordable markets, hospitals, tourist attractions, and historical sites. We can arrange partial or complete packages depending on your needs. 50% deposit required to secure bookings.",
+    answer:
+      "Complete travel packages include: visa application support and documentation, airline ticket bookings (local and international with flexible fare options), hotel reservations, airport pick-up and drop-off, connections to affordable markets, hospitals, tourist attractions, and historical sites. We can arrange partial or complete packages depending on your needs. 50% deposit required to secure bookings.",
   },
   {
     question: "How does your referral commission program work?",
-    answer: "If you refer people to us for either travel or trade services, you earn a percentage commission after each completed transaction. Contact us directly to enroll in the referral program and get details on commission structure and payment terms. This applies to both travel bookings and trade deals.",
+    answer:
+      "If you refer people to us for either travel or trade services, you earn a percentage commission after each completed transaction. Contact us directly to enroll in the referral program and get details on commission structure and payment terms. This applies to both travel bookings and trade deals.",
   },
   {
     question: "Can you handle oil and gas investment deals?",
-    answer: "Yes. Our oil and gas operations include buying, selling, supplying, and shipping petroleum products. We can order directly from refineries and handle complete logistics. Investment opportunities are available with 60% initial deposit. Contact us to discuss specific deal structures, volumes, and partnership terms.",
+    answer:
+      "Yes. Our oil and gas operations include buying, selling, supplying, and shipping petroleum products. We can order directly from refineries and handle complete logistics. Investment opportunities are available with 60% initial deposit. Contact us to discuss specific deal structures, volumes, and partnership terms.",
   },
 ];
 
@@ -278,6 +297,53 @@ const categoryCards = [
 function Index() {
   const [activeJourney, setActiveJourney] = useState<"travel" | "trade">("trade");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { data: homepage } = useQuery({
+    queryKey: ["website", "homepage"],
+    queryFn: getPublishedHomepage,
+    staleTime: 60_000,
+  });
+  const { data: settings } = useQuery({
+    queryKey: ["website", "settings"],
+    queryFn: getPublishedSettings,
+    staleTime: 60_000,
+  });
+  const { data: publishedTestimonials } = useQuery({
+    queryKey: ["website", "testimonials", "featured"],
+    queryFn: getFeaturedTestimonials,
+    staleTime: 60_000,
+  });
+  const { data: publishedFaqs } = useQuery({
+    queryKey: ["website", "faqs"],
+    queryFn: getPublishedFAQs,
+    staleTime: 60_000,
+  });
+
+  const displayStats = homepage
+    ? [
+        { value: `${homepage.stats_clients_served ?? 500}+`, label: "Clients served" },
+        { value: `${homepage.stats_destinations ?? 10}+`, label: "Countries" },
+        { value: `${homepage.stats_years_experience ?? 5}+`, label: "Years in operation" },
+        { value: "2", label: "Business divisions" },
+      ]
+    : stats;
+  const displayTestimonials = publishedTestimonials?.length
+    ? publishedTestimonials.map((testimonial) => ({
+        division:
+          testimonial.service_division === "both"
+            ? "Travel & Trade"
+            : testimonial.service_division
+              ? testimonial.service_division.charAt(0).toUpperCase() +
+                testimonial.service_division.slice(1)
+              : "Client",
+        quote: testimonial.testimonial,
+        name: testimonial.client_name,
+        role: testimonial.client_title ?? "",
+      }))
+    : testimonials;
+  const displayFaqs = publishedFaqs?.length
+    ? publishedFaqs.map((faq) => ({ question: faq.question, answer: faq.answer }))
+    : faqs;
+  const companyRegistration = settings?.rc_number ?? site.rcNumber;
 
   const steps = activeJourney === "travel" ? travelSteps : tradeSteps;
 
@@ -286,20 +352,19 @@ function Index() {
       {/* Hero with Floating Collage */}
       <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-24 sm:py-32 lg:py-40 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-deep via-primary to-primary-deep/90" />
-        
+
         <div className="container-page relative z-10">
           <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-center">
             <div>
               <p className="animate-fade-up stagger-1 text-xs font-bold uppercase tracking-[0.3em] text-accent">
-                RC {site.rcNumber} · Jimeta-Yola, Adamawa
+                RC {companyRegistration} · Jimeta-Yola, Adamawa
               </p>
               <h1 className="animate-fade-up stagger-2 mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-6xl">
-                Your Trusted Partner in{" "}
-                <span className="text-accent">Travel</span> and{" "}
-                <span className="text-accent">Trade</span>
+                {homepage?.hero_title ?? "Your Trusted Partner in Travel and Trade"}
               </h1>
               <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
-                We operate at the intersection of travel management, international consultancy, and global trade facilitation, offering a comprehensive suite of services that include visa processing, flight bookings, tour packages, hotel reservations, travel advisory, trade consultancy, general trading, oil & gas commodity supply, wholesale import and export, as well as sourcing and procurement services.
+                {homepage?.hero_subtitle ??
+                  "We operate at the intersection of travel management, international consultancy, and global trade facilitation, offering a comprehensive suite of services that include visa processing, flight bookings, tour packages, hotel reservations, travel advisory, trade consultancy, general trading, oil & gas commodity supply, wholesale import and export, as well as sourcing and procurement services."}
               </p>
               <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
@@ -373,9 +438,13 @@ function Index() {
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
                     <Plane className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
-                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">Travel and Tour</h3>
+                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+                      Travel and Tour
+                    </h3>
                     <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
-                      Complete visa processing, flight bookings, hotel reservations, and tour packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
+                      Complete visa processing, flight bookings, hotel reservations, and tour
+                      packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus
+                      and more.
                     </p>
                     <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
                       Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
@@ -402,9 +471,12 @@ function Index() {
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
                     <PackageSearch className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
-                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">Sourcing and Procurement</h3>
+                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+                      Sourcing and Procurement
+                    </h3>
                     <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
-                     Direct international sourcing from trusted global suppliers — competitive pricing, verified credentials, complete delivery management.
+                      Direct international sourcing from trusted global suppliers — competitive
+                      pricing, verified credentials, complete delivery management.
                     </p>
                     <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
                       Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
@@ -413,7 +485,6 @@ function Index() {
                 </div>
               </Link>
             </AnimatedSection>
-
           </div>
         </div>
       </section>
@@ -431,7 +502,10 @@ function Index() {
                   Travels & Tours
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  Complete visa processing and travel packages for tourist, business, medical, Hajj, Umrah, work, and study visas to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more. Flight bookings, hotel reservations, airport transfers, and guided tours.
+                  Complete visa processing and travel packages for tourist, business, medical, Hajj,
+                  Umrah, work, and study visas to Germany, Saudi Arabia, Qatar, Turkey, UAE, China,
+                  Egypt, Cyprus and more. Flight bookings, hotel reservations, airport transfers,
+                  and guided tours.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <div className="flex items-center gap-2 text-sm text-foreground">
@@ -483,9 +557,11 @@ function Index() {
                   Direct sourcing and international procurement
                 </h2>
                 <p className="mt-5 text-muted-foreground leading-relaxed">
-                  We source new products directly from manufacturers in China, Egypt, and Saudi Arabia at the lowest prices. Complete order handling from supplier verification to delivery at your location.
+                  We source new products directly from manufacturers in China, Egypt, and Saudi
+                  Arabia at the lowest prices. Complete order handling from supplier verification to
+                  delivery at your location.
                 </p>
-                
+
                 <div className="mt-8 space-y-5">
                   <div className="flex gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
@@ -494,7 +570,8 @@ function Index() {
                     <div>
                       <h3 className="font-bold text-primary">Product Identification & Sourcing</h3>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        Tell us what you need. We identify manufacturers in China, Egypt, and Saudi Arabia offering the best prices based on your order specifications
+                        Tell us what you need. We identify manufacturers in China, Egypt, and Saudi
+                        Arabia offering the best prices based on your order specifications
                       </p>
                     </div>
                   </div>
@@ -503,9 +580,12 @@ function Index() {
                       2
                     </div>
                     <div>
-                      <h3 className="font-bold text-primary">Price Negotiation & Order Placement</h3>
+                      <h3 className="font-bold text-primary">
+                        Price Negotiation & Order Placement
+                      </h3>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        We negotiate transparent pricing and place orders directly with verified suppliers. 50% deposit required on first order to initiate procurement
+                        We negotiate transparent pricing and place orders directly with verified
+                        suppliers. 50% deposit required on first order to initiate procurement
                       </p>
                     </div>
                   </div>
@@ -516,7 +596,8 @@ function Index() {
                     <div>
                       <h3 className="font-bold text-primary">Shipping & Delivery Coordination</h3>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        Complete logistics handling — freight coordination, customs clearing, and delivery to your specified location with full documentation
+                        Complete logistics handling — freight coordination, customs clearing, and
+                        delivery to your specified location with full documentation
                       </p>
                     </div>
                   </div>
@@ -554,9 +635,7 @@ function Index() {
               <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
                 Premium Services
               </span>
-              <h2 className="mt-4 text-3xl font-bold text-primary sm:text-4xl">
-                What we deliver
-              </h2>
+              <h2 className="mt-4 text-3xl font-bold text-primary sm:text-4xl">What we deliver</h2>
               <p className="mt-3 text-muted-foreground">
                 Hover over each card to explore our comprehensive service offerings
               </p>
@@ -580,11 +659,10 @@ function Index() {
                   <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
                     Complete Travel Services
                   </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">
-                    Travel
-                  </h3>
+                  <h3 className="mt-4 text-2xl font-bold text-primary">Travel</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Complete visa processing, flight bookings, hotel reservations, and tour packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
+                    Complete visa processing, flight bookings, hotel reservations, and tour packages
+                    to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
                   </p>
 
                   {/* Expandable details - visible on mobile, hover on desktop */}
@@ -637,11 +715,10 @@ function Index() {
                   <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
                     International Sourcing
                   </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">
-                    Sourcing & Procurement
-                  </h3>
+                  <h3 className="mt-4 text-2xl font-bold text-primary">Sourcing & Procurement</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Direct sourcing of new products from our international partners at lowest prices. We find suppliers, verify credentials, and manage complete delivery.
+                    Direct sourcing of new products from our international partners at lowest
+                    prices. We find suppliers, verify credentials, and manage complete delivery.
                   </p>
 
                   {/* Expandable details - visible on mobile, hover on desktop */}
@@ -694,11 +771,10 @@ function Index() {
                   <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
                     Expert Advisory
                   </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">
-                    Consultation & Referrals
-                  </h3>
+                  <h3 className="mt-4 text-2xl font-bold text-primary">Consultation & Referrals</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Trade and travel consultation services plus referral commission opportunities for connecting us with new clients.
+                    Trade and travel consultation services plus referral commission opportunities
+                    for connecting us with new clients.
                   </p>
 
                   {/* Expandable details - visible on mobile, hover on desktop */}
@@ -722,7 +798,8 @@ function Index() {
                       <div className="mt-4 pt-3 border-t border-border/50">
                         <h4 className="text-sm font-bold text-primary mb-2">Referral Program</h4>
                         <p className="text-xs text-muted-foreground">
-                          Earn commission when you refer clients to us. Paid after each completed transaction.
+                          Earn commission when you refer clients to us. Paid after each completed
+                          transaction.
                         </p>
                       </div>
                     </div>
@@ -757,7 +834,10 @@ function Index() {
                   One partner for trade and travel
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-primary-foreground/80 sm:mt-4 sm:text-base md:mt-5 md:text-lg">
-                  From sourcing products internationally to arranging complete travel packages — we manage logistics, documentation, and coordination. Oil & gas trading with refinery connections, import/export with full clearing, and visa processing with appointment booking all under one roof.
+                  From sourcing products internationally to arranging complete travel packages — we
+                  manage logistics, documentation, and coordination. Oil & gas trading with refinery
+                  connections, import/export with full clearing, and visa processing with
+                  appointment booking all under one roof.
                 </p>
                 <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4">
                   <Link
@@ -789,11 +869,16 @@ function Index() {
                   Five years of trusted service
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  Since 2020, we've been processing visas, arranging travel, sourcing products from China, Egypt, and Saudi Arabia, and facilitating oil & gas trade. Our clients trust us with their travel plans and their business deals.
+                  Since 2020, we've been processing visas, arranging travel, sourcing products from
+                  China, Egypt, and Saudi Arabia, and facilitating oil & gas trade. Our clients
+                  trust us with their travel plans and their business deals.
                 </p>
                 <div className="mt-8 grid grid-cols-2 gap-6">
-                  {stats.map((stat, i) => (
-                    <div key={stat.label} className="rounded-2xl border border-border bg-card p-6 shadow-card">
+                  {displayStats.map((stat, i) => (
+                    <div
+                      key={stat.label}
+                      className="rounded-2xl border border-border bg-card p-6 shadow-card"
+                    >
                       <p className="font-display text-4xl font-extrabold text-accent">
                         {stat.value}
                       </p>
@@ -825,9 +910,7 @@ function Index() {
       <section className="border-y border-border bg-secondary/30 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-              How it works
-            </h2>
+            <h2 className="text-3xl font-bold text-primary sm:text-4xl">How it works</h2>
             <p className="mt-3 text-muted-foreground">
               From first contact to completion — here's what to expect
             </p>
@@ -895,7 +978,8 @@ function Index() {
                   <div>
                     <h3 className="font-bold text-primary">Documentation discipline</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Purchase orders, delivery notes, quality certificates, customs clearance — every transaction tracked and documented from quote to delivery.
+                      Purchase orders, delivery notes, quality certificates, customs clearance —
+                      every transaction tracked and documented from quote to delivery.
                     </p>
                   </div>
                 </div>
@@ -904,7 +988,9 @@ function Index() {
                   <div>
                     <h3 className="font-bold text-primary">Logistics coordination</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Multi-vendor procurement with freight, clearing, and delivery requires project management. We coordinate timelines, manage dependencies, and keep you informed.
+                      Multi-vendor procurement with freight, clearing, and delivery requires project
+                      management. We coordinate timelines, manage dependencies, and keep you
+                      informed.
                     </p>
                   </div>
                 </div>
@@ -913,7 +999,8 @@ function Index() {
                   <div>
                     <h3 className="font-bold text-primary">Supplier verification</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      We vet suppliers and freight forwarders — checking references, confirming terms in writing, and ensuring they can deliver to spec before you commit.
+                      We vet suppliers and freight forwarders — checking references, confirming
+                      terms in writing, and ensuring they can deliver to spec before you commit.
                     </p>
                   </div>
                 </div>
@@ -922,7 +1009,9 @@ function Index() {
                   <div>
                     <h3 className="font-bold text-primary">One accountable relationship</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Corporate clients often need both procurement and travel services for the same project. Managing both through one vendor simplifies coordination and accountability.
+                      Corporate clients often need both procurement and travel services for the same
+                      project. Managing both through one vendor simplifies coordination and
+                      accountability.
                     </p>
                   </div>
                 </div>
@@ -965,17 +1054,16 @@ function Index() {
             </AnimatedSection>
 
             <div>
-              <h2 className="text-3xl font-bold sm:text-4xl">
-                Why clients keep coming back
-              </h2>
+              <h2 className="text-3xl font-bold sm:text-4xl">Why clients keep coming back</h2>
               <div className="mt-8 grid gap-6 sm:grid-cols-2">
                 {trustPoints.map((point) => (
-                  <div key={point.title} className="rounded-2xl border border-primary-foreground/10 bg-primary-deep p-6">
+                  <div
+                    key={point.title}
+                    className="rounded-2xl border border-primary-foreground/10 bg-primary-deep p-6"
+                  >
                     <point.icon className="h-7 w-7 text-accent" />
                     <h3 className="mt-4 font-bold">{point.title}</h3>
-                    <p className="mt-2 text-sm text-primary-foreground/75">
-                      {point.body}
-                    </p>
+                    <p className="mt-2 text-sm text-primary-foreground/75">{point.body}</p>
                   </div>
                 ))}
               </div>
@@ -1102,15 +1190,16 @@ function Index() {
           <AnimatedSection animation="fade-up">
             <h2 className="text-3xl font-bold text-primary sm:text-4xl">What clients say</h2>
           </AnimatedSection>
-          
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {testimonials.map((t, i) => (
+
+          <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
+            {displayTestimonials.map((t, i) => (
               <AnimatedSection
                 key={i}
                 animation={i % 2 === 0 ? "slide-left" : "slide-right"}
                 delay={i * 100}
+                className="h-full"
               >
-                <figure className="card-interactive flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
+                <figure className="card-interactive flex h-full min-h-64 flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
                   <div className="flex items-center justify-between">
                     <Quote className="h-6 w-6 text-accent" />
                     <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
@@ -1135,25 +1224,25 @@ function Index() {
       <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page max-w-3xl">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-              Common questions
-            </h2>
+            <h2 className="text-3xl font-bold text-primary sm:text-4xl">Common questions</h2>
             <p className="mt-3 text-muted-foreground">
               Quick answers to questions we hear most often
             </p>
           </div>
 
           <div className="mt-10 space-y-3">
-            {faqs.map((faq, index) => (
+            {displayFaqs.map((faq, index) => (
               <div
                 key={index}
                 className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
               >
                 <button
+                  type="button"
+                  aria-expanded={openFaq === index}
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-secondary/50"
+                  className="group flex min-h-16 w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-secondary/50"
                 >
-                  <span className="font-bold text-primary">{faq.question}</span>
+                  <span className="font-bold leading-relaxed text-primary">{faq.question}</span>
                   <ChevronDown
                     className={`h-5 w-5 shrink-0 text-accent transition-transform ${
                       openFaq === index ? "rotate-180" : ""
@@ -1162,9 +1251,7 @@ function Index() {
                 </button>
                 {openFaq === index && (
                   <div className="border-t border-border bg-secondary/30 px-5 py-4">
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {faq.answer}
-                    </p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -1173,7 +1260,10 @@ function Index() {
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
             Don't see your question?{" "}
-            <Link to="/contact" className="font-bold text-accent-foreground underline underline-offset-4">
+            <Link
+              to="/contact"
+              className="font-bold text-accent-foreground underline underline-offset-4"
+            >
               Contact us
             </Link>{" "}
             and we'll give you a specific answer.
@@ -1189,7 +1279,9 @@ function Index() {
               Ready to get started?
             </h2>
             <p className="mt-3 max-w-xl text-primary-foreground/75">
-              Whether you need international sourcing, oil & gas trading, or complete travel packages — send us your requirements. We offer trade and travel consultation plus referral commission opportunities.
+              Whether you need international sourcing, oil & gas trading, or complete travel
+              packages — send us your requirements. We offer trade and travel consultation plus
+              referral commission opportunities.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">

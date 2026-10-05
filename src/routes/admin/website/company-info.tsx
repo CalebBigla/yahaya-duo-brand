@@ -59,10 +59,7 @@ function CompanyInfoPage() {
 
   const fetchSettings = async () => {
     setLoading(true);
-    const { data: settings, error } = await supabase
-      .from('website_settings')
-      .select('*')
-      .single();
+    const { data: settings, error } = await supabase.from('website_settings').select('*').single();
 
     if (error) {
       console.error('Error fetching settings:', error);
@@ -77,7 +74,7 @@ function CompanyInfoPage() {
     setSaving(true);
     const { error } = await supabase
       .from('website_settings')
-      .update({ ...data, status: 'draft', updated_by: adminUser?.id })
+      .update({ ...data, status: 'draft', updated_by: adminUser?.user_id })
       .eq('id', data.id);
 
     if (error) {
@@ -92,17 +89,21 @@ function CompanyInfoPage() {
 
   const handlePublish = async () => {
     if (!data) return;
-    if (!confirm('Publish company information changes? This will update contact details on the website.')) {
+    if (
+      !confirm(
+        'Publish company information changes? This will update contact details on the website.',
+      )
+    ) {
       return;
     }
     setSaving(true);
     const { error } = await supabase
       .from('website_settings')
-      .update({ 
-        ...data, 
-        status: 'published', 
+      .update({
+        ...data,
+        status: 'published',
         published_at: new Date().toISOString(),
-        updated_by: adminUser?.id 
+        updated_by: adminUser?.user_id,
       })
       .eq('id', data.id);
 
@@ -126,7 +127,11 @@ function CompanyInfoPage() {
   const updateBusinessHour = (index: number, field: 'days' | 'time', value: string) => {
     if (!data) return;
     const newHours = [...data.business_hours];
-    newHours[index] = { ...newHours[index], [field]: value };
+    newHours[index] = {
+      days: newHours[index]?.days ?? '',
+      time: newHours[index]?.time ?? '',
+      [field]: value,
+    };
     setData({ ...data, business_hours: newHours });
     setHasChanges(true);
   };
@@ -174,7 +179,9 @@ function CompanyInfoPage() {
             <AlertCircle className="w-5 h-5 text-yellow-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-900">Draft</p>
-              <p className="text-xs text-yellow-700">Changes are not visible on the public website</p>
+              <p className="text-xs text-yellow-700">
+                Changes are not visible on the public website
+              </p>
             </div>
           </div>
         )}
@@ -182,12 +189,10 @@ function CompanyInfoPage() {
         {/* Company Details */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Company Details</h2>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Company Name *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
               <input
                 type="text"
                 value={data.company_name}
@@ -196,9 +201,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Short Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Short Name</label>
               <input
                 type="text"
                 value={data.company_short_name}
@@ -210,9 +213,7 @@ function CompanyInfoPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sub Brand
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Sub Brand</label>
               <input
                 type="text"
                 value={data.sub_brand}
@@ -221,9 +222,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                RC Number
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">RC Number</label>
               <input
                 type="text"
                 value={data.rc_number}
@@ -237,11 +236,9 @@ function CompanyInfoPage() {
         {/* Contact Information */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Contact Information</h2>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
             <input
               type="email"
               value={data.email}
@@ -292,11 +289,9 @@ function CompanyInfoPage() {
         {/* Address */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Address</h2>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Street Address *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
             <input
               type="text"
               value={data.address_street}
@@ -318,9 +313,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                State/Region *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">State/Region *</label>
               <input
                 type="text"
                 value={data.address_region}
@@ -331,9 +324,7 @@ function CompanyInfoPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Country *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
             <input
               type="text"
               value={data.address_country}
@@ -346,13 +337,11 @@ function CompanyInfoPage() {
         {/* Business Hours */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Business Hours</h2>
-          
+
           {data.business_hours.map((hour, index) => (
             <div key={index} className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Days
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Days</label>
                 <input
                   type="text"
                   value={hour.days}
@@ -361,9 +350,7 @@ function CompanyInfoPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Time
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
                 <input
                   type="text"
                   value={hour.time}
@@ -378,11 +365,9 @@ function CompanyInfoPage() {
         {/* Social Media */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Social Media Links</h2>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Facebook URL
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
             <input
               type="url"
               value={data.facebook_url || ''}
@@ -393,9 +378,7 @@ function CompanyInfoPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Instagram URL
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
             <input
               type="url"
               value={data.instagram_url || ''}
@@ -407,9 +390,7 @@ function CompanyInfoPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Twitter/X URL
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Twitter/X URL</label>
               <input
                 type="url"
                 value={data.twitter_url || ''}
@@ -418,9 +399,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                LinkedIn URL
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn URL</label>
               <input
                 type="url"
                 value={data.linkedin_url || ''}
@@ -429,9 +408,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                TikTok URL
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">TikTok URL</label>
               <input
                 type="url"
                 value={data.tiktok_url || ''}
@@ -445,9 +422,7 @@ function CompanyInfoPage() {
         {/* Save Bar */}
         {hasChanges && (
           <div className="sticky bottom-0 bg-white border-t shadow-lg p-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              You have unsaved changes
-            </div>
+            <div className="text-sm text-gray-600">You have unsaved changes</div>
             <div className="flex gap-3">
               <button
                 onClick={() => {

@@ -1,20 +1,21 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
-import { 
-  Home, 
-  Briefcase, 
-  Image, 
-  MessageSquare, 
-  HelpCircle, 
-  Settings, 
+import {
+  Home,
+  Briefcase,
+  Image,
+  MessageSquare,
+  HelpCircle,
+  Settings,
   Search,
   CheckCircle2,
   Clock,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 
 export const Route = createFileRoute('/admin/website')({
@@ -36,17 +37,71 @@ interface ModuleCard {
   itemCount?: number;
 }
 
+type ModuleKey = 'homepage' | 'services' | 'gallery' | 'testimonials' | 'faqs' | 'settings' | 'seo';
+
+interface ModuleStatus {
+  status: ModuleCard['status'];
+  itemCount: number;
+}
+
 function WebsitePage() {
   const [adminUser, setAdminUser] = useState<any>(null);
+  const [moduleStatus, setModuleStatus] = useState<Record<ModuleKey, ModuleStatus>>({
+    homepage: { status: 'empty', itemCount: 0 },
+    services: { status: 'empty', itemCount: 0 },
+    gallery: { status: 'empty', itemCount: 0 },
+    testimonials: { status: 'empty', itemCount: 0 },
+    faqs: { status: 'empty', itemCount: 0 },
+    settings: { status: 'empty', itemCount: 0 },
+    seo: { status: 'empty', itemCount: 0 },
+  });
+  const location = useLocation();
 
   useEffect(() => {
     const loadAdminData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
+      await loadModuleStatus();
     };
 
     loadAdminData();
   }, []);
+
+  const loadModuleStatus = async () => {
+    const tables: Array<[ModuleKey, string]> = [
+      ['homepage', 'website_homepage'],
+      ['services', 'website_services'],
+      ['gallery', 'website_gallery'],
+      ['testimonials', 'website_testimonials'],
+      ['faqs', 'website_faqs'],
+      ['settings', 'website_settings'],
+      ['seo', 'website_seo'],
+    ];
+
+    const results = await Promise.all(
+      tables.map(async ([key, table]) => {
+        const { data, error } = await supabase.from(table).select('status');
+        if (error) return [key, { status: 'empty', itemCount: 0 }] as const;
+
+        const rows = data ?? [];
+        const published = rows.filter((row) => row.status === 'published').length;
+        const draft = rows.filter((row) => row.status === 'draft').length;
+        return [
+          key,
+          {
+            status: published > 0 ? 'published' : draft > 0 ? 'draft' : 'empty',
+            itemCount: rows.length,
+          },
+        ] as const;
+      }),
+    );
+
+    setModuleStatus(Object.fromEntries(results) as Record<ModuleKey, ModuleStatus>);
+  };
+
+  if (location.pathname !== '/admin/website') {
+    return <Outlet />;
+  }
 
   const modules: ModuleCard[] = [
     {
@@ -54,58 +109,60 @@ function WebsitePage() {
       description: 'Hero section, stats, mission & vision',
       icon: Home,
       href: '/admin/website/homepage',
-      status: 'published',
-      itemCount: 1,
+      ...moduleStatus.homepage,
     },
     {
       title: 'Services',
       description: 'Travel & trade service listings',
       icon: Briefcase,
       href: '/admin/website/services',
-      status: 'published',
-      itemCount: 10,
+      ...moduleStatus.services,
     },
     {
       title: 'Gallery',
       description: 'Image gallery with categories',
       icon: Image,
       href: '/admin/website/gallery',
-      status: 'empty',
-      itemCount: 0,
+      ...moduleStatus.gallery,
     },
     {
       title: 'Testimonials',
       description: 'Client reviews and feedback',
       icon: MessageSquare,
       href: '/admin/website/testimonials',
-      status: 'empty',
-      itemCount: 0,
+      ...moduleStatus.testimonials,
     },
     {
       title: 'FAQs',
       description: 'Frequently asked questions',
       icon: HelpCircle,
       href: '/admin/website/faqs',
-      status: 'empty',
-      itemCount: 0,
+      ...moduleStatus.faqs,
     },
     {
       title: 'Company Info',
       description: 'Contact details, hours, address',
       icon: Settings,
       href: '/admin/website/company-info',
-      status: 'published',
-      itemCount: 1,
+      ...moduleStatus.settings,
     },
     {
       title: 'SEO Settings',
       description: 'Meta tags for each page',
       icon: Search,
       href: '/admin/website/seo',
-      status: 'published',
-      itemCount: 6,
+      ...moduleStatus.seo,
     },
   ];
+  const moduleTotals = Object.values(moduleStatus);
+  const publishedContent = moduleTotals.reduce(
+    (total, module) => total + (module.status === 'published' ? module.itemCount : 0),
+    0,
+  );
+  const draftItems = moduleTotals.reduce(
+    (total, module) => total + (module.status === 'draft' ? module.itemCount : 0),
+    0,
+  );
 
   const getStatusBadge = (status: ModuleCard['status']) => {
     switch (status) {
@@ -150,7 +207,7 @@ function WebsitePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-green-700 font-medium">Published Content</p>
-                <p className="text-2xl font-bold text-green-900 mt-1">4</p>
+                <p className="text-2xl font-bold text-green-900 mt-1">{publishedContent}</p>
               </div>
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
@@ -159,7 +216,7 @@ function WebsitePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-yellow-700 font-medium">Draft Items</p>
-                <p className="text-2xl font-bold text-yellow-900 mt-1">0</p>
+                <p className="text-2xl font-bold text-yellow-900 mt-1">{draftItems}</p>
               </div>
               <Clock className="w-8 h-8 text-yellow-600" />
             </div>
@@ -205,10 +262,18 @@ function WebsitePage() {
         <div className="bg-teal-50 border border-teal-200 rounded-lg p-5">
           <h3 className="font-semibold text-teal-900 mb-2">📖 Quick Guide</h3>
           <ul className="text-sm text-teal-800 space-y-1">
-            <li>• <strong>Draft:</strong> Save changes without making them live</li>
-            <li>• <strong>Publish:</strong> Make content visible on the public website</li>
-            <li>• <strong>Permissions:</strong> Staff can view, only admins can publish</li>
-            <li>• <strong>Database:</strong> All content is stored in Supabase with audit logs</li>
+            <li>
+              • <strong>Draft:</strong> Save changes without making them live
+            </li>
+            <li>
+              • <strong>Publish:</strong> Make content visible on the public website
+            </li>
+            <li>
+              • <strong>Permissions:</strong> Staff can view, only admins can publish
+            </li>
+            <li>
+              • <strong>Database:</strong> All content is stored in Supabase with audit logs
+            </li>
           </ul>
         </div>
       </div>

@@ -32,7 +32,12 @@ export function Navbar() {
         <Logo />
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
-          <Link to="/" className={linkBase} activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}>
+          <Link
+            to="/"
+            className={linkBase}
+            activeProps={{ className: "text-primary" }}
+            activeOptions={{ exact: true }}
+          >
             Home
           </Link>
 
@@ -40,14 +45,18 @@ export function Navbar() {
             <Link
               to="/travel"
               className="flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
-              activeProps={{ className: "bg-primary text-primary-foreground hover:text-primary-foreground" }}
+              activeProps={{
+                className: "bg-primary text-primary-foreground hover:text-primary-foreground",
+              }}
             >
               <Plane className="h-4 w-4" /> Travel
             </Link>
             <Link
               to="/trade"
               className="flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
-              activeProps={{ className: "bg-primary text-primary-foreground hover:text-primary-foreground" }}
+              activeProps={{
+                className: "bg-primary text-primary-foreground hover:text-primary-foreground",
+              }}
             >
               <Ship className="h-4 w-4" /> Trade
             </Link>
@@ -58,6 +67,9 @@ export function Navbar() {
           </Link>
           <Link to="/contact" className={linkBase} activeProps={{ className: "text-primary" }}>
             Contact
+          </Link>
+          <Link to="/media" className={linkBase} activeProps={{ className: "text-primary" }}>
+            Media
           </Link>
           <Link
             to="/quote"
@@ -81,27 +93,54 @@ export function Navbar() {
       {open && (
         <nav className="border-t border-border bg-background lg:hidden" aria-label="Mobile">
           <div className="container-page flex flex-col gap-1 py-4">
-            <Link to="/" onClick={close} className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
+            <Link
+              to="/"
+              onClick={close}
+              className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary"
+            >
               Home
             </Link>
             <p className="mt-3 px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
               Travel Division
             </p>
-            <Link to="/travel" onClick={close} className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
+            <Link
+              to="/travel"
+              onClick={close}
+              className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary"
+            >
               <Plane className="h-4 w-4 text-accent" /> Travel Services
             </Link>
             <p className="mt-3 px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
               Trade Division
             </p>
-            <Link to="/trade" onClick={close} className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
+            <Link
+              to="/trade"
+              onClick={close}
+              className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary"
+            >
               <Ship className="h-4 w-4 text-accent" /> Trade Activities
             </Link>
             <div className="mt-3 h-px bg-border" />
-            <Link to="/about" onClick={close} className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
+            <Link
+              to="/about"
+              onClick={close}
+              className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary"
+            >
               About
             </Link>
-            <Link to="/contact" onClick={close} className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary">
+            <Link
+              to="/contact"
+              onClick={close}
+              className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary"
+            >
               Contact
+            </Link>
+            <Link
+              to="/media"
+              onClick={close}
+              className="rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-secondary"
+            >
+              Media
             </Link>
             <Link
               to="/quote"

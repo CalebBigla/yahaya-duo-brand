@@ -92,7 +92,7 @@ function SEOPage() {
       .from('website_seo')
       .update({
         ...editingPage,
-        updated_by: adminUser?.id,
+        updated_by: adminUser?.user_id,
       })
       .eq('id', editingPage.id);
 
@@ -110,10 +110,10 @@ function SEOPage() {
     const newStatus = page.status === 'published' ? 'draft' : 'published';
     const { error } = await supabase
       .from('website_seo')
-      .update({ 
+      .update({
         status: newStatus,
         published_at: newStatus === 'published' ? new Date().toISOString() : null,
-        updated_by: adminUser?.id,
+        updated_by: adminUser?.user_id,
       })
       .eq('id', page.id);
 
@@ -148,10 +148,18 @@ function SEOPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="font-semibold text-blue-900 mb-1">💡 SEO Best Practices</h3>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• <strong>Meta Title:</strong> 50-60 characters, include main keyword</li>
-            <li>• <strong>Meta Description:</strong> 150-160 characters, compelling and descriptive</li>
-            <li>• <strong>Open Graph:</strong> For social media sharing preview</li>
-            <li>• <strong>Keywords:</strong> Comma-separated, relevant terms</li>
+            <li>
+              • <strong>Meta Title:</strong> 50-60 characters, include main keyword
+            </li>
+            <li>
+              • <strong>Meta Description:</strong> 150-160 characters, compelling and descriptive
+            </li>
+            <li>
+              • <strong>Open Graph:</strong> For social media sharing preview
+            </li>
+            <li>
+              • <strong>Keywords:</strong> Comma-separated, relevant terms
+            </li>
           </ul>
         </div>
 
@@ -179,12 +187,14 @@ function SEOPage() {
                   </div>
                   <div className="space-y-1 text-sm">
                     <p className="text-gray-700">
-                      <strong>Title:</strong> {page.meta_title} 
+                      <strong>Title:</strong> {page.meta_title}
                       <span className="text-gray-500 ml-2">({page.meta_title.length}/60)</span>
                     </p>
                     <p className="text-gray-700">
                       <strong>Description:</strong> {page.meta_description}
-                      <span className="text-gray-500 ml-2">({page.meta_description.length}/160)</span>
+                      <span className="text-gray-500 ml-2">
+                        ({page.meta_description.length}/160)
+                      </span>
                     </p>
                     {page.meta_keywords && (
                       <p className="text-gray-600">
@@ -254,7 +264,9 @@ function SEOPage() {
                   </label>
                   <textarea
                     value={editingPage.meta_description}
-                    onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
+                    onChange={(e) =>
+                      setEditingPage({ ...editingPage, meta_description: e.target.value })
+                    }
                     rows={3}
                     maxLength={160}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
@@ -274,7 +286,9 @@ function SEOPage() {
                   <input
                     type="text"
                     value={editingPage.meta_keywords || ''}
-                    onChange={(e) => setEditingPage({ ...editingPage, meta_keywords: e.target.value })}
+                    onChange={(e) =>
+                      setEditingPage({ ...editingPage, meta_keywords: e.target.value })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="travel, visa, nigeria, export"
                   />
@@ -284,7 +298,7 @@ function SEOPage() {
                   <h3 className="text-sm font-semibold text-gray-900 mb-3">
                     Open Graph (Social Media Preview)
                   </h3>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       OG Title (max 60 characters)
@@ -305,7 +319,9 @@ function SEOPage() {
                     </label>
                     <textarea
                       value={editingPage.og_description || ''}
-                      onChange={(e) => setEditingPage({ ...editingPage, og_description: e.target.value })}
+                      onChange={(e) =>
+                        setEditingPage({ ...editingPage, og_description: e.target.value })
+                      }
                       rows={2}
                       maxLength={200}
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
@@ -320,7 +336,9 @@ function SEOPage() {
                     <input
                       type="url"
                       value={editingPage.og_image_url || ''}
-                      onChange={(e) => setEditingPage({ ...editingPage, og_image_url: e.target.value })}
+                      onChange={(e) =>
+                        setEditingPage({ ...editingPage, og_image_url: e.target.value })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                       placeholder="https://... (recommended: 1200x630px)"
                     />
@@ -328,17 +346,17 @@ function SEOPage() {
                 </div>
 
                 <div className="border-t pt-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                    Twitter Card
-                  </h3>
-                  
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3">Twitter Card</h3>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Card Type
                     </label>
                     <select
                       value={editingPage.twitter_card_type}
-                      onChange={(e) => setEditingPage({ ...editingPage, twitter_card_type: e.target.value as any })}
+                      onChange={(e) =>
+                        setEditingPage({ ...editingPage, twitter_card_type: e.target.value as any })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     >
                       <option value="summary">Summary</option>

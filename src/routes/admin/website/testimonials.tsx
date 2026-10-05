@@ -90,12 +90,10 @@ function TestimonialsPage() {
     }
 
     if (isCreating) {
-      const { error } = await supabase
-        .from('website_testimonials')
-        .insert({
-          ...editingItem,
-          updated_by: adminUser?.id,
-        });
+      const { error } = await supabase.from('website_testimonials').insert({
+        ...editingItem,
+        updated_by: adminUser?.user_id,
+      });
 
       if (error) {
         console.error('Error creating testimonial:', error);
@@ -107,7 +105,7 @@ function TestimonialsPage() {
         .from('website_testimonials')
         .update({
           ...editingItem,
-          updated_by: adminUser?.id,
+          updated_by: adminUser?.user_id,
         })
         .eq('id', editingItem.id);
 
@@ -128,10 +126,7 @@ function TestimonialsPage() {
       return;
     }
 
-    const { error } = await supabase
-      .from('website_testimonials')
-      .delete()
-      .eq('id', item.id);
+    const { error } = await supabase.from('website_testimonials').delete().eq('id', item.id);
 
     if (error) {
       console.error('Error deleting testimonial:', error);
@@ -145,10 +140,10 @@ function TestimonialsPage() {
     const newStatus = item.status === 'published' ? 'draft' : 'published';
     const { error } = await supabase
       .from('website_testimonials')
-      .update({ 
+      .update({
         status: newStatus,
         published_at: newStatus === 'published' ? new Date().toISOString() : null,
-        updated_by: adminUser?.id,
+        updated_by: adminUser?.user_id,
       })
       .eq('id', item.id);
 
@@ -190,14 +185,16 @@ function TestimonialsPage() {
 
         {testimonials.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed">
-            <p className="text-gray-600">No testimonials yet. Click "Add Testimonial" to create one.</p>
+            <p className="text-gray-600">
+              No testimonials yet. Click "Add Testimonial" to create one.
+            </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
             {testimonials.map((item) => (
               <div
                 key={item.id}
-                className="bg-white border rounded-lg p-5 hover:border-teal-300 transition-colors"
+                className="flex h-full flex-col rounded-lg border bg-white p-5 transition-colors hover:border-teal-300"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
@@ -221,7 +218,7 @@ function TestimonialsPage() {
                     {item.client_title && (
                       <p className="text-sm text-gray-600 mb-2">{item.client_title}</p>
                     )}
-                    <p className="text-gray-700 mb-2">"{item.testimonial}"</p>
+                    <p className="line-clamp-5 text-gray-700 mb-2">"{item.testimonial}"</p>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       {item.rating && (
                         <div className="flex items-center gap-1">
@@ -239,7 +236,7 @@ function TestimonialsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     onClick={() => setEditingItem(item)}
                     className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 flex items-center gap-1"
@@ -292,7 +289,9 @@ function TestimonialsPage() {
                   <input
                     type="text"
                     value={editingItem.client_name}
-                    onChange={(e) => setEditingItem({ ...editingItem, client_name: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, client_name: e.target.value })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="e.g., John Doe"
                   />
@@ -305,7 +304,9 @@ function TestimonialsPage() {
                   <input
                     type="text"
                     value={editingItem.client_title || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, client_title: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, client_title: e.target.value })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="e.g., CEO, ABC Company"
                   />
@@ -317,23 +318,27 @@ function TestimonialsPage() {
                   </label>
                   <textarea
                     value={editingItem.testimonial}
-                    onChange={(e) => setEditingItem({ ...editingItem, testimonial: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, testimonial: e.target.value })
+                    }
                     rows={4}
                     maxLength={1000}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="Write the testimonial here..."
                   />
-                  <p className="text-xs text-gray-500 mt-1">{editingItem.testimonial.length}/1000 characters</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {editingItem.testimonial.length}/1000 characters
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Rating
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
                     <select
                       value={editingItem.rating || 5}
-                      onChange={(e) => setEditingItem({ ...editingItem, rating: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, rating: parseInt(e.target.value) })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     >
                       <option value={5}>⭐⭐⭐⭐⭐ (5 stars)</option>
@@ -349,7 +354,9 @@ function TestimonialsPage() {
                     </label>
                     <select
                       value={editingItem.service_division || 'both'}
-                      onChange={(e) => setEditingItem({ ...editingItem, service_division: e.target.value as any })}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, service_division: e.target.value as any })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     >
                       <option value="both">Both</option>
@@ -366,7 +373,9 @@ function TestimonialsPage() {
                   <input
                     type="text"
                     value={editingItem.client_photo_url || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, client_photo_url: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, client_photo_url: e.target.value })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="https://..."
                   />

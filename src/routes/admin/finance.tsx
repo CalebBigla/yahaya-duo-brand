@@ -135,7 +135,12 @@ function FinancePage() {
           .order('division')
           .order('display_order');
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Categories query error:', error);
+          throw error;
+        }
+        console.log('✅ Categories loaded:', data?.length || 0, 'items');
+        console.table(data);
         return data || [];
       });
 

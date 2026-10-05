@@ -69,9 +69,8 @@ function FAQsPage() {
     setLoading(false);
   };
 
-  const filteredFaqs = activeCategory === 'all' 
-    ? faqs 
-    : faqs.filter(faq => faq.category === activeCategory);
+  const filteredFaqs =
+    activeCategory === 'all' ? faqs : faqs.filter((faq) => faq.category === activeCategory);
 
   const handleCreate = () => {
     setEditingItem({
@@ -96,12 +95,10 @@ function FAQsPage() {
     }
 
     if (isCreating) {
-      const { error } = await supabase
-        .from('website_faqs')
-        .insert({
-          ...editingItem,
-          updated_by: adminUser?.id,
-        });
+      const { error } = await supabase.from('website_faqs').insert({
+        ...editingItem,
+        updated_by: adminUser?.user_id,
+      });
 
       if (error) {
         console.error('Error creating FAQ:', error);
@@ -113,7 +110,7 @@ function FAQsPage() {
         .from('website_faqs')
         .update({
           ...editingItem,
-          updated_by: adminUser?.id,
+          updated_by: adminUser?.user_id,
         })
         .eq('id', editingItem.id);
 
@@ -134,10 +131,7 @@ function FAQsPage() {
       return;
     }
 
-    const { error } = await supabase
-      .from('website_faqs')
-      .delete()
-      .eq('id', item.id);
+    const { error } = await supabase.from('website_faqs').delete().eq('id', item.id);
 
     if (error) {
       console.error('Error deleting FAQ:', error);
@@ -151,10 +145,10 @@ function FAQsPage() {
     const newStatus = item.status === 'published' ? 'draft' : 'published';
     const { error } = await supabase
       .from('website_faqs')
-      .update({ 
+      .update({
         status: newStatus,
         published_at: newStatus === 'published' ? new Date().toISOString() : null,
-        updated_by: adminUser?.id,
+        updated_by: adminUser?.user_id,
       })
       .eq('id', item.id);
 
@@ -195,7 +189,7 @@ function FAQsPage() {
           >
             All ({faqs.length})
           </button>
-          {CATEGORIES.map(cat => (
+          {CATEGORIES.map((cat) => (
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
@@ -205,7 +199,7 @@ function FAQsPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {cat.label} ({faqs.filter(f => f.category === cat.value).length})
+              {cat.label} ({faqs.filter((f) => f.category === cat.value).length})
             </button>
           ))}
         </div>
@@ -225,11 +219,11 @@ function FAQsPage() {
             <p className="text-gray-600">No FAQs yet. Click "Add FAQ" to create one.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-2">
             {filteredFaqs.map((item) => (
               <div
                 key={item.id}
-                className="bg-white border rounded-lg p-4 hover:border-teal-300 transition-colors"
+                className="flex h-full flex-col rounded-lg border bg-white p-4 transition-colors hover:border-teal-300"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
@@ -247,11 +241,15 @@ function FAQsPage() {
                         </span>
                       )}
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{item.question}</h3>
-                    <p className="text-sm text-gray-600">{item.answer}</p>
+                    <h3 className="font-semibold leading-relaxed text-gray-900 mb-1">
+                      {item.question}
+                    </h3>
+                    <p className="line-clamp-5 text-sm leading-relaxed text-gray-600">
+                      {item.answer}
+                    </p>
                   </div>
                 </div>
-                <div className="flex gap-2 mt-3">
+                <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     onClick={() => setEditingItem(item)}
                     className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 flex items-center gap-1"
@@ -298,16 +296,18 @@ function FAQsPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
                   <select
                     value={editingItem.category}
-                    onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value as any })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, category: e.target.value as any })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                   >
-                    {CATEGORIES.map(cat => (
-                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -324,7 +324,9 @@ function FAQsPage() {
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="e.g., How long does visa processing take?"
                   />
-                  <p className="text-xs text-gray-500 mt-1">{editingItem.question.length}/500 characters</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {editingItem.question.length}/500 characters
+                  </p>
                 </div>
 
                 <div>
@@ -339,7 +341,9 @@ function FAQsPage() {
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="Provide a detailed answer..."
                   />
-                  <p className="text-xs text-gray-500 mt-1">{editingItem.answer.length}/2000 characters</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {editingItem.answer.length}/2000 characters
+                  </p>
                 </div>
 
                 <div>
@@ -349,7 +353,9 @@ function FAQsPage() {
                   <input
                     type="number"
                     value={editingItem.display_order}
-                    onChange={(e) => setEditingItem({ ...editingItem, display_order: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, display_order: parseInt(e.target.value) })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                   />
                 </div>

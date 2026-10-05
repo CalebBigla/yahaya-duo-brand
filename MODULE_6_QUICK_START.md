@@ -123,9 +123,9 @@ In Supabase **Table Editor**, check:
 
 ## 🔗 Connect to Public Website (Required)
 
-Currently, public pages use hardcoded data from `src/lib/site.ts`.
+Public pages now read published content from Supabase through `src/lib/queries/website.ts`. Values in `src/lib/site.ts` are used only as a fallback if the CMS tables are missing or temporarily unavailable.
 
-### Replace with Database Queries:
+### Shared Database Queries:
 
 Create `src/lib/queries/website.ts`:
 ```typescript
@@ -226,15 +226,15 @@ const services = await getPublishedServices('travel');
 
 | Module | Database | Admin UI | Public Site | Status |
 |--------|----------|----------|-------------|--------|
-| Homepage | ✅ | ✅ | ⏳ | 95% |
-| Services | ✅ | ✅ | ⏳ | 95% |
+| Homepage | ✅ | ✅ | ✅ | 100% |
+| Services | ✅ | ✅ | ✅ | 100% |
 | Gallery | ✅ | ✅ | ⏳ | 95% |
-| Testimonials | ✅ | ✅ | ⏳ | 95% |
-| FAQs | ✅ | ✅ | ⏳ | 95% |
-| Company Info | ✅ | ✅ | ⏳ | 95% |
+| Testimonials | ✅ | ✅ | ✅ | 100% |
+| FAQs | ✅ | ✅ | ✅ | 100% |
+| Company Info | ✅ | ✅ | ✅ | 100% |
 | SEO | ✅ | ✅ | ⏳ | 95% |
 
-**⏳ Pending:** Connect database queries to public website pages
+**⏳ Remaining:** Add public gallery rendering and dynamic SEO head metadata.
 
 ## 🎨 UI Preview
 

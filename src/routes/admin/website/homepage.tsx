@@ -54,10 +54,7 @@ function HomepagePage() {
 
   const fetchHomepage = async () => {
     setLoading(true);
-    const { data: homepage, error } = await supabase
-      .from('website_homepage')
-      .select('*')
-      .single();
+    const { data: homepage, error } = await supabase.from('website_homepage').select('*').single();
 
     if (error) {
       console.error('Error fetching homepage:', error);
@@ -76,7 +73,8 @@ function HomepagePage() {
       .from('website_homepage')
       .insert({
         hero_title: 'Your Trusted Partner for Global Travel and International Trade',
-        hero_subtitle: 'Connecting continents through reliable visa services, seamless logistics, and strategic sourcing solutions.',
+        hero_subtitle:
+          'Connecting continents through reliable visa services, seamless logistics, and strategic sourcing solutions.',
         hero_cta_text: 'Get Started',
         hero_cta_link: '/contact',
         stats_years_experience: 10,
@@ -84,9 +82,11 @@ function HomepagePage() {
         stats_destinations: 45,
         stats_success_rate: 98,
         mission_title: 'Our Mission',
-        mission_content: 'To provide world-class travel and trade solutions that connect businesses and individuals across borders with integrity, efficiency, and excellence.',
+        mission_content:
+          'To provide world-class travel and trade solutions that connect businesses and individuals across borders with integrity, efficiency, and excellence.',
         vision_title: 'Our Vision',
-        vision_content: 'To be the most trusted name in international travel and trade facilitation across Africa and beyond.',
+        vision_content:
+          'To be the most trusted name in international travel and trade facilitation across Africa and beyond.',
         status: 'draft',
       })
       .select()
@@ -102,7 +102,7 @@ function HomepagePage() {
     setSaving(true);
     const { error } = await supabase
       .from('website_homepage')
-      .update({ ...data, status: 'draft', updated_by: adminUser?.id })
+      .update({ ...data, status: 'draft', updated_by: adminUser?.user_id })
       .eq('id', data.id);
 
     if (error) {
@@ -123,11 +123,11 @@ function HomepagePage() {
     setSaving(true);
     const { error } = await supabase
       .from('website_homepage')
-      .update({ 
-        ...data, 
-        status: 'published', 
+      .update({
+        ...data,
+        status: 'published',
         published_at: new Date().toISOString(),
-        updated_by: adminUser?.id 
+        updated_by: adminUser?.user_id,
       })
       .eq('id', data.id);
 
@@ -174,9 +174,7 @@ function HomepagePage() {
         {/* Header */}
         <div className="border-b pb-4">
           <h1 className="text-2xl font-bold text-gray-900">Homepage Editor</h1>
-          <p className="text-gray-600 mt-1">
-            Manage hero section, statistics, mission, and vision
-          </p>
+          <p className="text-gray-600 mt-1">Manage hero section, statistics, mission, and vision</p>
         </div>
 
         {/* Status Banner */}
@@ -195,7 +193,9 @@ function HomepagePage() {
             <AlertCircle className="w-5 h-5 text-yellow-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-900">Draft</p>
-              <p className="text-xs text-yellow-700">Changes are not visible on the public website</p>
+              <p className="text-xs text-yellow-700">
+                Changes are not visible on the public website
+              </p>
             </div>
           </div>
         )}
@@ -203,11 +203,9 @@ function HomepagePage() {
         {/* Hero Section */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Hero Section</h2>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Hero Title
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
             <input
               type="text"
               value={data.hero_title}
@@ -217,9 +215,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Hero Subtitle
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle</label>
             <textarea
               value={data.hero_subtitle}
               onChange={(e) => updateField('hero_subtitle', e.target.value)}
@@ -241,9 +237,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                CTA Link
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">CTA Link</label>
               <input
                 type="text"
                 value={data.hero_cta_link}
@@ -273,14 +267,16 @@ function HomepagePage() {
                 Upload
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Image upload coming soon. Use direct URLs for now.</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Image upload coming soon. Use direct URLs for now.
+            </p>
           </div>
         </div>
 
         {/* Statistics Section */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Statistics</h2>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -294,9 +290,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Clients Served
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Clients Served</label>
               <input
                 type="number"
                 value={data.stats_clients_served}
@@ -305,9 +299,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Destinations
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Destinations</label>
               <input
                 type="number"
                 value={data.stats_destinations}
@@ -334,11 +326,9 @@ function HomepagePage() {
         {/* Mission & Vision */}
         <div className="bg-white border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Mission & Vision</h2>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mission Title
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Mission Title</label>
             <input
               type="text"
               value={data.mission_title}
@@ -348,9 +338,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mission Content
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Mission Content</label>
             <textarea
               value={data.mission_content}
               onChange={(e) => updateField('mission_content', e.target.value)}
@@ -360,9 +348,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Vision Title
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Vision Title</label>
             <input
               type="text"
               value={data.vision_title}
@@ -372,9 +358,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Vision Content
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Vision Content</label>
             <textarea
               value={data.vision_content}
               onChange={(e) => updateField('vision_content', e.target.value)}
@@ -387,9 +371,7 @@ function HomepagePage() {
         {/* Save Bar */}
         {hasChanges && (
           <div className="sticky bottom-0 bg-white border-t shadow-lg p-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              You have unsaved changes
-            </div>
+            <div className="text-sm text-gray-600">You have unsaved changes</div>
             <div className="flex gap-3">
               <button
                 onClick={() => {

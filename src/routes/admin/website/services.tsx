@@ -65,7 +65,7 @@ function ServicesPage() {
     setLoading(false);
   };
 
-  const filteredServices = services.filter(s => s.division === activeDivision);
+  const filteredServices = services.filter((s) => s.division === activeDivision);
 
   const handleCreate = () => {
     setEditingService({
@@ -87,18 +87,21 @@ function ServicesPage() {
     if (!editingService) return;
 
     // Validate required fields
-    if (!editingService.title || !editingService.slug || !editingService.summary || !editingService.detail) {
+    if (
+      !editingService.title ||
+      !editingService.slug ||
+      !editingService.summary ||
+      !editingService.detail
+    ) {
       alert('Please fill in all required fields');
       return;
     }
 
     if (isCreating) {
-      const { error } = await supabase
-        .from('website_services')
-        .insert({
-          ...editingService,
-          updated_by: adminUser?.id,
-        });
+      const { error } = await supabase.from('website_services').insert({
+        ...editingService,
+        updated_by: adminUser?.user_id,
+      });
 
       if (error) {
         console.error('Error creating service:', error);
@@ -110,7 +113,7 @@ function ServicesPage() {
         .from('website_services')
         .update({
           ...editingService,
-          updated_by: adminUser?.id,
+          updated_by: adminUser?.user_id,
         })
         .eq('id', editingService.id);
 
@@ -131,10 +134,7 @@ function ServicesPage() {
       return;
     }
 
-    const { error } = await supabase
-      .from('website_services')
-      .delete()
-      .eq('id', service.id);
+    const { error } = await supabase.from('website_services').delete().eq('id', service.id);
 
     if (error) {
       console.error('Error deleting service:', error);
@@ -148,10 +148,10 @@ function ServicesPage() {
     const newStatus = service.status === 'published' ? 'draft' : 'published';
     const { error } = await supabase
       .from('website_services')
-      .update({ 
+      .update({
         status: newStatus,
         published_at: newStatus === 'published' ? new Date().toISOString() : null,
-        updated_by: adminUser?.id,
+        updated_by: adminUser?.user_id,
       })
       .eq('id', service.id);
 
@@ -179,9 +179,7 @@ function ServicesPage() {
         {/* Header */}
         <div className="border-b pb-4">
           <h1 className="text-2xl font-bold text-gray-900">Services Management</h1>
-          <p className="text-gray-600 mt-1">
-            Manage travel and trade service listings
-          </p>
+          <p className="text-gray-600 mt-1">Manage travel and trade service listings</p>
         </div>
 
         {/* Division Tabs */}
@@ -194,7 +192,7 @@ function ServicesPage() {
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            Travel Services ({services.filter(s => s.division === 'travel').length})
+            Travel Services ({services.filter((s) => s.division === 'travel').length})
           </button>
           <button
             onClick={() => setActiveDivision('trade')}
@@ -204,7 +202,7 @@ function ServicesPage() {
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            Trade Services ({services.filter(s => s.division === 'trade').length})
+            Trade Services ({services.filter((s) => s.division === 'trade').length})
           </button>
         </div>
 
@@ -235,7 +233,7 @@ function ServicesPage() {
                   <button className="mt-1 text-gray-400 hover:text-gray-600 cursor-move">
                     <GripVertical className="w-5 h-5" />
                   </button>
-                  
+
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>
@@ -257,7 +255,7 @@ function ServicesPage() {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => setEditingService(service)}
@@ -318,12 +316,15 @@ function ServicesPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Division
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Division</label>
                   <select
                     value={editingService.division}
-                    onChange={(e) => setEditingService({ ...editingService, division: e.target.value as 'travel' | 'trade' })}
+                    onChange={(e) =>
+                      setEditingService({
+                        ...editingService,
+                        division: e.target.value as 'travel' | 'trade',
+                      })
+                    }
                     disabled={!isCreating}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100"
                   >
@@ -333,13 +334,13 @@ function ServicesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                   <input
                     type="text"
                     value={editingService.title}
-                    onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
+                    onChange={(e) =>
+                      setEditingService({ ...editingService, title: e.target.value })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="e.g., Visa Processing Services"
                   />
@@ -352,7 +353,12 @@ function ServicesPage() {
                   <input
                     type="text"
                     value={editingService.slug}
-                    onChange={(e) => setEditingService({ ...editingService, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+                    onChange={(e) =>
+                      setEditingService({
+                        ...editingService,
+                        slug: e.target.value.toLowerCase().replace(/\s+/g, '-'),
+                      })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="e.g., visa-processing"
                   />
@@ -364,7 +370,9 @@ function ServicesPage() {
                   </label>
                   <textarea
                     value={editingService.summary}
-                    onChange={(e) => setEditingService({ ...editingService, summary: e.target.value })}
+                    onChange={(e) =>
+                      setEditingService({ ...editingService, summary: e.target.value })
+                    }
                     rows={2}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="One-line summary shown in cards"
@@ -377,7 +385,9 @@ function ServicesPage() {
                   </label>
                   <textarea
                     value={editingService.detail}
-                    onChange={(e) => setEditingService({ ...editingService, detail: e.target.value })}
+                    onChange={(e) =>
+                      setEditingService({ ...editingService, detail: e.target.value })
+                    }
                     rows={4}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="Full description shown on service detail pages"
@@ -392,7 +402,9 @@ function ServicesPage() {
                     <input
                       type="text"
                       value={editingService.icon_name || ''}
-                      onChange={(e) => setEditingService({ ...editingService, icon_name: e.target.value })}
+                      onChange={(e) =>
+                        setEditingService({ ...editingService, icon_name: e.target.value })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="e.g., Plane, Ship, Briefcase"
                     />
@@ -404,7 +416,12 @@ function ServicesPage() {
                     <input
                       type="number"
                       value={editingService.display_order}
-                      onChange={(e) => setEditingService({ ...editingService, display_order: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          display_order: parseInt(e.target.value),
+                        })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
@@ -417,7 +434,9 @@ function ServicesPage() {
                   <input
                     type="text"
                     value={editingService.image_url || ''}
-                    onChange={(e) => setEditingService({ ...editingService, image_url: e.target.value })}
+                    onChange={(e) =>
+                      setEditingService({ ...editingService, image_url: e.target.value })
+                    }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="https://..."
                   />

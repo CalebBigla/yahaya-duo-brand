@@ -133,14 +133,16 @@ Created 7 new tables with RLS policies, triggers, and initial data:
 ## 🔄 Integration with Public Website
 
 ### Current State
-Services are currently hardcoded in `src/lib/site.ts`:
+Published CMS content is loaded through `src/lib/queries/website.ts` and used by the public homepage, travel, trade, footer, contact, and WhatsApp components. The static values in `src/lib/site.ts` remain as a safe fallback when the CMS tables are unavailable.
+
+The static service definitions in `src/lib/site.ts` are now fallback data rather than the primary content source:
 ```typescript
 export const travelServices = [ /* 5 items */ ]
 export const tradeServices = [ /* 5 items */ ]
 ```
 
-### Migration Path
-Replace hardcoded arrays with Supabase queries:
+### Query Layer
+The shared Supabase query layer filters content to `status = 'published'` and orders services, testimonials, and FAQs for the public site:
 
 ```typescript
 // Example: src/lib/queries/website.ts
@@ -275,7 +277,7 @@ Database constraints:
 | Company info editor | ✅ Complete | Contact, address, hours, social |
 | SEO settings | ✅ Complete | Meta tags, OG, Twitter Card |
 | Draft/Publish workflow | ✅ Complete | Status toggle, confirmation dialogs |
-| Public site integration | ⏳ Pending | Replace hardcoded data with DB queries |
+| Public site integration | ✅ Complete | Published CMS data is used with static fallbacks |
 | Image upload | ⏳ Future | Currently using direct URLs |
 | Drag-and-drop reorder | ⏳ Future | Display order can be set manually |
 | Rich text editor | ⏳ Future | Currently plain textarea |
@@ -286,8 +288,8 @@ Database constraints:
 ### Immediate (Required for Production)
 1. **Run database migration** on Supabase
 2. **Test all CRUD operations** as admin user
-3. **Update public pages** to fetch from database instead of hardcoded `site.ts`
-4. **Cache strategy**: Add TanStack Query with staleTime for public content
+3. **Test published content** on the homepage, travel, trade, footer, contact, and quote flows
+4. **Keep the database migration applied** so CMS edits are available to the public site
 
 ### Short-term Enhancements
 1. **Image upload**: Integrate Supabase Storage for gallery/hero images

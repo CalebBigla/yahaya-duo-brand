@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as HealthRouteImport } from './routes/health'
+import { Route as MediaRouteImport } from './routes/media'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -23,6 +24,8 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminClientsRouteImport } from './routes/admin/clients'
 import { Route as AdminDebugRouteImport } from './routes/admin/debug'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
+import { Route as AdminExpensesRouteImport } from './routes/admin/expenses'
+import { Route as AdminFinanceRouteImport } from './routes/admin/finance'
 import { Route as AdminForgotPasswordRouteImport } from './routes/admin/forgot-password'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
@@ -38,6 +41,7 @@ import { Route as AdminWebsiteHomepageRouteImport } from './routes/admin/website
 import { Route as AdminWebsiteSeoRouteImport } from './routes/admin/website/seo'
 import { Route as AdminWebsiteServicesRouteImport } from './routes/admin/website/services'
 import { Route as AdminWebsiteTestimonialsRouteImport } from './routes/admin/website/testimonials'
+import { Route as QuoteViewTokenRouteImport } from './routes/quote/view.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -57,6 +61,11 @@ const ContactRoute = ContactRouteImport.update({
 const HealthRoute = HealthRouteImport.update({
   id: '/health',
   path: '/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediaRoute = MediaRouteImport.update({
+  id: '/media',
+  path: '/media',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -107,6 +116,16 @@ const AdminDebugRoute = AdminDebugRouteImport.update({
 const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
   id: '/admin/enquiries',
   path: '/admin/enquiries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminExpensesRoute = AdminExpensesRouteImport.update({
+  id: '/admin/expenses',
+  path: '/admin/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFinanceRoute = AdminFinanceRouteImport.update({
+  id: '/admin/finance',
+  path: '/admin/finance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminForgotPasswordRoute = AdminForgotPasswordRouteImport.update({
@@ -185,14 +204,20 @@ const AdminWebsiteTestimonialsRoute =
     path: '/testimonials',
     getParentRoute: () => AdminWebsiteRoute,
   } as any)
+const QuoteViewTokenRoute = QuoteViewTokenRouteImport.update({
+  id: '/view/$token',
+  path: '/view/$token',
+  getParentRoute: () => QuoteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/health': typeof HealthRoute
+  '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
-  '/quote': typeof QuoteRoute
+  '/quote': typeof QuoteRouteWithChildren
   '/terms': typeof TermsRoute
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
@@ -200,6 +225,8 @@ export interface FileRoutesByFullPath {
   '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/expenses': typeof AdminExpensesRoute
+  '/admin/finance': typeof AdminFinanceRoute
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
@@ -216,14 +243,16 @@ export interface FileRoutesByFullPath {
   '/admin/website/seo': typeof AdminWebsiteSeoRoute
   '/admin/website/services': typeof AdminWebsiteServicesRoute
   '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
+  '/quote/view/$token': typeof QuoteViewTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/health': typeof HealthRoute
+  '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
-  '/quote': typeof QuoteRoute
+  '/quote': typeof QuoteRouteWithChildren
   '/terms': typeof TermsRoute
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
@@ -231,6 +260,8 @@ export interface FileRoutesByTo {
   '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/expenses': typeof AdminExpensesRoute
+  '/admin/finance': typeof AdminFinanceRoute
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
@@ -247,6 +278,7 @@ export interface FileRoutesByTo {
   '/admin/website/seo': typeof AdminWebsiteSeoRoute
   '/admin/website/services': typeof AdminWebsiteServicesRoute
   '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
+  '/quote/view/$token': typeof QuoteViewTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -254,8 +286,9 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/health': typeof HealthRoute
+  '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
-  '/quote': typeof QuoteRoute
+  '/quote': typeof QuoteRouteWithChildren
   '/terms': typeof TermsRoute
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
@@ -263,6 +296,8 @@ export interface FileRoutesById {
   '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/expenses': typeof AdminExpensesRoute
+  '/admin/finance': typeof AdminFinanceRoute
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
@@ -279,6 +314,7 @@ export interface FileRoutesById {
   '/admin/website/seo': typeof AdminWebsiteSeoRoute
   '/admin/website/services': typeof AdminWebsiteServicesRoute
   '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
+  '/quote/view/$token': typeof QuoteViewTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -287,6 +323,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/health'
+    | '/media'
     | '/privacy'
     | '/quote'
     | '/terms'
@@ -296,6 +333,8 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/debug'
     | '/admin/enquiries'
+    | '/admin/expenses'
+    | '/admin/finance'
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/media'
@@ -312,12 +351,14 @@ export interface FileRouteTypes {
     | '/admin/website/seo'
     | '/admin/website/services'
     | '/admin/website/testimonials'
+    | '/quote/view/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
     | '/health'
+    | '/media'
     | '/privacy'
     | '/quote'
     | '/terms'
@@ -327,6 +368,8 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/debug'
     | '/admin/enquiries'
+    | '/admin/expenses'
+    | '/admin/finance'
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/media'
@@ -343,12 +386,14 @@ export interface FileRouteTypes {
     | '/admin/website/seo'
     | '/admin/website/services'
     | '/admin/website/testimonials'
+    | '/quote/view/$token'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/contact'
     | '/health'
+    | '/media'
     | '/privacy'
     | '/quote'
     | '/terms'
@@ -358,6 +403,8 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/debug'
     | '/admin/enquiries'
+    | '/admin/expenses'
+    | '/admin/finance'
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/media'
@@ -374,6 +421,7 @@ export interface FileRouteTypes {
     | '/admin/website/seo'
     | '/admin/website/services'
     | '/admin/website/testimonials'
+    | '/quote/view/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -381,8 +429,9 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   HealthRoute: typeof HealthRoute
+  MediaRoute: typeof MediaRoute
   PrivacyRoute: typeof PrivacyRoute
-  QuoteRoute: typeof QuoteRoute
+  QuoteRoute: typeof QuoteRouteWithChildren
   TermsRoute: typeof TermsRoute
   TestEnvRoute: typeof TestEnvRoute
   TradeRoute: typeof TradeRoute
@@ -390,6 +439,8 @@ export interface RootRouteChildren {
   AdminClientsRoute: typeof AdminClientsRoute
   AdminDebugRoute: typeof AdminDebugRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
+  AdminExpensesRoute: typeof AdminExpensesRoute
+  AdminFinanceRoute: typeof AdminFinanceRoute
   AdminForgotPasswordRoute: typeof AdminForgotPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -429,6 +480,13 @@ declare module '@tanstack/react-router' {
       path: '/health'
       fullPath: '/health'
       preLoaderRoute: typeof HealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/media': {
+      id: '/media'
+      path: '/media'
+      fullPath: '/media'
+      preLoaderRoute: typeof MediaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -499,6 +557,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/enquiries'
       fullPath: '/admin/enquiries'
       preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/expenses': {
+      id: '/admin/expenses'
+      path: '/admin/expenses'
+      fullPath: '/admin/expenses'
+      preLoaderRoute: typeof AdminExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/finance': {
+      id: '/admin/finance'
+      path: '/admin/finance'
+      fullPath: '/admin/finance'
+      preLoaderRoute: typeof AdminFinanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/forgot-password': {
@@ -606,8 +678,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteTestimonialsRouteImport
       parentRoute: typeof AdminWebsiteRoute
     }
+    '/quote/view/$token': {
+      id: '/quote/view/$token'
+      path: '/view/$token'
+      fullPath: '/quote/view/$token'
+      preLoaderRoute: typeof QuoteViewTokenRouteImport
+      parentRoute: typeof QuoteRoute
+    }
   }
 }
+
+interface QuoteRouteChildren {
+  QuoteViewTokenRoute: typeof QuoteViewTokenRoute
+}
+
+const QuoteRouteChildren: QuoteRouteChildren = {
+  QuoteViewTokenRoute: QuoteViewTokenRoute,
+}
+
+const QuoteRouteWithChildren = QuoteRoute._addFileChildren(QuoteRouteChildren)
 
 interface AdminWebsiteRouteChildren {
   AdminWebsiteCompanyInfoRoute: typeof AdminWebsiteCompanyInfoRoute
@@ -638,8 +727,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   HealthRoute: HealthRoute,
+  MediaRoute: MediaRoute,
   PrivacyRoute: PrivacyRoute,
-  QuoteRoute: QuoteRoute,
+  QuoteRoute: QuoteRouteWithChildren,
   TermsRoute: TermsRoute,
   TestEnvRoute: TestEnvRoute,
   TradeRoute: TradeRoute,
@@ -647,6 +737,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClientsRoute: AdminClientsRoute,
   AdminDebugRoute: AdminDebugRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
+  AdminExpensesRoute: AdminExpensesRoute,
+  AdminFinanceRoute: AdminFinanceRoute,
   AdminForgotPasswordRoute: AdminForgotPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMediaRoute: AdminMediaRoute,

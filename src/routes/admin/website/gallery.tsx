@@ -71,9 +71,8 @@ function GalleryPage() {
     setLoading(false);
   };
 
-  const filteredItems = activeCategory === 'all' 
-    ? items 
-    : items.filter(item => item.category === activeCategory);
+  const filteredItems =
+    activeCategory === 'all' ? items : items.filter((item) => item.category === activeCategory);
 
   const handleCreate = () => {
     setEditingItem({
@@ -100,12 +99,10 @@ function GalleryPage() {
     }
 
     if (isCreating) {
-      const { error } = await supabase
-        .from('website_gallery')
-        .insert({
-          ...editingItem,
-          updated_by: adminUser?.id,
-        });
+      const { error } = await supabase.from('website_gallery').insert({
+        ...editingItem,
+        updated_by: adminUser?.user_id,
+      });
 
       if (error) {
         console.error('Error creating gallery item:', error);
@@ -117,7 +114,7 @@ function GalleryPage() {
         .from('website_gallery')
         .update({
           ...editingItem,
-          updated_by: adminUser?.id,
+          updated_by: adminUser?.user_id,
         })
         .eq('id', editingItem.id);
 
@@ -138,10 +135,7 @@ function GalleryPage() {
       return;
     }
 
-    const { error } = await supabase
-      .from('website_gallery')
-      .delete()
-      .eq('id', item.id);
+    const { error } = await supabase.from('website_gallery').delete().eq('id', item.id);
 
     if (error) {
       console.error('Error deleting gallery item:', error);
@@ -155,10 +149,10 @@ function GalleryPage() {
     const newStatus = item.status === 'published' ? 'draft' : 'published';
     const { error } = await supabase
       .from('website_gallery')
-      .update({ 
+      .update({
         status: newStatus,
         published_at: newStatus === 'published' ? new Date().toISOString() : null,
-        updated_by: adminUser?.id,
+        updated_by: adminUser?.user_id,
       })
       .eq('id', item.id);
 
@@ -186,9 +180,7 @@ function GalleryPage() {
         {/* Header */}
         <div className="border-b pb-4">
           <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
-          <p className="text-gray-600 mt-1">
-            Manage images organized by category
-          </p>
+          <p className="text-gray-600 mt-1">Manage images organized by category</p>
         </div>
 
         {/* Category Filter */}
@@ -203,7 +195,7 @@ function GalleryPage() {
           >
             All ({items.length})
           </button>
-          {CATEGORIES.map(cat => (
+          {CATEGORIES.map((cat) => (
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
@@ -213,7 +205,7 @@ function GalleryPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {cat.label} ({items.filter(i => i.category === cat.value).length})
+              {cat.label} ({items.filter((i) => i.category === cat.value).length})
             </button>
           ))}
         </div>
@@ -247,7 +239,8 @@ function GalleryPage() {
                     alt={item.alt_text || item.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                      e.currentTarget.src =
+                        'https://via.placeholder.com/400x300?text=Image+Not+Found';
                     }}
                   />
                   <div className="absolute top-2 right-2">
@@ -284,7 +277,11 @@ function GalleryPage() {
                         className="p-1.5 text-teal-600 hover:bg-teal-50 rounded"
                         title={item.status === 'published' ? 'Unpublish' : 'Publish'}
                       >
-                        {item.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {item.status === 'published' ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                       <button
                         onClick={() => handleDelete(item)}
@@ -322,9 +319,7 @@ function GalleryPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                   <input
                     type="text"
                     value={editingItem.title}
@@ -340,7 +335,9 @@ function GalleryPage() {
                   </label>
                   <textarea
                     value={editingItem.description || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, description: e.target.value })
+                    }
                     rows={2}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     placeholder="Optional description"
@@ -355,7 +352,9 @@ function GalleryPage() {
                     <input
                       type="text"
                       value={editingItem.image_url}
-                      onChange={(e) => setEditingItem({ ...editingItem, image_url: e.target.value })}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, image_url: e.target.value })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="https://..."
                     />
@@ -366,7 +365,8 @@ function GalleryPage() {
                           alt="Preview"
                           className="w-full h-48 object-cover rounded"
                           onError={(e) => {
-                            e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Invalid+URL';
+                            e.currentTarget.src =
+                              'https://via.placeholder.com/400x300?text=Invalid+URL';
                           }}
                         />
                       </div>
@@ -394,11 +394,15 @@ function GalleryPage() {
                     </label>
                     <select
                       value={editingItem.category}
-                      onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value as any })}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, category: e.target.value as any })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
-                      {CATEGORIES.map(cat => (
-                        <option key={cat.value} value={cat.value}>{cat.label}</option>
+                      {CATEGORIES.map((cat) => (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -409,7 +413,9 @@ function GalleryPage() {
                     <input
                       type="number"
                       value={editingItem.display_order}
-                      onChange={(e) => setEditingItem({ ...editingItem, display_order: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, display_order: parseInt(e.target.value) })
+                      }
                       className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>

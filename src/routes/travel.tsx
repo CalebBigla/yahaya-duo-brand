@@ -12,12 +12,14 @@ import {
   Download,
   type LucideIcon,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PageHero } from "@/components/site/PageHero";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { CountryCarousel } from "@/components/travel/CountryCarousel";
 import { TourPackagesCards } from "@/components/travel/TourPackagesCards";
 import { travelServices, site } from "@/lib/site";
+import { getPublishedServices } from "@/lib/queries/website";
 import travelImg from "@/assets/travel.jpg";
 
 // Page hero image
@@ -85,9 +87,12 @@ const serviceDetails = {
       "Document verification before submission to avoid rejections",
       "Application tracking and follow-up throughout the process",
     ],
-    required: "Valid passport (6+ months validity), passport photos, proof of funds (bank statements), travel itinerary, accommodation booking, invitation letter (if applicable), employment letter or business registration.",
-    timeline: "Cyprus Visa: Processing time varies depending on application requirements and embassy processing. Turkey Visa: Processing time varies depending on application type and processing conditions. Schengen Visa: Approximately 15 working days, depending on the consulate and application. Dubai Visa: Approximately 3–5 working days. We provide specific timelines when you enquire.",
-    example: "Applying for a Schengen visa? We provide your document checklist, review your bank statements and invitation letter, help you complete the online application, book your appointment at the visa application center, and track the application until your passport is returned with the visa sticker.",
+    required:
+      "Valid passport (6+ months validity), passport photos, proof of funds (bank statements), travel itinerary, accommodation booking, invitation letter (if applicable), employment letter or business registration.",
+    timeline:
+      "Cyprus Visa: Processing time varies depending on application requirements and embassy processing. Turkey Visa: Processing time varies depending on application type and processing conditions. Schengen Visa: Approximately 15 working days, depending on the consulate and application. Dubai Visa: Approximately 3–5 working days. We provide specific timelines when you enquire.",
+    example:
+      "Applying for a Schengen visa? We provide your document checklist, review your bank statements and invitation letter, help you complete the online application, book your appointment at the visa application center, and track the application until your passport is returned with the visa sticker.",
   },
   "flight-bookings": {
     included: [
@@ -97,9 +102,12 @@ const serviceDetails = {
       "Date change and rebooking coordination",
       "E-ticket issuance and confirmation sent to your email or WhatsApp",
     ],
-    required: "Full names as they appear on passport, passport number and expiry date, preferred travel dates (plus flexible alternatives if possible), destination(s), contact phone and email.",
-    timeline: "Same-day booking for most routes once payment is confirmed. For group bookings (8+ passengers) or complex multi-city itineraries, allow 1-2 business days for us to secure the best fares and confirm availability.",
-    example: "Flying from Yola to London for a business trip? We compare fares on Ethiopian, Turkish, Emirates and other carriers, find the best routing and price, issue your e-ticket, and send you the itinerary. If your meeting date shifts, we rebook without you having to call the airline.",
+    required:
+      "Full names as they appear on passport, passport number and expiry date, preferred travel dates (plus flexible alternatives if possible), destination(s), contact phone and email.",
+    timeline:
+      "Same-day booking for most routes once payment is confirmed. For group bookings (8+ passengers) or complex multi-city itineraries, allow 1-2 business days for us to secure the best fares and confirm availability.",
+    example:
+      "Flying from Yola to London for a business trip? We compare fares on Ethiopian, Turkish, Emirates and other carriers, find the best routing and price, issue your e-ticket, and send you the itinerary. If your meeting date shifts, we rebook without you having to call the airline.",
   },
   "hotel-reservations": {
     included: [
@@ -109,9 +117,12 @@ const serviceDetails = {
       "Payment coordination (pay directly or through us, depending on hotel terms)",
       "Reservation modifications or extensions if your stay changes",
     ],
-    required: "Destination city, check-in and check-out dates, number of rooms and guests, budget range, location preferences (near airport, city center, business district).",
-    timeline: "Confirmed reservations within 24 hours for most destinations. For high-demand periods (conferences, holidays) or specific property requests, allow 2-3 days.",
-    example: "Need accommodation in Dubai for a week-long trade expo? We identify hotels near the expo center, provide 3 options at different price points with breakfast included, book your preferred choice, and send the confirmation you can present at check-in or use for your visa application.",
+    required:
+      "Destination city, check-in and check-out dates, number of rooms and guests, budget range, location preferences (near airport, city center, business district).",
+    timeline:
+      "Confirmed reservations within 24 hours for most destinations. For high-demand periods (conferences, holidays) or specific property requests, allow 2-3 days.",
+    example:
+      "Need accommodation in Dubai for a week-long trade expo? We identify hotels near the expo center, provide 3 options at different price points with breakfast included, book your preferred choice, and send the confirmation you can present at check-in or use for your visa application.",
   },
   "tour-packages": {
     included: [
@@ -121,9 +132,12 @@ const serviceDetails = {
       "Travel insurance options",
       "On-ground contact number for the duration of the trip",
     ],
-    required: "Group size, destination, preferred travel period, budget per person, any specific activities or sites you want included (pilgrimage sites, tourist attractions, business visits).",
-    timeline: "Allow 4-6 weeks for full package arrangements, especially for groups requiring visas. For domestic packages or visa-free destinations, 2-3 weeks is usually sufficient.",
-    example: "Organizing a corporate retreat to Ghana for 12 staff? We arrange round-trip flights from Abuja, 3 nights at a beach resort, airport transfers, a city tour, team dinner, and travel insurance — all itemized and confirmed before you commit. One invoice, one point of contact.",
+    required:
+      "Group size, destination, preferred travel period, budget per person, any specific activities or sites you want included (pilgrimage sites, tourist attractions, business visits).",
+    timeline:
+      "Allow 4-6 weeks for full package arrangements, especially for groups requiring visas. For domestic packages or visa-free destinations, 2-3 weeks is usually sufficient.",
+    example:
+      "Organizing a corporate retreat to Ghana for 12 staff? We arrange round-trip flights from Abuja, 3 nights at a beach resort, airport transfers, a city tour, team dinner, and travel insurance — all itemized and confirmed before you commit. One invoice, one point of contact.",
   },
   "travel-consultancy": {
     included: [
@@ -133,9 +147,12 @@ const serviceDetails = {
       "Packing and documentation checklists",
       "Real-time advice by phone or WhatsApp during your trip",
     ],
-    required: "Your destination(s), travel purpose (tourism, business, study, medical), approximate dates, your nationality and passport validity, any constraints (budget, time).",
-    timeline: "Immediate consultancy for straightforward queries. For complex multi-country trips or business travel programs, we'll schedule a call or meeting to go through requirements in detail.",
-    example: "Planning a multi-city trip across Europe but not sure which Schengen visa to apply for? We review your itinerary, tell you which country's embassy to approach, what documents are needed, and the optimal flight routing to minimize costs and layovers. Pay only for our time — no booking required.",
+    required:
+      "Your destination(s), travel purpose (tourism, business, study, medical), approximate dates, your nationality and passport validity, any constraints (budget, time).",
+    timeline:
+      "Immediate consultancy for straightforward queries. For complex multi-country trips or business travel programs, we'll schedule a call or meeting to go through requirements in detail.",
+    example:
+      "Planning a multi-city trip across Europe but not sure which Schengen visa to apply for? We review your itinerary, tell you which country's embassy to approach, what documents are needed, and the optimal flight routing to minimize costs and layovers. Pay only for our time — no booking required.",
   },
 };
 
@@ -175,7 +192,8 @@ const visaDestinations = [
     country: "Egypt",
     types: "Tourism, Business",
     timeline: "5-7 working days",
-    notes: "Hotel booking and return ticket confirmation required. E-visa available for some nationalities.",
+    notes:
+      "Hotel booking and return ticket confirmation required. E-visa available for some nationalities.",
   },
   {
     country: "Cyprus",
@@ -208,8 +226,16 @@ const visaChecklist = [
 ];
 
 function TravelPage() {
-  const [selectedDestination, setSelectedDestination] = useState<string>(visaDestinations[0].country);
+  const [selectedDestination, setSelectedDestination] = useState<string>(
+    visaDestinations[0]?.country ?? "",
+  );
   const [showChecklist, setShowChecklist] = useState(false);
+  const { data: publishedServices } = useQuery({
+    queryKey: ["website", "services", "travel"],
+    queryFn: () => getPublishedServices("travel"),
+    staleTime: 60_000,
+  });
+  const services = publishedServices ?? travelServices;
 
   const destination = visaDestinations.find((d) => d.country === selectedDestination);
 
@@ -234,7 +260,8 @@ function TravelPage() {
                 Travel Services
               </h1>
               <p className="mt-5 text-lg leading-relaxed text-primary-foreground/85">
-                Visas, flights, hotels and full itineraries handled end to end — from our office in Jimeta-Yola to wherever you are going.
+                Visas, flights, hotels and full itineraries handled end to end — from our office in
+                Jimeta-Yola to wherever you are going.
               </p>
             </div>
           </div>
@@ -255,14 +282,14 @@ function TravelPage() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { name: 'Umrah Visas', icon: '🕌' },
-              { name: 'Study Visas', icon: '🎓' },
-              { name: 'Tourism Visas', icon: '✈️' },
-              { name: 'Hajj Visas', icon: '🕋' },
-              { name: 'Schengen Visas', icon: '🇪🇺' },
-              { name: 'Work Visas', icon: '💼' },
-              { name: 'Business Visas', icon: '🤝' },
-              { name: 'Transit Visas', icon: '🌍' },
+              { name: "Umrah Visas", icon: "🕌" },
+              { name: "Study Visas", icon: "🎓" },
+              { name: "Tourism Visas", icon: "✈️" },
+              { name: "Hajj Visas", icon: "🕋" },
+              { name: "Schengen Visas", icon: "🇪🇺" },
+              { name: "Work Visas", icon: "💼" },
+              { name: "Business Visas", icon: "🤝" },
+              { name: "Transit Visas", icon: "🌍" },
             ].map((visa, index) => (
               <div
                 key={index}
@@ -339,10 +366,14 @@ function TravelPage() {
                     : "border-primary-foreground/20 bg-primary-deep hover:border-accent/50"
                 }`}
               >
-                <h3 className={`font-bold ${selectedDestination === dest.country ? "text-accent-foreground" : "text-primary-foreground"}`}>
+                <h3
+                  className={`font-bold ${selectedDestination === dest.country ? "text-accent-foreground" : "text-primary-foreground"}`}
+                >
                   {dest.country}
                 </h3>
-                <p className={`mt-1 text-xs ${selectedDestination === dest.country ? "text-accent-foreground/80" : "text-primary-foreground/60"}`}>
+                <p
+                  className={`mt-1 text-xs ${selectedDestination === dest.country ? "text-accent-foreground/80" : "text-primary-foreground/60"}`}
+                >
                   {dest.timeline}
                 </p>
               </button>
@@ -353,17 +384,29 @@ function TravelPage() {
             <div className="mt-6 rounded-xl border border-primary-foreground/20 bg-primary-deep p-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent">Visa Types</p>
-                  <p className="mt-1 text-sm font-semibold text-primary-foreground">{destination.types}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    Visa Types
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-primary-foreground">
+                    {destination.types}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent">Processing Time</p>
-                  <p className="mt-1 text-sm font-semibold text-primary-foreground">{destination.timeline}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    Processing Time
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-primary-foreground">
+                    {destination.timeline}
+                  </p>
                 </div>
               </div>
               <div className="mt-4 border-t border-primary-foreground/10 pt-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-accent">Important Notes</p>
-                <p className="mt-2 text-sm leading-relaxed text-primary-foreground/75">{destination.notes}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                  Important Notes
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-primary-foreground/75">
+                  {destination.notes}
+                </p>
               </div>
             </div>
           )}
@@ -386,7 +429,8 @@ function TravelPage() {
               Explore Our Popular Destinations
             </h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
-              Discover the countries we serve most frequently. From visa processing to complete travel packages, we handle all the details for your journey.
+              Discover the countries we serve most frequently. From visa processing to complete
+              travel packages, we handle all the details for your journey.
             </p>
           </div>
           <CountryCarousel />
@@ -401,7 +445,8 @@ function TravelPage() {
               Visa application document checklist
             </h2>
             <p className="mt-2 text-muted-foreground">
-              General requirements for most visa applications — we provide a tailored checklist for your specific destination when you enquire
+              General requirements for most visa applications — we provide a tailored checklist for
+              your specific destination when you enquire
             </p>
           </div>
 
@@ -411,7 +456,9 @@ function TravelPage() {
           >
             <FileText className="h-5 w-5" />
             {showChecklist ? "Hide" : "View"} Checklist
-            <ChevronDown className={`h-4 w-4 transition-transform ${showChecklist ? "rotate-180" : ""}`} />
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${showChecklist ? "rotate-180" : ""}`}
+            />
           </button>
 
           {showChecklist && (
@@ -426,7 +473,11 @@ function TravelPage() {
               </ul>
               <div className="mt-6 rounded-lg border border-accent/30 bg-accent-soft/50 p-4">
                 <p className="text-sm leading-relaxed text-foreground/80">
-                  <strong className="text-accent-foreground">Important:</strong> Requirements vary by destination, visa type, and your circumstances. This is a general guide. When you contact us, we provide a specific checklist for your application, review your documents before submission, and flag anything that might cause delays or rejections.
+                  <strong className="text-accent-foreground">Important:</strong> Requirements vary
+                  by destination, visa type, and your circumstances. This is a general guide. When
+                  you contact us, we provide a specific checklist for your application, review your
+                  documents before submission, and flag anything that might cause delays or
+                  rejections.
                 </p>
               </div>
             </div>
@@ -435,12 +486,12 @@ function TravelPage() {
       </section>
 
       {/* Detailed Services */}
-      {travelServices.map((service, i) => {
+      {services.map((service, i) => {
         const Icon = icons[service.slug] ?? Plane;
         const details = serviceDetails[service.slug as keyof typeof serviceDetails];
-        
+
         // Special handling for tour packages - use card layout
-        if (service.slug === 'tour-packages') {
+        if (service.slug === "tour-packages") {
           return (
             <section
               key={service.slug}
@@ -453,7 +504,7 @@ function TravelPage() {
             </section>
           );
         }
-        
+
         // Original layout for other services
         return (
           <section
@@ -482,7 +533,10 @@ function TravelPage() {
                     </div>
                     <ul className="mt-4 space-y-2">
                       {details.included.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <li
+                          key={idx}
+                          className="flex items-start gap-2 text-sm text-muted-foreground"
+                        >
                           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                           {item}
                         </li>
@@ -496,7 +550,9 @@ function TravelPage() {
                         <FileText className="h-5 w-5 text-accent" />
                         <h3 className="text-sm font-bold text-primary">What you need to provide</h3>
                       </div>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{details.required}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        {details.required}
+                      </p>
                     </div>
 
                     <div className="rounded-xl border border-border bg-card p-5 shadow-card">
@@ -504,7 +560,9 @@ function TravelPage() {
                         <Clock className="h-5 w-5 text-accent" />
                         <h3 className="text-sm font-bold text-primary">Typical timeline</h3>
                       </div>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{details.timeline}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        {details.timeline}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -512,8 +570,12 @@ function TravelPage() {
 
               {details?.example && (
                 <div className="mt-6 rounded-xl border-2 border-accent/20 bg-accent-soft/30 p-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent-foreground/70">Example Scenario</p>
-                  <p className="mt-3 text-sm leading-relaxed text-foreground/80">{details.example}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent-foreground/70">
+                    Example Scenario
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-foreground/80">
+                    {details.example}
+                  </p>
                 </div>
               )}
             </div>
@@ -537,11 +599,16 @@ function TravelPage() {
                 label: "Service needed",
                 type: "select",
                 required: true,
-                options: travelServices.map((s) => s.title),
+                options: services.map((s) => s.title),
               },
               { name: "dates", label: "Travel dates", type: "date" },
               { name: "destination", label: "Destination" },
-              { name: "message", label: "Message", type: "textarea", placeholder: "Any details we should know" },
+              {
+                name: "message",
+                label: "Message",
+                type: "textarea",
+                placeholder: "Any details we should know",
+              },
             ]}
           />
         </div>
