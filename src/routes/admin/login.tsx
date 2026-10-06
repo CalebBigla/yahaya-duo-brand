@@ -75,8 +75,8 @@ function AdminLogin() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 px-4 py-12">
-      <div className="w-full max-w-md">
+    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 px-4">
+      <div className="w-full max-w-md h-screen flex flex-col justify-center py-12">
         {/* Logo and Title */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-2xl">
