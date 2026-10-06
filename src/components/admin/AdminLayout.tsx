@@ -114,7 +114,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
   const ThemeIcon = themeIcons[theme];
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900"
       {/* Sidebar - Desktop */}
       <aside
         className={`hidden lg:flex lg:flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${
@@ -274,7 +274,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col h-screen overflow-hidden">
         {/* Header */}
         <header className="flex h-16 items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6">
           <div className="flex items-center gap-4">
