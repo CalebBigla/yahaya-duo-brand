@@ -124,7 +124,7 @@ const travelSteps = [
     number: 1,
     title: "Tell us your destination",
     description:
-      "Call, WhatsApp, or fill our form with your travel dates and visa type — tourist, business, medical, Hajj, Umrah, work, or study. We process visas for Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.",
+      "Call, WhatsApp, or fill our form with your travel dates and visa type — tourist, business, medical, Hajj, Umrah, work, or study. We process visas for Saudi Arabia, Qatar, Turkey, UAE, China, Egypt and more.",
   },
   {
     number: 2,
@@ -165,7 +165,7 @@ const faqs = [
   {
     question: "What visa types do you process?",
     answer:
-      "We process Tourist Visas, Business Visas, Medical Visas, Transit Visas, Hajj Visas, Umrah Visas, Work Visas, and Study Visas. We also handle Schengen Visas. Destination countries include Germany, Saudi Arabia, Qatar, Turkey, United Arab Emirates, China, Egypt, Cyprus and others. Contact us with your specific destination for processing timelines and document requirements.",
+      "We process Tourist Visas, Business Visas, Medical Visas, Transit Visas, Hajj Visas, Umrah Visas, Work Visas, and Study Visas. Destination countries include Saudi Arabia, Qatar, Turkey, United Arab Emirates, China, Egypt and others. Contact us with your specific destination for processing timelines and document requirements.",
   },
   {
     question: "How do your trade deposits work?",
@@ -443,7 +443,7 @@ function Index() {
                     </h3>
                     <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
                       Complete visa processing, flight bookings, hotel reservations, and tour
-                      packages to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus
+                      packages to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt
                       and more.
                     </p>
                     <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
@@ -503,8 +503,8 @@ function Index() {
                 </h2>
                 <p className="mt-4 text-muted-foreground">
                   Complete visa processing and travel packages for tourist, business, medical, Hajj,
-                  Umrah, work, and study visas to Germany, Saudi Arabia, Qatar, Turkey, UAE, China,
-                  Egypt, Cyprus and more. Flight bookings, hotel reservations, airport transfers,
+                  Umrah, work, and study visas to Saudi Arabia, Qatar, Turkey, UAE, China,
+                  Egypt and more. Flight bookings, hotel reservations, airport transfers,
                   and guided tours.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-4">
@@ -662,7 +662,7 @@ function Index() {
                   <h3 className="mt-4 text-2xl font-bold text-primary">Travel</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                     Complete visa processing, flight bookings, hotel reservations, and tour packages
-                    to Germany, Saudi Arabia, Qatar, Turkey, UAE, China, Egypt, Cyprus and more.
+                    to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt and more.
                   </p>
 
                   {/* Expandable details - visible on mobile, hover on desktop */}

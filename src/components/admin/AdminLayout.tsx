@@ -67,7 +67,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
       title: 'MAIN',
       items: [
         { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-        { name: 'Enquiries', path: '/admin/enquiries', icon: Inbox, badge: 24 },
+        { name: 'Enquiries', path: '/admin/enquiries', icon: Inbox },
         { name: 'Clients', path: '/admin/clients', icon: UsersIcon },
         { name: 'Quotes', path: '/admin/quotes', icon: FileText },
         { name: 'Finance', path: '/admin/finance', icon: DollarSign },

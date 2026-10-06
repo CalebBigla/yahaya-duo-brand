@@ -46,7 +46,7 @@ interface FinancialStats {
   totalRevenue: number;
   totalExpenses: number;
   netRevenue: number;
-  monthlyGrowth: number;
+  monthlyGrowth: number | null;
   monthlyGrowthTrend: 'up' | 'down';
 }
 
@@ -71,7 +71,7 @@ function AdminDashboard() {
     totalRevenue: 0,
     totalExpenses: 0,
     netRevenue: 0,
-    monthlyGrowth: 0,
+    monthlyGrowth: null,
     monthlyGrowthTrend: 'up',
   });
   const [operationsStats, setOperationsStats] = useState<OperationsStats>({
@@ -87,47 +87,75 @@ function AdminDashboard() {
   const [isLoadingChart, setIsLoadingChart] = useState(true);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
   const [dashboardLoadError, setDashboardLoadError] = useState(false);
+  const [financialStatsError, setFinancialStatsError] = useState(false);
+  const [operationsStatsError, setOperationsStatsError] = useState(false);
+  const [chartLoadError, setChartLoadError] = useState(false);
 
   useEffect(() => {
     const loadAdminData = async () => {
-      const { user } = await checkAdminAccess();
-      setAdminUser(user);
-      await Promise.all([
-        loadFinancialStats(),
-        loadOperationsStats(),
-      ]);
-      setIsLoadingDashboard(false);
+      try {
+        const { user } = await checkAdminAccess();
+        if (!user) throw new Error('No authorized admin session');
+        setAdminUser(user);
+        await Promise.all([
+          user.role === 'owner' ? loadFinancialStats() : Promise.resolve(),
+          loadOperationsStats(),
+        ]);
+      } catch (error) {
+        console.error('Unable to load dashboard access:', error);
+        setDashboardLoadError(true);
+      } finally {
+        setIsLoadingDashboard(false);
+      }
     };
 
-    loadAdminData();
+    void loadAdminData();
   }, []);
 
   useEffect(() => {
-    loadChartData();
-  }, [timePeriod, customStartDate, customEndDate]);
+    if (adminUser?.role !== 'owner') {
+      setIsLoadingChart(false);
+      return;
+    }
+    void loadChartData();
+  }, [timePeriod, customStartDate, customEndDate, adminUser?.role]);
 
   const loadFinancialStats = async () => {
+    setFinancialStatsError(false);
     try {
-      // Load all financial transactions
-      const transactions = await queueQuery(async () => {
-        const { data, error } = await supabase
-          .from('financial_transactions')
-          .select('amount, transaction_date')
-          .eq('status', 'active');
-        
-        if (error) throw error;
-        return data || [];
-      });
+      const pageSize = 1000;
+      const transactions: Array<{ amount: number; transaction_date: string }> = [];
+      for (let from = 0; ; from += pageSize) {
+        const page = await queueQuery(async () => {
+          const { data, error } = await supabase
+            .from('financial_transactions')
+            .select('amount, transaction_date')
+            .eq('status', 'active')
+            .order('transaction_date', { ascending: true })
+            .order('id', { ascending: true })
+            .range(from, from + pageSize - 1);
+          if (error) throw error;
+          return data ?? [];
+        });
+        transactions.push(...page);
+        if (page.length < pageSize) break;
+      }
 
-      // Load all expense transactions
-      const expenses = await queueQuery(async () => {
-        const { data, error } = await supabase
-          .from('expense_transactions')
-          .select('amount, expense_date');
-        
-        if (error) throw error;
-        return data || [];
-      });
+      const expenses: Array<{ amount: number; expense_date: string }> = [];
+      for (let from = 0; ; from += pageSize) {
+        const page = await queueQuery(async () => {
+          const { data, error } = await supabase
+            .from('expense_transactions')
+            .select('amount, expense_date')
+            .order('expense_date', { ascending: true })
+            .order('id', { ascending: true })
+            .range(from, from + pageSize - 1);
+          if (error) throw error;
+          return data ?? [];
+        });
+        expenses.push(...page);
+        if (page.length < pageSize) break;
+      }
 
       // Calculate totals
       const totalRevenue = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
@@ -156,27 +184,25 @@ function AdminDashboard() {
         })
         .reduce((sum, t) => sum + Number(t.amount), 0);
 
-      let monthlyGrowth = 0;
-      if (previousMonthRevenue > 0) {
-        monthlyGrowth = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
-      } else if (currentMonthRevenue > 0) {
-        monthlyGrowth = 100; // If no previous data but have current, show 100% growth
-      }
+      const monthlyGrowth = previousMonthRevenue > 0
+        ? ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
+        : currentMonthRevenue > 0 ? null : 0;
 
       setFinancialStats({
         totalRevenue,
         totalExpenses,
         netRevenue,
         monthlyGrowth,
-        monthlyGrowthTrend: monthlyGrowth >= 0 ? 'up' : 'down',
+        monthlyGrowthTrend: monthlyGrowth === null || monthlyGrowth >= 0 ? 'up' : 'down',
       });
     } catch (error) {
       console.error('Error loading financial stats:', error);
-      setDashboardLoadError(true);
+      setFinancialStatsError(true);
     }
   };
 
   const loadOperationsStats = async () => {
+    setOperationsStatsError(false);
     try {
       // Load enquiries count
       const enquiriesResult = await queueQuery(async () => {
@@ -221,12 +247,13 @@ function AdminDashboard() {
       });
     } catch (error) {
       console.error('Error loading operations stats:', error);
-      setDashboardLoadError(true);
+      setOperationsStatsError(true);
     }
   };
 
   const loadChartData = async () => {
     setIsLoadingChart(true);
+    setChartLoadError(false);
     try {
       // Calculate date range based on selected period
       let startDate: Date;
@@ -244,81 +271,100 @@ function AdminDashboard() {
           break;
         case 'custom':
           if (!customStartDate || !customEndDate) {
+            setChartData([]);
             setIsLoadingChart(false);
             return;
           }
           startDate = new Date(customStartDate);
           endDate = new Date(customEndDate);
+          if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || startDate > endDate) {
+            setChartData([]);
+            setIsLoadingChart(false);
+            return;
+          }
           break;
         default:
           startDate = subMonths(endDate, 6);
       }
 
       // Load transactions within date range
-      const transactions = await queueQuery(async () => {
-        const { data, error } = await supabase
-          .from('financial_transactions')
-          .select('amount, transaction_date')
-          .eq('status', 'active')
-          .gte('transaction_date', format(startDate, 'yyyy-MM-dd'))
-          .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
-          .order('transaction_date', { ascending: true });
-        
-        if (error) throw error;
-        return data || [];
-      });
+      const pageSize = 1000;
+      const transactions: Array<{ amount: number; transaction_date: string }> = [];
+      for (let from = 0; ; from += pageSize) {
+        const page = await queueQuery(async () => {
+          const { data, error } = await supabase
+            .from('financial_transactions')
+            .select('amount, transaction_date')
+            .eq('status', 'active')
+            .gte('transaction_date', format(startDate, 'yyyy-MM-dd'))
+            .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
+            .order('transaction_date', { ascending: true })
+            .order('id', { ascending: true })
+            .range(from, from + pageSize - 1);
+          if (error) throw error;
+          return data ?? [];
+        });
+        transactions.push(...page);
+        if (page.length < pageSize) break;
+      }
 
-      // Load expenses within date range
-      const expenses = await queueQuery(async () => {
-        const { data, error } = await supabase
-          .from('expense_transactions')
-          .select('amount, expense_date')
-          .gte('expense_date', format(startDate, 'yyyy-MM-dd'))
-          .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
-          .order('expense_date', { ascending: true });
-        
-        if (error) throw error;
-        return data || [];
-      });
+      const expenses: Array<{ amount: number; expense_date: string }> = [];
+      for (let from = 0; ; from += pageSize) {
+        const page = await queueQuery(async () => {
+          const { data, error } = await supabase
+            .from('expense_transactions')
+            .select('amount, expense_date')
+            .gte('expense_date', format(startDate, 'yyyy-MM-dd'))
+            .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
+            .order('expense_date', { ascending: true })
+            .order('id', { ascending: true })
+            .range(from, from + pageSize - 1);
+          if (error) throw error;
+          return data ?? [];
+        });
+        expenses.push(...page);
+        if (page.length < pageSize) break;
+      }
 
       // Aggregate data by period
       const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, startDate, endDate);
       setChartData(aggregated);
     } catch (error) {
       console.error('Error loading chart data:', error);
+      setChartData([]);
+      setChartLoadError(true);
     } finally {
       setIsLoadingChart(false);
     }
   };
 
   const aggregateDataByPeriod = (
-    transactions: any[],
-    expenses: any[],
+    transactions: Array<{ amount: number; transaction_date: string }>,
+    expenses: Array<{ amount: number; expense_date: string }>,
     period: TimePeriod,
     startDate: Date,
     endDate: Date
   ): ChartDataPoint[] => {
     const dataMap = new Map<string, { revenue: number; expenses: number }>();
 
-    // Helper to get period key
+    const customDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    const customByWeek = period === 'custom' && customDays <= 60;
+
+    // Use sortable ISO dates as keys so periods remain chronological across years.
     const getPeriodKey = (date: Date): string => {
       switch (period) {
         case 'weekly':
-          return format(startOfWeek(date), 'MMM dd');
+          return format(startOfWeek(date), 'yyyy-MM-dd');
         case 'monthly':
-          return format(startOfMonth(date), 'MMM yyyy');
+          return format(startOfMonth(date), 'yyyy-MM-dd');
         case 'yearly':
-          return format(startOfYear(date), 'yyyy');
+          return format(startOfYear(date), 'yyyy-MM-dd');
         case 'custom':
-          // For custom, group by week if range < 60 days, else by month
-          const daysDiff = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-          if (daysDiff <= 60) {
-            return format(startOfWeek(date), 'MMM dd');
-          } else {
-            return format(startOfMonth(date), 'MMM yyyy');
-          }
+          return customByWeek
+            ? format(startOfWeek(date), 'yyyy-MM-dd')
+            : format(startOfMonth(date), 'yyyy-MM-dd');
         default:
-          return format(date, 'MMM yyyy');
+          return format(startOfMonth(date), 'yyyy-MM-dd');
       }
     };
 
@@ -337,18 +383,19 @@ function AdminDashboard() {
     });
 
     // Convert to array and sort
+    const labelFormat = period === 'yearly'
+      ? 'yyyy'
+      : period === 'weekly' || customByWeek
+        ? 'MMM dd'
+        : 'MMM yyyy';
+
     return Array.from(dataMap.entries())
-      .map(([date, values]) => ({
-        date,
+      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+      .map(([periodStart, values]) => ({
+        date: format(new Date(`${periodStart}T12:00:00`), labelFormat),
         revenue: Math.round(values.revenue),
         expenses: Math.round(values.expenses),
-      }))
-      .sort((a, b) => {
-        // Sort chronologically
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateA.getTime() - dateB.getTime();
-      });
+      }));
   };
 
   const getGreeting = () => {
@@ -387,10 +434,14 @@ function AdminDashboard() {
           </p>
         </div>
 
-        {/* Financial Summary Section */}
-        <div>
+        {/* Financial Summary Section: finance data is owner-only under Finance RLS. */}
+        {adminUser?.role === 'owner' && <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Financial Summary</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {financialStatsError ? (
+            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
+              Unable to load financial summary. Confirm the Finance schema migration is applied, then refresh.
+            </div>
+          ) : <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Total Revenue */}
             <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -473,7 +524,9 @@ function AdminDashboard() {
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
                   }`}>
-                    {financialStats.monthlyGrowth >= 0 ? '+' : ''}{financialStats.monthlyGrowth.toFixed(1)}%
+                    {financialStats.monthlyGrowth === null
+                      ? 'New revenue'
+                      : `${financialStats.monthlyGrowth >= 0 ? '+' : ''}${financialStats.monthlyGrowth.toFixed(1)}%`}
                   </p>
                 </div>
                 <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
@@ -490,15 +543,15 @@ function AdminDashboard() {
               </div>
               <div className="mt-4">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  vs previous month
+                  {financialStats.monthlyGrowth === null ? 'No revenue in the previous month' : 'vs previous month'}
                 </span>
               </div>
             </div>
-          </div>
-        </div>
+          </div>}
+        </div>}
 
         {/* Business Performance Section */}
-        <div>
+        {adminUser?.role === 'owner' && <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Business Performance</h2>
             <div className="flex items-center gap-2">
@@ -578,6 +631,14 @@ function AdminDashboard() {
                   <p className="text-sm">Loading chart data...</p>
                 </div>
               </div>
+            ) : chartLoadError ? (
+              <div role="alert" className="flex h-80 items-center justify-center text-center text-sm text-red-700 dark:text-red-300">
+                Unable to load performance data. Confirm the Finance schema migration is applied, then try again.
+              </div>
+            ) : timePeriod === 'custom' && (!customStartDate || !customEndDate) ? (
+              <div className="flex h-80 items-center justify-center text-center text-sm text-gray-500 dark:text-gray-400">
+                Choose both dates to view custom period performance.
+              </div>
             ) : chartData.length === 0 ? (
               <div className="flex items-center justify-center h-80 text-gray-500 dark:text-gray-400">
                 <div className="text-center">
@@ -633,12 +694,16 @@ function AdminDashboard() {
               </ChartContainer>
             )}
           </div>
-        </div>
+        </div>}
 
         {/* Operations Section */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Operations</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {operationsStatsError ? (
+            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
+              Unable to load operations summary. Please refresh and try again.
+            </div>
+          ) : <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Total Enquiries */}
             <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -727,7 +792,7 @@ function AdminDashboard() {
                 </span>
               </div>
             </div>
-          </div>
+          </div>}
         </div>
 
         {/* Quick Actions */}

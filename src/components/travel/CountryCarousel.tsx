@@ -3,9 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Import country images
-import cyprusImg from '@/assets/Cyprus.jpg';
 import turkeyImg from '@/assets/Turkey.jpg';
-import schengenImg from '@/assets/Schengen.jpg';
 import dubaiImg from '@/assets/Dubai.jpg';
 import egyptImg from '@/assets/Egypt.jpg';
 import qatarImg from '@/assets/qatar beuty.jpg';
@@ -20,19 +18,9 @@ interface CountryDestination {
 
 const destinations: CountryDestination[] = [
   {
-    name: 'Cyprus',
-    image: cyprusImg,
-    alt: 'Beautiful coastal view of Cyprus',
-  },
-  {
     name: 'Turkey',
     image: turkeyImg,
     alt: 'Scenic Turkish landscape',
-  },
-  {
-    name: 'Schengen',
-    image: schengenImg,
-    alt: 'European Schengen destinations',
   },
   {
     name: 'Dubai',

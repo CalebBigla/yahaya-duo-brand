@@ -90,9 +90,9 @@ const serviceDetails = {
     required:
       "Valid passport (6+ months validity), passport photos, proof of funds (bank statements), travel itinerary, accommodation booking, invitation letter (if applicable), employment letter or business registration.",
     timeline:
-      "Cyprus Visa: Processing time varies depending on application requirements and embassy processing. Turkey Visa: Processing time varies depending on application type and processing conditions. Schengen Visa: Approximately 15 working days, depending on the consulate and application. Dubai Visa: Approximately 3–5 working days. We provide specific timelines when you enquire.",
+      "Turkey Visa: Processing time varies depending on application type and processing conditions. Dubai Visa: Approximately 3–5 working days. We provide specific timelines when you enquire.",
     example:
-      "Applying for a Schengen visa? We provide your document checklist, review your bank statements and invitation letter, help you complete the online application, book your appointment at the visa application center, and track the application until your passport is returned with the visa sticker.",
+      "Applying for a visa? We provide your document checklist, review your bank statements and invitation letter, help you complete the online application, book your appointment at the visa application center, and track the application until your passport is returned with the visa sticker.",
   },
   "flight-bookings": {
     included: [
@@ -152,7 +152,7 @@ const serviceDetails = {
     timeline:
       "Immediate consultancy for straightforward queries. For complex multi-country trips or business travel programs, we'll schedule a call or meeting to go through requirements in detail.",
     example:
-      "Planning a multi-city trip across Europe but not sure which Schengen visa to apply for? We review your itinerary, tell you which country's embassy to approach, what documents are needed, and the optimal flight routing to minimize costs and layovers. Pay only for our time — no booking required.",
+      "Planning a multi-city trip but not sure which visa to apply for? We review your itinerary, tell you which country's embassy to approach, what documents are needed, and the optimal flight routing to minimize costs and layovers. Pay only for our time — no booking required.",
   },
 };
 
@@ -166,7 +166,7 @@ const visaChecklist = [
   "Travel itinerary (flight bookings and hotel reservations)",
   "Invitation letter (if visiting friends, family, or business partners)",
   "Proof of ties to Nigeria (property ownership, family, job)",
-  "Travel insurance certificate (for Schengen and some other destinations)",
+  "Travel insurance certificate (for certain destinations)",
   "Marriage certificate, birth certificates (if traveling with family)",
   "Previous visa pages or travel history (if applicable)",
   "Vaccination certificates (yellow fever, COVID-19, others as required)",
@@ -242,7 +242,6 @@ function TravelPage() {
               { name: "Study Visas", icon: "🎓" },
               { name: "Tourism Visas", icon: "✈️" },
               { name: "Hajj Visas", icon: "🕋" },
-              { name: "Schengen Visas", icon: "🇪🇺" },
               { name: "Work Visas", icon: "💼" },
               { name: "Business Visas", icon: "🤝" },
               { name: "Transit Visas", icon: "🌍" },
