@@ -2,7 +2,7 @@
  * Admin Layout - Shell structure for admin dashboard
  * Includes sidebar navigation, header, and main content area with dark mode support
  */
-import { ReactNode, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import { Link, useLocation } from '@tanstack/react-router';
 import {
   LayoutDashboard,
@@ -24,9 +24,11 @@ import {
   Sun,
   Moon,
   Monitor,
+  ClipboardList,
 } from 'lucide-react';
 import { signOut, type AdminUser } from '@/lib/auth';
 import { useTheme } from '@/lib/theme';
+import { AdminAuthContext } from '@/components/admin/AdminAuthContext';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -46,6 +48,7 @@ interface NavSection {
 }
 
 export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
+  const sharedAdminAuth = useContext(AdminAuthContext);
   const location = useLocation();
   const { theme, setTheme, effectiveTheme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -54,6 +57,9 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
 
   const isOwner = adminUser?.role === 'owner';
+
+  // Protected admin routes reuse the persistent shell mounted by the root route.
+  if (sharedAdminAuth) return <>{children}</>;
 
   // Navigation structure
   const mainNav: NavSection[] = [
@@ -65,6 +71,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
         { name: 'Clients', path: '/admin/clients', icon: UsersIcon },
         { name: 'Quotes', path: '/admin/quotes', icon: FileText },
         { name: 'Finance', path: '/admin/finance', icon: DollarSign },
+        ...(isOwner ? [{ name: 'Audit Log', path: '/admin/audit-log', icon: ClipboardList }] : []),
         { name: 'Expenses', path: '/admin/expenses', icon: TrendingDown },
       ],
     },

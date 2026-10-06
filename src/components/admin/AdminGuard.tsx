@@ -3,9 +3,12 @@
  * Protects admin routes from unauthorized access
  * This is a UX convenience - actual security is enforced via RLS
  */
-import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { checkAdminAccess, InactivityManager } from '@/lib/auth';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminRouteSkeleton } from '@/components/admin/SkeletonLoader';
+import { AdminAuthContext } from '@/components/admin/AdminAuthContext';
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -16,8 +19,17 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
   const [authState, setAuthState] = useState<'checking' | 'authenticated' | 'error'>('checking');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const router = useRouter();
+  const sharedAuth = useContext(AdminAuthContext);
 
   useEffect(() => {
+    if (sharedAuth) {
+      if (sharedAuth.status === 'authenticated' && requireOwner && sharedAuth.user?.role !== 'owner') {
+        navigate({ to: '/admin' });
+      }
+      return;
+    }
+
     let inactivityManager: InactivityManager | null = null;
 
     const checkAccess = async () => {
@@ -55,22 +67,32 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
         inactivityManager.destroy();
       }
     };
-  }, [navigate, requireOwner]);
+  }, [navigate, requireOwner, sharedAuth]);
+
+  const effectiveAuthState = sharedAuth?.status ?? authState;
+
+  if (sharedAuth?.status === 'authenticated' && requireOwner && sharedAuth.user?.role !== 'owner') {
+    return <AdminRouteSkeleton pathname={router.state.location.pathname} />;
+  }
 
   // Show loading state while checking authentication
-  if (authState === 'checking') {
+  if (effectiveAuthState === 'checking') {
+    if (sharedAuth) return <AdminRouteSkeleton pathname={router.state.location.pathname} />;
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600 dark:border-gray-600 dark:border-t-blue-400" />
-          <p className="text-sm text-gray-600 dark:text-gray-400">Verifying access...</p>
+      <AdminLayout adminUser={null}>
+        <div aria-live="polite" aria-busy="true">
+          <p className="sr-only">Verifying access and loading the admin page.</p>
+          <AdminRouteSkeleton pathname={router.state.location.pathname} />
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   // Show error if database fails
-  if (authState === 'error') {
+  if (effectiveAuthState === 'error') {
+    if (sharedAuth) {
+      return <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">{sharedAuth.errorMessage || 'Unable to verify admin access. Please try again.'}</div>;
+    }
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
         <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-white dark:bg-gray-800 p-8 shadow-xl">

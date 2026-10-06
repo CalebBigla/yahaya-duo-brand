@@ -70,14 +70,14 @@ export function InquiryForm({
       // Map form values to database fields
       const submission = {
         form_type: formType,
-        name: values.name || null,
-        email: values.email || null,
-        phone: values.phone || null,
-        division: values.division || null,
-        destination: values.destination || null,
-        dates: values.dates || values.timeline || null,
-        service: values.service || null,
-        message: values.message || null,
+        name: values['name'] || null,
+        email: values['email'] || null,
+        phone: values['phone'] || null,
+        division: values['division'] || null,
+        destination: values['destination'] || null,
+        dates: values['dates'] || values['timeline'] || null,
+        service: values['service'] || null,
+        message: values['message'] || null,
         status: 'new' as const,
       };
 

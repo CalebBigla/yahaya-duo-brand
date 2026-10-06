@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { CreateQuoteFromEnquiry } from '@/components/quotes/CreateQuoteFromEnquiry';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 
 export const Route = createFileRoute('/admin/enquiries')({
   component: () => (
@@ -65,12 +66,14 @@ function EnquiriesPage() {
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
-      await loadSubmissions();
+      try { await loadSubmissions(); } finally { setInitialLoading(false); }
     };
 
     loadData();
@@ -119,6 +122,7 @@ function EnquiriesPage() {
       setSubmissions(data || []);
     } catch (error) {
       console.error('Error loading submissions:', error);
+      setLoadError(true);
     }
   };
 
@@ -228,9 +232,12 @@ function EnquiriesPage() {
     responded: submissions.filter(s => s.status === 'responded').length,
   };
 
+  if (initialLoading) return <AdminLayout adminUser={adminUser}><TablePageSkeleton /></AdminLayout>;
+
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Unable to load enquiries. Please try again.</div>}
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <div>

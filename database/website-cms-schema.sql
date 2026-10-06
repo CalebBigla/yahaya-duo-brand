@@ -143,6 +143,24 @@ CREATE TABLE IF NOT EXISTS website_faqs (
     updated_by UUID REFERENCES auth.users(id)
 );
 
+-- Structured travel-page visa destination reference content.
+CREATE TABLE IF NOT EXISTS website_visa_destinations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    country TEXT NOT NULL UNIQUE CHECK (LENGTH(country) <= 120 AND LENGTH(country) > 0),
+    visa_types TEXT NOT NULL CHECK (LENGTH(visa_types) <= 500),
+    processing_time TEXT NOT NULL CHECK (LENGTH(processing_time) <= 120),
+    notes TEXT NOT NULL CHECK (LENGTH(notes) <= 1000),
+    display_order INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
+    published_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_by UUID REFERENCES auth.users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_website_visa_destinations_status_order
+    ON website_visa_destinations(status, display_order);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_website_faqs_category ON website_faqs(category, status);
 CREATE INDEX IF NOT EXISTS idx_website_faqs_order ON website_faqs(category, display_order);
@@ -234,6 +252,10 @@ ALTER TABLE website_services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE website_gallery ENABLE ROW LEVEL SECURITY;
 ALTER TABLE website_testimonials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE website_faqs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE website_visa_destinations ENABLE ROW LEVEL SECURITY;
+
+GRANT SELECT ON TABLE website_visa_destinations TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON TABLE website_visa_destinations TO authenticated;
 ALTER TABLE website_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE website_seo ENABLE ROW LEVEL SECURITY;
 
@@ -321,6 +343,18 @@ CREATE POLICY "Admin full access to faqs"
         EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid())
     );
 
+-- VISA DESTINATION POLICIES
+CREATE POLICY "Public read published visa destinations"
+    ON website_visa_destinations FOR SELECT
+    TO public
+    USING (status = 'published');
+
+CREATE POLICY "Admin full access to visa destinations"
+    ON website_visa_destinations FOR ALL
+    TO authenticated
+    USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid()))
+    WITH CHECK (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid()));
+
 -- SETTINGS POLICIES
 CREATE POLICY "Public read published settings"
     ON website_settings FOR SELECT
@@ -377,6 +411,10 @@ CREATE TRIGGER update_website_faqs_timestamp
     BEFORE UPDATE ON website_faqs
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_website_visa_destinations_timestamp
+    BEFORE UPDATE ON website_visa_destinations
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 CREATE TRIGGER update_website_settings_timestamp
     BEFORE UPDATE ON website_settings
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -404,6 +442,10 @@ CREATE TRIGGER audit_website_testimonials_trigger
 
 CREATE TRIGGER audit_website_faqs_trigger
     AFTER INSERT OR UPDATE OR DELETE ON website_faqs
+    FOR EACH ROW EXECUTE FUNCTION audit_content_changes();
+
+CREATE TRIGGER audit_website_visa_destinations_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON website_visa_destinations
     FOR EACH ROW EXECUTE FUNCTION audit_content_changes();
 
 CREATE TRIGGER audit_website_settings_trigger
@@ -472,6 +514,18 @@ INSERT INTO website_services (division, slug, title, summary, detail, display_or
 ('trade', 'trade-consultancy', 'Trade Consultancy', 'Feasibility studies, market entry strategies, and compliance advisory.', 'We support individuals and companies seeking to expand into international markets through feasibility studies, market entry strategies, supplier verification and due diligence, regulatory and compliance advisory, and trade finance guidance.', 5, 'published', NOW())
 ON CONFLICT (division, slug) DO NOTHING;
 
+-- Seed the current public travel-page destination reference.
+INSERT INTO website_visa_destinations (country, visa_types, processing_time, notes, display_order, status, published_at) VALUES
+('Saudi Arabia', 'Umrah, Hajj, Tourism, Business', 'Variable by season', 'Vaccination certificate mandatory. Pilgrimage visas through licensed agents.', 1, 'published', NOW()),
+('Qatar', 'Tourism, Business, Work, Transit', '3-5 working days', 'Sponsor or hotel booking required. Fast processing available.', 2, 'published', NOW()),
+('China', 'Tourism, Business, Study, Work', '4-7 working days', 'Invitation letter often required. Apply at Chinese Visa Application Center.', 3, 'published', NOW()),
+('Turkey', 'Tourism, Business, Work, Transit', '3-7 working days', 'E-visa available online. Hotel confirmation and travel insurance recommended.', 4, 'published', NOW()),
+('Dubai (UAE)', 'Tourism, Business, Work, Transit', '3-5 working days', 'Sponsor or hotel booking required. Fast-track options available for urgent cases.', 5, 'published', NOW()),
+('Egypt', 'Tourism, Business', '5-7 working days', 'Hotel booking and return ticket confirmation required. E-visa available for some nationalities.', 6, 'published', NOW()),
+('Cyprus', 'Tourism, Business', '5-10 working days', 'Travel insurance and hotel confirmation required.', 7, 'published', NOW()),
+('Schengen Countries', 'Tourism, Business, Study, Work', '15 working days', 'Travel insurance mandatory. Biometrics required. Multiple entry options available.', 8, 'published', NOW())
+ON CONFLICT (country) DO NOTHING;
+
 -- Seed default SEO for each page
 INSERT INTO website_seo (page_slug, meta_title, meta_description, status, published_at) VALUES
 ('home', 'Yahaya Travel and Trade Co Ltd | Global Travel & Trade Solutions', 'Your trusted partner for visa processing, flight bookings, import-export, and international trade solutions in Nigeria.', 'published', NOW()),
@@ -481,4 +535,3 @@ INSERT INTO website_seo (page_slug, meta_title, meta_description, status, publis
 ('contact', 'Contact Us | Yahaya Travel and Trade Co Ltd', 'Get in touch with us for travel and trade inquiries. Located in Jimeta-Yola, Adamawa State, Nigeria.', 'published', NOW()),
 ('media', 'Media Gallery | Yahaya Travel and Trade Co Ltd', 'View our gallery of travel destinations, trade operations, and client success stories.', 'published', NOW())
 ON CONFLICT (page_slug) DO NOTHING;
-

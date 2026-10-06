@@ -1,11 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { CardGridPageSkeleton } from '@/components/admin/SkeletonLoader';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Upload, X, Save } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/website/gallery')({
   component: () => (
@@ -92,9 +95,10 @@ function GalleryPage() {
 
   const handleSave = async () => {
     if (!editingItem) return;
+    const wasCreating = isCreating;
 
     if (!editingItem.title || !editingItem.image_url) {
-      alert('Please fill in title and image URL');
+      toast.error('Please fill in the title and image URL.');
       return;
     }
 
@@ -106,7 +110,7 @@ function GalleryPage() {
 
       if (error) {
         console.error('Error creating gallery item:', error);
-        alert('Failed to create item: ' + error.message);
+        toast.error('Unable to save this gallery item. Please try again.');
         return;
       }
     } else {
@@ -120,7 +124,7 @@ function GalleryPage() {
 
       if (error) {
         console.error('Error updating gallery item:', error);
-        alert('Failed to update item: ' + error.message);
+        toast.error('Unable to save this gallery item. Please try again.');
         return;
       }
     }
@@ -128,21 +132,14 @@ function GalleryPage() {
     setEditingItem(null);
     setIsCreating(false);
     await fetchGallery();
+    toast.success(wasCreating ? 'Gallery item created successfully.' : 'Gallery item updated successfully.');
   };
 
   const handleDelete = async (item: GalleryItem) => {
-    if (!confirm(`Delete "${item.title}"? This cannot be undone.`)) {
-      return;
-    }
-
-    const { error } = await supabase.from('website_gallery').delete().eq('id', item.id);
-
-    if (error) {
-      console.error('Error deleting gallery item:', error);
-      alert('Failed to delete item');
-    } else {
-      await fetchGallery();
-    }
+    const { data, error } = await supabase.from('website_gallery').delete().eq('id', item.id).select('id').maybeSingle();
+    if (error) throw error;
+    if (!data?.id) throw new Error('No gallery row was deleted');
+    setItems((current) => current.filter((row) => row.id !== item.id));
   };
 
   const handleToggleStatus = async (item: GalleryItem) => {
@@ -158,18 +155,17 @@ function GalleryPage() {
 
     if (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      toast.error('Unable to update gallery status. Please try again.');
     } else {
       await fetchGallery();
+      toast.success(`Gallery item ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`);
     }
   };
 
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading gallery...</div>
-        </div>
+        <CardGridPageSkeleton />
       </AdminLayout>
     );
   }
@@ -283,13 +279,7 @@ function GalleryPage() {
                           <Eye className="w-4 h-4" />
                         )}
                       </button>
-                      <button
-                        onClick={() => handleDelete(item)}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <DeleteConfirmation trigger={<button className="p-1.5 text-red-600 hover:bg-red-50 rounded" title="Delete" aria-label={`Delete ${item.title}`}><Trash2 className="w-4 h-4" /></button>} title="Delete gallery item?" description="Are you sure you want to delete this gallery item? This action cannot be undone." detail={item.title} successMessage="Gallery item deleted successfully." errorMessage="Unable to delete this gallery item. Please try again." onConfirm={() => handleDelete(item)} />
                     </div>
                   </div>
                 </div>

@@ -26,8 +26,8 @@ function AdminDebug() {
     };
     
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const supabaseUrl = import.meta.env['VITE_SUPABASE_URL'];
+      const supabaseKey = import.meta.env['VITE_SUPABASE_ANON_KEY'];
       
       diagnostics.tests.envVars.details = {
         VITE_SUPABASE_URL: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'MISSING',

@@ -7,7 +7,8 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -15,6 +16,12 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppFab } from "@/components/site/WhatsAppButton";
 import { LoadingState } from "@/components/site/LoadingState";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminRouteSkeleton } from "@/components/admin/SkeletonLoader";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/lib/theme";
+import { AdminAuthContext, type AdminAuthState } from "@/components/admin/AdminAuthContext";
+import { checkAdminAccess, InactivityManager } from "@/lib/auth";
 import { site } from "@/lib/site";
 
 function NotFoundComponent() {
@@ -185,7 +192,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
-  pendingComponent: LoadingState,
+  pendingComponent: RoutePendingState,
 });
 
 function RootShell({ children }: { children: ReactNode }) {
@@ -196,6 +203,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster position="top-right" />
         <Scripts />
       </body>
     </html>
@@ -213,7 +221,11 @@ function RootComponent() {
   if (isAdminRoute) {
     return (
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <ThemeProvider>
+          {['/admin/login', '/admin/forgot-password', '/admin/reset-password'].some((path) => router.state.location.pathname.startsWith(path))
+            ? <Outlet />
+            : <AdminDashboardShell />}
+        </ThemeProvider>
       </QueryClientProvider>
     );
   }
@@ -231,5 +243,70 @@ function RootComponent() {
         <WhatsAppFab />
       </div>
     </QueryClientProvider>
+  );
+}
+
+function AdminDashboardShell() {
+  const navigate = useNavigate();
+  const [auth, setAuth] = useState<AdminAuthState>({ status: 'checking', user: null });
+
+  useEffect(() => {
+    let inactivityManager: InactivityManager | null = null;
+    let active = true;
+    void checkAdminAccess().then((result) => {
+      if (!active) return;
+      if (!result.isAdmin) {
+        if (result.error === 'DATABASE_ERROR') {
+          setAuth({ status: 'error', user: null, errorMessage: 'Unable to verify admin access. Please try again.' });
+        } else {
+          void navigate({ to: '/admin/login' });
+        }
+        return;
+      }
+      setAuth({ status: 'authenticated', user: result.user });
+      inactivityManager = new InactivityManager();
+    });
+    return () => {
+      active = false;
+      inactivityManager?.destroy();
+    };
+  }, [navigate]);
+
+  const shellUser = auth.status === 'authenticated' ? auth.user : null;
+  return (
+    <AdminLayout adminUser={shellUser}>
+      <AdminAuthContext.Provider value={auth}>
+        {auth.status === 'checking' ? (
+          <div aria-live="polite" aria-busy="true">
+            <p className="sr-only">Verifying access and loading the admin dashboard.</p>
+            <AdminRouteSkeleton pathname="/admin" />
+          </div>
+        ) : auth.status === 'error' ? (
+          <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-6 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
+            <p>{auth.errorMessage}</p>
+            <button onClick={() => window.location.reload()} className="mt-4 rounded bg-red-700 px-4 py-2 font-medium text-white">Reload page</button>
+          </div>
+        ) : <Outlet />}
+      </AdminAuthContext.Provider>
+    </AdminLayout>
+  );
+}
+
+function RoutePendingState() {
+  const router = useRouter();
+  const pathname = router.state.location.pathname;
+  const isAdminModule = pathname.startsWith("/admin") && !/^\/admin\/(login|forgot-password|reset-password)/.test(pathname);
+
+  if (!isAdminModule) return <LoadingState />;
+
+  return (
+    <ThemeProvider>
+      <AdminLayout adminUser={null}>
+        <div aria-live="polite" aria-busy="true">
+          <p className="sr-only">Loading admin page.</p>
+          <AdminRouteSkeleton pathname={pathname} />
+        </div>
+      </AdminLayout>
+    </ThemeProvider>
   );
 }

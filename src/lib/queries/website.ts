@@ -79,6 +79,15 @@ export interface WebsiteFaq {
   display_order: number;
 }
 
+export interface WebsiteVisaDestination {
+  id: string;
+  country: string;
+  visa_types: string;
+  processing_time: string;
+  notes: string;
+  display_order: number;
+}
+
 export interface WebsiteSeo {
   id: string;
   page_slug: string;
@@ -146,6 +155,11 @@ export async function getPublishedGallery() {
 
 export async function getPublishedFAQs() {
   const rows = await readPublished<WebsiteFaq>("website_faqs");
+  return rows?.sort((a, b) => a.display_order - b.display_order) ?? null;
+}
+
+export async function getPublishedVisaDestinations() {
+  const rows = await readPublished<WebsiteVisaDestination>("website_visa_destinations");
   return rows?.sort((a, b) => a.display_order - b.display_order) ?? null;
 }
 

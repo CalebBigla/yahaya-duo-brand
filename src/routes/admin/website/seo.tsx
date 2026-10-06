@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
+import { toast } from 'sonner';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
@@ -74,17 +76,17 @@ function SEOPage() {
     if (!editingPage) return;
 
     if (!editingPage.meta_title || !editingPage.meta_description) {
-      alert('Please fill in meta title and description');
+      toast.error('Please fill in the meta title and description.');
       return;
     }
 
     if (editingPage.meta_title.length > 60) {
-      alert('Meta title must be 60 characters or less');
+      toast.error('Meta title must be 60 characters or less.');
       return;
     }
 
     if (editingPage.meta_description.length > 160) {
-      alert('Meta description must be 160 characters or less');
+      toast.error('Meta description must be 160 characters or less.');
       return;
     }
 
@@ -98,12 +100,13 @@ function SEOPage() {
 
     if (error) {
       console.error('Error updating SEO:', error);
-      alert('Failed to update SEO: ' + error.message);
+      toast.error('Unable to save SEO changes. Please try again.');
       return;
     }
 
     setEditingPage(null);
     await fetchSEO();
+    toast.success('SEO settings updated successfully.');
   };
 
   const handleToggleStatus = async (page: SEO) => {
@@ -119,18 +122,17 @@ function SEOPage() {
 
     if (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      toast.error('Unable to update SEO publishing status. Please try again.');
     } else {
       await fetchSEO();
+      toast.success(`SEO settings ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`);
     }
   };
 
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading SEO settings...</div>
-        </div>
+        <TablePageSkeleton rows={4} />
       </AdminLayout>
     );
   }

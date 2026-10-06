@@ -76,6 +76,16 @@ CREATE TABLE IF NOT EXISTS financial_transactions (
     
     -- Transaction Date
     transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
+
+    -- Voiding preserves the record while excluding it from revenue totals.
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'voided')),
+    voided_at TIMESTAMPTZ,
+    voided_by UUID REFERENCES auth.users(id),
+    void_reason TEXT CHECK (void_reason IS NULL OR LENGTH(void_reason) <= 1000),
+    CONSTRAINT financial_transactions_void_metadata_check CHECK (
+        (status = 'active' AND voided_at IS NULL AND voided_by IS NULL)
+        OR (status = 'voided' AND voided_at IS NOT NULL AND voided_by IS NOT NULL)
+    ),
     
     -- Audit
     created_by UUID NOT NULL REFERENCES auth.users(id),
@@ -90,6 +100,7 @@ CREATE INDEX IF NOT EXISTS idx_financial_transactions_category ON financial_tran
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_client ON financial_transactions(client_id);
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_quote ON financial_transactions(quote_id);
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_date ON financial_transactions(transaction_date DESC);
+CREATE INDEX IF NOT EXISTS idx_financial_transactions_status_date ON financial_transactions(status, transaction_date DESC);
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_description ON financial_transactions USING gin(to_tsvector('english', description));
 
 -- ============================================================================
@@ -191,7 +202,7 @@ CREATE TRIGGER audit_financial_categories_trigger
     FOR EACH ROW EXECUTE FUNCTION audit_content_changes();
 
 CREATE TRIGGER audit_financial_transactions_trigger
-    AFTER INSERT OR UPDATE OR DELETE ON financial_transactions
+    AFTER INSERT OR UPDATE ON financial_transactions
     FOR EACH ROW EXECUTE FUNCTION audit_content_changes();
 
 CREATE TRIGGER audit_expense_transactions_trigger
@@ -229,6 +240,8 @@ CREATE POLICY "Owners can insert financial_transactions" ON financial_transactio
 CREATE POLICY "Owners can update financial_transactions" ON financial_transactions FOR UPDATE TO authenticated
     USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND role = 'owner'));
 
+REVOKE DELETE ON TABLE financial_transactions FROM PUBLIC, anon, authenticated;
+
 -- Expenses: Owner read/write only
 CREATE POLICY "Owners can read expense_transactions" ON expense_transactions FOR SELECT TO authenticated
     USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND role = 'owner'));
@@ -237,6 +250,9 @@ CREATE POLICY "Owners can insert expense_transactions" ON expense_transactions F
     WITH CHECK (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND role = 'owner'));
 
 CREATE POLICY "Owners can update expense_transactions" ON expense_transactions FOR UPDATE TO authenticated
+    USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND role = 'owner'));
+
+CREATE POLICY "Owners can delete expense_transactions" ON expense_transactions FOR DELETE TO authenticated
     USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND role = 'owner'));
 
 -- ============================================================================

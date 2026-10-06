@@ -30,6 +30,9 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
+import { toast } from 'sonner';
+import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
 
 export const Route = createFileRoute('/admin/clients')({
   component: () => (
@@ -71,6 +74,8 @@ function ClientsPage() {
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -96,7 +101,7 @@ function ClientsPage() {
     const loadData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
-      await loadClients();
+      try { await loadClients(); } finally { setInitialLoading(false); }
     };
 
     loadData();
@@ -147,6 +152,7 @@ function ClientsPage() {
       setClients(data);
     } catch (error) {
       console.error('Error loading clients:', error);
+      setLoadError(true);
     }
   };
 
@@ -199,6 +205,7 @@ function ClientsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const wasEditing = showEditModal && Boolean(selectedClient);
     setIsSubmitting(true);
 
     try {
@@ -228,34 +235,22 @@ function ClientsPage() {
       setShowEditModal(false);
       resetForm();
       setSelectedClient(null);
+      toast.success(wasEditing ? 'Client updated successfully.' : 'Client created successfully.');
     } catch (error) {
       console.error('Error saving client:', error);
-      alert('Failed to save client. Please try again.');
+      toast.error('Unable to save the client. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (client: Client) => {
-    if (!confirm(`Are you sure you want to delete ${client.name}?`)) {
-      return;
-    }
-
-    try {
-      await queueQuery(async () => {
-        const { error } = await supabase
-          .from('clients')
-          .delete()
-          .eq('id', client.id);
-
-        if (error) throw error;
-      });
-
-      await loadClients();
-    } catch (error) {
-      console.error('Error deleting client:', error);
-      alert('Failed to delete client. Please try again.');
-    }
+    await queueQuery(async () => {
+      const { data, error } = await supabase.from('clients').delete().eq('id', client.id).select('id').maybeSingle();
+      if (error) throw error;
+      if (!data?.id) throw new Error('No client row was deleted');
+    });
+    setClients((current) => current.filter((row) => row.id !== client.id));
   };
 
   const exportToCSV = () => {
@@ -325,9 +320,12 @@ function ClientsPage() {
     corporate: clients.filter(c => c.client_type === 'corporate').length,
   };
 
+  if (initialLoading) return <AdminLayout adminUser={adminUser}><TablePageSkeleton /></AdminLayout>;
+
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Unable to load clients. Please try again.</div>}
 
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -625,13 +623,15 @@ function ClientsPage() {
                           >
                             <Edit className="h-4 w-4" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(client)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            title="Delete client"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <DeleteConfirmation
+                            trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete client" aria-label={`Delete ${client.name}`}><Trash2 className="h-4 w-4" /></button>}
+                            title="Delete client?"
+                            description="Are you sure you want to delete this client? This action cannot be undone."
+                            detail={client.name}
+                            successMessage="Client deleted successfully."
+                            errorMessage="Unable to delete this client. Please try again."
+                            onConfirm={() => handleDelete(client)}
+                          />
                         </div>
                       </td>
                     </tr>

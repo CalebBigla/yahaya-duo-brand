@@ -30,6 +30,10 @@ export interface FinancialTransaction {
   description: string;
   notes: string | null;
   transaction_date: string;
+  status: 'active' | 'voided';
+  voided_at: string | null;
+  voided_by: string | null;
+  void_reason: string | null;
   created_by: string;
   created_at: string;
   updated_at: string;

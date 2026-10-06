@@ -138,3 +138,92 @@ export function FormSkeleton() {
     </div>
   );
 }
+
+function SkeletonBlock({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse rounded bg-gray-200 dark:bg-gray-700 ${className}`} />;
+}
+
+export function DashboardPageSkeleton() {
+  return (
+    <div aria-label="Loading dashboard" className="space-y-6">
+      <div className="space-y-2">
+        <SkeletonBlock className="h-7 w-56" />
+        <SkeletonBlock className="h-4 w-80 max-w-full" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+            <SkeletonBlock className="h-4 w-28" />
+            <SkeletonBlock className="mt-4 h-8 w-32" />
+            <SkeletonBlock className="mt-4 h-3 w-24" />
+          </div>
+        ))}
+      </div>
+      <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <SkeletonBlock className="h-5 w-44" />
+        <SkeletonBlock className="mt-6 h-64 w-full" />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div key={index} className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+            <SkeletonBlock className="h-5 w-40" />
+            <div className="mt-5 space-y-4">
+              {Array.from({ length: 3 }).map((__, row) => (
+                <SkeletonBlock key={row} className="h-12 w-full" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TablePageSkeleton({ rows = 6 }: { rows?: number }) {
+  return (
+    <div aria-label="Loading records" className="space-y-6">
+      <div className="flex items-center justify-between gap-4">
+        <div className="space-y-2"><SkeletonBlock className="h-7 w-52" /><SkeletonBlock className="h-4 w-72 max-w-full" /></div>
+        <SkeletonBlock className="h-10 w-32" />
+      </div>
+      <div className="flex flex-wrap gap-3"><SkeletonBlock className="h-10 w-64 max-w-full" /><SkeletonBlock className="h-10 w-36" /></div>
+      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="flex gap-5 border-b border-gray-200 p-4 dark:border-gray-700">
+          {Array.from({ length: 5 }).map((_, index) => <SkeletonBlock key={index} className="h-4 flex-1" />)}
+          <SkeletonBlock className="h-4 w-20" />
+        </div>
+        {Array.from({ length: rows }).map((_, index) => (
+          <div key={index} className="flex items-center gap-5 border-b border-gray-100 p-4 last:border-0 dark:border-gray-700">
+            {Array.from({ length: 5 }).map((__, cell) => <SkeletonBlock key={cell} className="h-4 flex-1" />)}
+            <div className="flex w-20 gap-2"><SkeletonBlock className="h-8 w-8" /><SkeletonBlock className="h-8 w-8" /></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function CardGridPageSkeleton({ cards = 6 }: { cards?: number }) {
+  return (
+    <div aria-label="Loading cards" className="space-y-6">
+      <div className="flex items-center justify-between gap-4"><div className="space-y-2"><SkeletonBlock className="h-7 w-52" /><SkeletonBlock className="h-4 w-72 max-w-full" /></div><SkeletonBlock className="h-10 w-32" /></div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: cards }).map((_, index) => (
+          <div key={index} className="rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+            <SkeletonBlock className="h-40 w-full" /><SkeletonBlock className="mt-4 h-5 w-2/3" /><SkeletonBlock className="mt-3 h-4 w-full" /><SkeletonBlock className="mt-2 h-4 w-4/5" />
+            <div className="mt-5 flex gap-2"><SkeletonBlock className="h-9 w-20" /><SkeletonBlock className="h-9 w-20" /></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function AdminRouteSkeleton({ pathname = '' }: { pathname?: string }) {
+  if (pathname === '/admin' || pathname === '/admin/') return <DashboardPageSkeleton />;
+  if (pathname === '/admin/website' || pathname.includes('/website/gallery') || pathname.includes('/media')) return <CardGridPageSkeleton />;
+  if (pathname.includes('/website/homepage') || pathname.includes('/website/company-info') || pathname.includes('/settings')) {
+    return <FormSkeleton />;
+  }
+  return <TablePageSkeleton />;
+}

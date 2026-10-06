@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { FormSkeleton } from '@/components/admin/SkeletonLoader';
+import { toast } from 'sonner';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
@@ -79,10 +81,11 @@ function CompanyInfoPage() {
 
     if (error) {
       console.error('Error saving draft:', error);
-      alert('Failed to save draft');
+      toast.error('Unable to save changes. Please try again.');
     } else {
       setHasChanges(false);
       await fetchSettings();
+      toast.success('Company information saved successfully.');
     }
     setSaving(false);
   };
@@ -109,11 +112,11 @@ function CompanyInfoPage() {
 
     if (error) {
       console.error('Error publishing:', error);
-      alert('Failed to publish');
+      toast.error('Unable to publish company information. Please try again.');
     } else {
       setHasChanges(false);
       await fetchSettings();
-      alert('Company information published successfully!');
+      toast.success('Company information published successfully.');
     }
     setSaving(false);
   };
@@ -139,9 +142,7 @@ function CompanyInfoPage() {
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading...</div>
-        </div>
+        <FormSkeleton />
       </AdminLayout>
     );
   }

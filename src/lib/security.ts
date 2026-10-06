@@ -95,7 +95,7 @@ export function containsMaliciousPatterns(input: string): boolean {
  */
 export function hashIP(ip: string): string {
   // Get salt from environment, fail loudly if not set in production
-  const salt = import.meta.env.VITE_IP_SALT;
+  const salt = import.meta.env['VITE_IP_SALT'];
 
   if (!salt || salt === 'change-this-to-a-random-string-in-production') {
     if (import.meta.env.PROD) {

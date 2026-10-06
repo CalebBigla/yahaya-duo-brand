@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { CardGridPageSkeleton } from '@/components/admin/SkeletonLoader';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
@@ -16,6 +17,7 @@ import {
   CheckCircle2,
   Clock,
   AlertCircle,
+  Plane,
 } from 'lucide-react';
 
 export const Route = createFileRoute('/admin/website')({
@@ -37,7 +39,7 @@ interface ModuleCard {
   itemCount?: number;
 }
 
-type ModuleKey = 'homepage' | 'services' | 'gallery' | 'testimonials' | 'faqs' | 'settings' | 'seo';
+type ModuleKey = 'homepage' | 'services' | 'gallery' | 'testimonials' | 'faqs' | 'visaDestinations' | 'settings' | 'seo';
 
 interface ModuleStatus {
   status: ModuleCard['status'];
@@ -52,9 +54,12 @@ function WebsitePage() {
     gallery: { status: 'empty', itemCount: 0 },
     testimonials: { status: 'empty', itemCount: 0 },
     faqs: { status: 'empty', itemCount: 0 },
+    visaDestinations: { status: 'empty', itemCount: 0 },
     settings: { status: 'empty', itemCount: 0 },
     seo: { status: 'empty', itemCount: 0 },
   });
+  const [loadingModules, setLoadingModules] = useState(true);
+  const [moduleLoadError, setModuleLoadError] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -74,6 +79,7 @@ function WebsitePage() {
       ['gallery', 'website_gallery'],
       ['testimonials', 'website_testimonials'],
       ['faqs', 'website_faqs'],
+      ['visaDestinations', 'website_visa_destinations'],
       ['settings', 'website_settings'],
       ['seo', 'website_seo'],
     ];
@@ -81,7 +87,10 @@ function WebsitePage() {
     const results = await Promise.all(
       tables.map(async ([key, table]) => {
         const { data, error } = await supabase.from(table).select('status');
-        if (error) return [key, { status: 'empty', itemCount: 0 }] as const;
+        if (error) {
+          setModuleLoadError(true);
+          return [key, { status: 'empty', itemCount: 0 }] as const;
+        }
 
         const rows = data ?? [];
         const published = rows.filter((row) => row.status === 'published').length;
@@ -97,10 +106,15 @@ function WebsitePage() {
     );
 
     setModuleStatus(Object.fromEntries(results) as Record<ModuleKey, ModuleStatus>);
+    setLoadingModules(false);
   };
 
   if (location.pathname !== '/admin/website') {
     return <Outlet />;
+  }
+
+  if (loadingModules) {
+    return <AdminLayout adminUser={adminUser}><CardGridPageSkeleton cards={8} /></AdminLayout>;
   }
 
   const modules: ModuleCard[] = [
@@ -138,6 +152,13 @@ function WebsitePage() {
       icon: HelpCircle,
       href: '/admin/website/faqs',
       ...moduleStatus.faqs,
+    },
+    {
+      title: 'Visa Destination Quick Reference',
+      description: 'Destinations, visa types, processing times and notes',
+      icon: Plane,
+      href: '/admin/website/visa-destinations',
+      ...moduleStatus.visaDestinations,
     },
     {
       title: 'Company Info',
@@ -193,6 +214,7 @@ function WebsitePage() {
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {moduleLoadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Some CMS module details could not be loaded.</div>}
         {/* Header */}
         <div className="border-b pb-4">
           <h1 className="text-2xl font-bold text-gray-900">Website CMS</h1>
@@ -225,7 +247,7 @@ function WebsitePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-blue-700 font-medium">Total Modules</p>
-                <p className="text-2xl font-bold text-blue-900 mt-1">7</p>
+                <p className="text-2xl font-bold text-blue-900 mt-1">8</p>
               </div>
               <Settings className="w-8 h-8 text-blue-600" />
             </div>

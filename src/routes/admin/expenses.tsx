@@ -12,6 +12,12 @@ import type {
   ExpenseTransactionFormData 
 } from '@/lib/types/finance';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
+import { toast } from 'sonner';
 import { 
   Search, 
   Plus, 
@@ -48,6 +54,9 @@ function ExpensesPage() {
   const [showRecordModal, setShowRecordModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<ExpenseTransaction | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<ExpenseTransaction | null>(null);
+  const [deletingExpense, setDeletingExpense] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -126,6 +135,7 @@ function ExpensesPage() {
       calculateStats(data);
     } catch (error) {
       console.error('Error loading expenses:', error);
+      setLoadError(true);
     }
   };
 
@@ -151,6 +161,7 @@ function ExpensesPage() {
       setCategories(data);
     } catch (error) {
       console.error('Error loading categories:', error);
+      setLoadError(true);
     }
   };
 
@@ -219,21 +230,30 @@ function ExpensesPage() {
     setShowRecordModal(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this expense record?')) return;
-
+  const handleDelete = async () => {
+    if (!pendingDelete || adminUser?.role !== 'owner' || deletingExpense) return;
+    setDeletingExpense(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('expense_transactions')
         .delete()
-        .eq('id', id);
+        .eq('id', pendingDelete.id)
+        .select('id')
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data?.id) throw new Error('No expense row was deleted');
 
-      await loadExpenses();
+      const remaining = expenses.filter((expense) => expense.id !== pendingDelete.id);
+      setExpenses(remaining);
+      calculateStats(remaining);
+      setPendingDelete(null);
+      toast.success('Expense deleted successfully.');
     } catch (error) {
       console.error('Error deleting expense:', error);
-      alert('Failed to delete expense record');
+      toast.error('Unable to delete this expense. Please try again.');
+    } finally {
+      setDeletingExpense(false);
     }
   };
 
@@ -245,12 +265,7 @@ function ExpensesPage() {
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading expenses...</p>
-          </div>
-        </div>
+        <TablePageSkeleton />
       </AdminLayout>
     );
   }
@@ -258,6 +273,7 @@ function ExpensesPage() {
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">Unable to load expense data. Please try again.</div>}
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -489,13 +505,16 @@ function ExpensesPage() {
                             >
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button
-                              onClick={() => handleDelete(expense.id)}
-                              className="text-red-600 hover:text-red-800"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            {adminUser?.role === 'owner' && (
+                              <button
+                                onClick={() => setPendingDelete(expense)}
+                                className="text-red-600 hover:text-red-800"
+                                title="Delete"
+                                aria-label={`Delete expense ${expense.expense_ref}`}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -521,6 +540,7 @@ function ExpensesPage() {
             setShowRecordModal(false);
             setSelectedExpense(null);
             loadExpenses();
+            toast.success(selectedExpense ? 'Expense updated successfully.' : 'Expense recorded successfully.');
           }}
         />
       )}
@@ -529,13 +549,46 @@ function ExpensesPage() {
       {showDetailsModal && selectedExpense && (
         <ExpenseDetailsModal
           expense={selectedExpense}
-          category={categories.find((c) => c.id === selectedExpense.category_id)}
+          category={categories.find((c) => c.id === selectedExpense.category_id) ?? null}
           onClose={() => {
             setShowDetailsModal(false);
             setSelectedExpense(null);
           }}
         />
       )}
+
+      <AlertDialog open={Boolean(pendingDelete)} onOpenChange={(open) => {
+        if (!open && !deletingExpense) setPendingDelete(null);
+      }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Expense?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this expense? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {pendingDelete && (
+            <div className="rounded-lg border border-gray-200 p-3 text-sm dark:border-gray-700">
+              <p className="font-medium text-gray-900 dark:text-white">{pendingDelete.description}</p>
+              <p className="mt-1 text-gray-600 dark:text-gray-400">
+                {categories.find((category) => category.id === pendingDelete.category_id)?.name || 'Expense'}
+                {' · '}{formatCurrency(Number(pendingDelete.amount))}
+                {' · '}{formatDate(pendingDelete.expense_date)}
+              </p>
+            </div>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingExpense}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(event) => { event.preventDefault(); void handleDelete(); }}
+              disabled={deletingExpense || adminUser?.role !== 'owner'}
+              className="bg-red-600 text-white hover:bg-red-700 focus:ring-red-600"
+            >
+              {deletingExpense ? 'Deleting…' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }
@@ -590,7 +643,7 @@ function RecordExpenseModal({
     external_ref: expense?.external_ref || '',
     description: expense?.description || '',
     notes: expense?.notes || '',
-    expense_date: expense?.expense_date || new Date().toISOString().split('T')[0],
+    expense_date: expense?.expense_date || new Date().toISOString().slice(0, 10),
   });
 
   const filteredCategories = categories.filter(
@@ -602,7 +655,10 @@ function RecordExpenseModal({
     
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      toast.error('Unable to save changes. Please try again.');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -633,7 +689,7 @@ function RecordExpenseModal({
       onSuccess();
     } catch (error) {
       console.error('Error saving expense:', error);
-      alert('Failed to save expense record');
+      toast.error('Unable to save changes. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -830,7 +886,7 @@ function ExpenseDetailsModal({
   onClose,
 }: {
   expense: ExpenseTransaction;
-  category?: FinancialCategory;
+  category?: FinancialCategory | null;
   onClose: () => void;
 }) {
   const formatCurrency = (amount: number) => {

@@ -151,12 +151,15 @@ export function useDeleteClient() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('clients')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .select('id')
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data?.id) throw new Error('No client row was deleted');
       return id;
     },
     onSuccess: (id) => {

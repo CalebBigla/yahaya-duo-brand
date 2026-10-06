@@ -34,6 +34,9 @@ import {
   Send,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
+import { toast } from 'sonner';
+import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
 
 export const Route = createFileRoute('/admin/quotes')({
   component: () => (
@@ -71,6 +74,7 @@ interface Quote {
   sent_at: string | null;
   sent_by: string | null;
   created_at: string;
+  created_by: string | null;
   updated_at: string;
 }
 
@@ -113,6 +117,8 @@ function QuotesPage() {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -143,7 +149,7 @@ function QuotesPage() {
     const loadData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
-      await Promise.all([loadQuotes(), loadClients(), loadEnquiries()]);
+      try { await Promise.all([loadQuotes(), loadClients(), loadEnquiries()]); } finally { setInitialLoading(false); }
       
       // Check if coming from enquiry (quote creation from enquiry)
       checkForPrefilledData();
@@ -191,6 +197,7 @@ function QuotesPage() {
       setQuotes(data);
     } catch (error) {
       console.error('Error loading quotes:', error);
+      setLoadError(true);
     }
   };
 
@@ -390,6 +397,7 @@ function QuotesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const wasEditing = showEditModal && Boolean(selectedQuote);
     setIsSubmitting(true);
 
     try {
@@ -445,34 +453,22 @@ function QuotesPage() {
       setShowEditModal(false);
       resetForm();
       setSelectedQuote(null);
+      toast.success(wasEditing ? 'Quote updated successfully.' : 'Quote created successfully.');
     } catch (error) {
       console.error('Error saving quote:', error);
-      alert('Failed to save quote. Please try again.');
+      toast.error('Unable to save the quote. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (quote: Quote) => {
-    if (!confirm(`Are you sure you want to delete quote ${quote.quote_number}?`)) {
-      return;
-    }
-
-    try {
-      await queueQuery(async () => {
-        const { error } = await supabase
-          .from('quotes')
-          .delete()
-          .eq('id', quote.id);
-
-        if (error) throw error;
-      });
-
-      await loadQuotes();
-    } catch (error) {
-      console.error('Error deleting quote:', error);
-      alert('Failed to delete quote. Please try again.');
-    }
+    await queueQuery(async () => {
+      const { data, error } = await supabase.from('quotes').delete().eq('id', quote.id).select('id').maybeSingle();
+      if (error) throw error;
+      if (!data?.id) throw new Error('No quote row was deleted');
+    });
+    setQuotes((current) => current.filter((row) => row.id !== quote.id));
   };
 
   const updateQuoteStatus = async (quoteId: string, newStatus: Quote['status']) => {
@@ -493,9 +489,10 @@ function QuotesPage() {
       if (selectedQuote?.id === quoteId) {
         setSelectedQuote({ ...selectedQuote, status: newStatus });
       }
+      toast.success('Quote status updated successfully.');
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update quote status. Please try again.');
+      toast.error('Unable to update quote status. Please try again.');
     }
   };
 
@@ -559,9 +556,12 @@ function QuotesPage() {
 
   const totals = calculateTotals();
 
+  if (initialLoading) return <AdminLayout adminUser={adminUser}><TablePageSkeleton /></AdminLayout>;
+
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Unable to load quotes. Please try again.</div>}
 
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -831,13 +831,15 @@ function QuotesPage() {
                           >
                             <Edit className="h-4 w-4" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(quote)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            title="Delete quote"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <DeleteConfirmation
+                            trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete quote" aria-label={`Delete quote ${quote.quote_number}`}><Trash2 className="h-4 w-4" /></button>}
+                            title="Delete quote?"
+                            description="Are you sure you want to delete this quote? This action cannot be undone."
+                            detail={`${quote.quote_number} · ${quote.client_name} · ${quote.title}`}
+                            successMessage="Quote deleted successfully."
+                            errorMessage="Unable to delete this quote. Please try again."
+                            onConfirm={() => handleDelete(quote)}
+                          />
                         </div>
                       </td>
                     </tr>

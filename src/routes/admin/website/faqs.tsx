@@ -1,11 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Save, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/website/faqs')({
   component: () => (
@@ -88,9 +91,10 @@ function FAQsPage() {
 
   const handleSave = async () => {
     if (!editingItem) return;
+    const wasCreating = isCreating;
 
     if (!editingItem.question || !editingItem.answer) {
-      alert('Please fill in question and answer');
+      toast.error('Please fill in the question and answer.');
       return;
     }
 
@@ -102,7 +106,7 @@ function FAQsPage() {
 
       if (error) {
         console.error('Error creating FAQ:', error);
-        alert('Failed to create FAQ: ' + error.message);
+        toast.error('Unable to save the FAQ. Please try again.');
         return;
       }
     } else {
@@ -116,7 +120,7 @@ function FAQsPage() {
 
       if (error) {
         console.error('Error updating FAQ:', error);
-        alert('Failed to update FAQ: ' + error.message);
+        toast.error('Unable to save the FAQ. Please try again.');
         return;
       }
     }
@@ -124,21 +128,14 @@ function FAQsPage() {
     setEditingItem(null);
     setIsCreating(false);
     await fetchFAQs();
+    toast.success(wasCreating ? 'FAQ created successfully.' : 'FAQ updated successfully.');
   };
 
   const handleDelete = async (item: FAQ) => {
-    if (!confirm(`Delete this FAQ? This cannot be undone.`)) {
-      return;
-    }
-
-    const { error } = await supabase.from('website_faqs').delete().eq('id', item.id);
-
-    if (error) {
-      console.error('Error deleting FAQ:', error);
-      alert('Failed to delete FAQ');
-    } else {
-      await fetchFAQs();
-    }
+    const { data, error } = await supabase.from('website_faqs').delete().eq('id', item.id).select('id').maybeSingle();
+    if (error) throw error;
+    if (!data?.id) throw new Error('No FAQ row was deleted');
+    setFaqs((current) => current.filter((row) => row.id !== item.id));
   };
 
   const handleToggleStatus = async (item: FAQ) => {
@@ -154,18 +151,17 @@ function FAQsPage() {
 
     if (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      toast.error('Unable to update FAQ status. Please try again.');
     } else {
       await fetchFAQs();
+      toast.success(`FAQ ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`);
     }
   };
 
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading FAQs...</div>
-        </div>
+        <TablePageSkeleton />
       </AdminLayout>
     );
   }
@@ -263,13 +259,7 @@ function FAQsPage() {
                   >
                     {item.status === 'published' ? 'Unpublish' : 'Publish'}
                   </button>
-                  <button
-                    onClick={() => handleDelete(item)}
-                    className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Delete
-                  </button>
+                  <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete FAQ?" description="Are you sure you want to delete this FAQ? This action cannot be undone." detail={item.question} successMessage="FAQ deleted successfully." errorMessage="Unable to delete this FAQ. Please try again." onConfirm={() => handleDelete(item)} />
                 </div>
               </div>
             ))}

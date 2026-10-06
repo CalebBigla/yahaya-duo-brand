@@ -5,10 +5,10 @@ export const Route = createFileRoute('/test-env')({
 });
 
 function TestEnv() {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  const cloudinaryName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const cloudinaryPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const supabaseUrl = import.meta.env['VITE_SUPABASE_URL'];
+  const supabaseKey = import.meta.env['VITE_SUPABASE_ANON_KEY'];
+  const cloudinaryName = import.meta.env['VITE_CLOUDINARY_CLOUD_NAME'];
+  const cloudinaryPreset = import.meta.env['VITE_CLOUDINARY_UPLOAD_PRESET'];
 
   return (
     <div className="container mx-auto px-4 py-12">

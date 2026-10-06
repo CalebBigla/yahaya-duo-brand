@@ -21,6 +21,7 @@ import { Route as TestEnvRouteImport } from './routes/test-env'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAuditLogRouteImport } from './routes/admin/audit-log'
 import { Route as AdminClientsRouteImport } from './routes/admin/clients'
 import { Route as AdminDebugRouteImport } from './routes/admin/debug'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
@@ -41,6 +42,7 @@ import { Route as AdminWebsiteHomepageRouteImport } from './routes/admin/website
 import { Route as AdminWebsiteSeoRouteImport } from './routes/admin/website/seo'
 import { Route as AdminWebsiteServicesRouteImport } from './routes/admin/website/services'
 import { Route as AdminWebsiteTestimonialsRouteImport } from './routes/admin/website/testimonials'
+import { Route as AdminWebsiteVisaDestinationsRouteImport } from './routes/admin/website/visa-destinations'
 import { Route as QuoteViewTokenRouteImport } from './routes/quote/view.$token'
 
 const IndexRoute = IndexRouteImport.update({
@@ -101,6 +103,11 @@ const TravelRoute = TravelRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
+  id: '/admin/audit-log',
+  path: '/admin/audit-log',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminClientsRoute = AdminClientsRouteImport.update({
@@ -204,6 +211,12 @@ const AdminWebsiteTestimonialsRoute =
     path: '/testimonials',
     getParentRoute: () => AdminWebsiteRoute,
   } as any)
+const AdminWebsiteVisaDestinationsRoute =
+  AdminWebsiteVisaDestinationsRouteImport.update({
+    id: '/visa-destinations',
+    path: '/visa-destinations',
+    getParentRoute: () => AdminWebsiteRoute,
+  } as any)
 const QuoteViewTokenRoute = QuoteViewTokenRouteImport.update({
   id: '/view/$token',
   path: '/view/$token',
@@ -222,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -243,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/admin/website/seo': typeof AdminWebsiteSeoRoute
   '/admin/website/services': typeof AdminWebsiteServicesRoute
   '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
+  '/admin/website/visa-destinations': typeof AdminWebsiteVisaDestinationsRoute
   '/quote/view/$token': typeof QuoteViewTokenRoute
 }
 export interface FileRoutesByTo {
@@ -257,6 +272,7 @@ export interface FileRoutesByTo {
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -278,6 +294,7 @@ export interface FileRoutesByTo {
   '/admin/website/seo': typeof AdminWebsiteSeoRoute
   '/admin/website/services': typeof AdminWebsiteServicesRoute
   '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
+  '/admin/website/visa-destinations': typeof AdminWebsiteVisaDestinationsRoute
   '/quote/view/$token': typeof QuoteViewTokenRoute
 }
 export interface FileRoutesById {
@@ -293,6 +310,7 @@ export interface FileRoutesById {
   '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -314,6 +332,7 @@ export interface FileRoutesById {
   '/admin/website/seo': typeof AdminWebsiteSeoRoute
   '/admin/website/services': typeof AdminWebsiteServicesRoute
   '/admin/website/testimonials': typeof AdminWebsiteTestimonialsRoute
+  '/admin/website/visa-destinations': typeof AdminWebsiteVisaDestinationsRoute
   '/quote/view/$token': typeof QuoteViewTokenRoute
 }
 export interface FileRouteTypes {
@@ -330,6 +349,7 @@ export interface FileRouteTypes {
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/audit-log'
     | '/admin/clients'
     | '/admin/debug'
     | '/admin/enquiries'
@@ -351,6 +371,7 @@ export interface FileRouteTypes {
     | '/admin/website/seo'
     | '/admin/website/services'
     | '/admin/website/testimonials'
+    | '/admin/website/visa-destinations'
     | '/quote/view/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -365,6 +386,7 @@ export interface FileRouteTypes {
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/audit-log'
     | '/admin/clients'
     | '/admin/debug'
     | '/admin/enquiries'
@@ -386,6 +408,7 @@ export interface FileRouteTypes {
     | '/admin/website/seo'
     | '/admin/website/services'
     | '/admin/website/testimonials'
+    | '/admin/website/visa-destinations'
     | '/quote/view/$token'
   id:
     | '__root__'
@@ -400,6 +423,7 @@ export interface FileRouteTypes {
     | '/test-env'
     | '/trade'
     | '/travel'
+    | '/admin/audit-log'
     | '/admin/clients'
     | '/admin/debug'
     | '/admin/enquiries'
@@ -421,6 +445,7 @@ export interface FileRouteTypes {
     | '/admin/website/seo'
     | '/admin/website/services'
     | '/admin/website/testimonials'
+    | '/admin/website/visa-destinations'
     | '/quote/view/$token'
   fileRoutesById: FileRoutesById
 }
@@ -436,6 +461,7 @@ export interface RootRouteChildren {
   TestEnvRoute: typeof TestEnvRoute
   TradeRoute: typeof TradeRoute
   TravelRoute: typeof TravelRoute
+  AdminAuditLogRoute: typeof AdminAuditLogRoute
   AdminClientsRoute: typeof AdminClientsRoute
   AdminDebugRoute: typeof AdminDebugRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
@@ -536,6 +562,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/audit-log': {
+      id: '/admin/audit-log'
+      path: '/admin/audit-log'
+      fullPath: '/admin/audit-log'
+      preLoaderRoute: typeof AdminAuditLogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/clients': {
@@ -678,6 +711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteTestimonialsRouteImport
       parentRoute: typeof AdminWebsiteRoute
     }
+    '/admin/website/visa-destinations': {
+      id: '/admin/website/visa-destinations'
+      path: '/visa-destinations'
+      fullPath: '/admin/website/visa-destinations'
+      preLoaderRoute: typeof AdminWebsiteVisaDestinationsRouteImport
+      parentRoute: typeof AdminWebsiteRoute
+    }
     '/quote/view/$token': {
       id: '/quote/view/$token'
       path: '/view/$token'
@@ -706,6 +746,7 @@ interface AdminWebsiteRouteChildren {
   AdminWebsiteSeoRoute: typeof AdminWebsiteSeoRoute
   AdminWebsiteServicesRoute: typeof AdminWebsiteServicesRoute
   AdminWebsiteTestimonialsRoute: typeof AdminWebsiteTestimonialsRoute
+  AdminWebsiteVisaDestinationsRoute: typeof AdminWebsiteVisaDestinationsRoute
 }
 
 const AdminWebsiteRouteChildren: AdminWebsiteRouteChildren = {
@@ -716,6 +757,7 @@ const AdminWebsiteRouteChildren: AdminWebsiteRouteChildren = {
   AdminWebsiteSeoRoute: AdminWebsiteSeoRoute,
   AdminWebsiteServicesRoute: AdminWebsiteServicesRoute,
   AdminWebsiteTestimonialsRoute: AdminWebsiteTestimonialsRoute,
+  AdminWebsiteVisaDestinationsRoute: AdminWebsiteVisaDestinationsRoute,
 }
 
 const AdminWebsiteRouteWithChildren = AdminWebsiteRoute._addFileChildren(
@@ -734,6 +776,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestEnvRoute: TestEnvRoute,
   TradeRoute: TradeRoute,
   TravelRoute: TravelRoute,
+  AdminAuditLogRoute: AdminAuditLogRoute,
   AdminClientsRoute: AdminClientsRoute,
   AdminDebugRoute: AdminDebugRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,

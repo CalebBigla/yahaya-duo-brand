@@ -17,7 +17,20 @@ import {
   ArrowUpRight,
   Activity,
   MessageSquare,
+  Wallet,
+  CheckCircle2,
+  Calendar,
 } from 'lucide-react';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { format, subDays, subMonths, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from 'date-fns';
+import { DashboardPageSkeleton } from '@/components/admin/SkeletonLoader';
 
 export const Route = createFileRoute('/admin/')({
   component: () => (
@@ -29,116 +42,313 @@ export const Route = createFileRoute('/admin/')({
   ),
 });
 
-interface DashboardStats {
-  enquiries: {
-    total: number;
-    new: number;
-    change: number;
-    trend: 'up' | 'down';
-  };
-  clients: {
-    total: number;
-    active: number;
-    change: number;
-    trend: 'up' | 'down';
-  };
-  quotes: {
-    total: number;
-    pending: number;
-    change: number;
-    trend: 'up' | 'down';
-  };
+interface FinancialStats {
+  totalRevenue: number;
+  totalExpenses: number;
+  netRevenue: number;
+  monthlyGrowth: number;
+  monthlyGrowthTrend: 'up' | 'down';
 }
+
+interface OperationsStats {
+  totalEnquiries: number;
+  activeClients: number;
+  pendingQuotes: number;
+  completedTransactions: number;
+}
+
+interface ChartDataPoint {
+  date: string;
+  revenue: number;
+  expenses: number;
+}
+
+type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'custom';
 
 function AdminDashboard() {
   const [adminUser, setAdminUser] = useState<any>(null);
-  const [stats, setStats] = useState<DashboardStats>({
-    enquiries: { total: 0, new: 0, change: 0, trend: 'up' },
-    clients: { total: 0, active: 0, change: 0, trend: 'up' },
-    quotes: { total: 0, pending: 0, change: 0, trend: 'up' },
+  const [financialStats, setFinancialStats] = useState<FinancialStats>({
+    totalRevenue: 0,
+    totalExpenses: 0,
+    netRevenue: 0,
+    monthlyGrowth: 0,
+    monthlyGrowthTrend: 'up',
   });
+  const [operationsStats, setOperationsStats] = useState<OperationsStats>({
+    totalEnquiries: 0,
+    activeClients: 0,
+    pendingQuotes: 0,
+    completedTransactions: 0,
+  });
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('monthly');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+  const [isLoadingChart, setIsLoadingChart] = useState(true);
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
+  const [dashboardLoadError, setDashboardLoadError] = useState(false);
 
   useEffect(() => {
     const loadAdminData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
-      await loadDashboardStats();
+      await Promise.all([
+        loadFinancialStats(),
+        loadOperationsStats(),
+      ]);
+      setIsLoadingDashboard(false);
     };
 
     loadAdminData();
   }, []);
 
-  const loadDashboardStats = async () => {
-    try {
-      // Load enquiries count
-      const enquiriesData = await queueQuery(async () => {
-        const { count: total } = await supabase
-          .from('submissions')
-          .select('*', { count: 'exact', head: true });
-        
-        const { count: newCount } = await supabase
-          .from('submissions')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'new');
+  useEffect(() => {
+    loadChartData();
+  }, [timePeriod, customStartDate, customEndDate]);
 
-        return { total: total || 0, new: newCount || 0 };
+  const loadFinancialStats = async () => {
+    try {
+      // Load all financial transactions
+      const transactions = await queueQuery(async () => {
+        const { data, error } = await supabase
+          .from('financial_transactions')
+          .select('amount, transaction_date')
+          .eq('status', 'active');
+        
+        if (error) throw error;
+        return data || [];
       });
 
-      // Load clients count
-      const clientsData = await queueQuery(async () => {
-        const { count: total } = await supabase
-          .from('clients')
-          .select('*', { count: 'exact', head: true });
+      // Load all expense transactions
+      const expenses = await queueQuery(async () => {
+        const { data, error } = await supabase
+          .from('expense_transactions')
+          .select('amount, expense_date');
         
-        const { count: active } = await supabase
+        if (error) throw error;
+        return data || [];
+      });
+
+      // Calculate totals
+      const totalRevenue = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+      const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+      const netRevenue = totalRevenue - totalExpenses;
+
+      // Calculate monthly growth
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      
+      const currentMonthRevenue = transactions
+        .filter(t => {
+          const date = new Date(t.transaction_date);
+          return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        })
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+      const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+      
+      const previousMonthRevenue = transactions
+        .filter(t => {
+          const date = new Date(t.transaction_date);
+          return date.getMonth() === previousMonth && date.getFullYear() === previousYear;
+        })
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      let monthlyGrowth = 0;
+      if (previousMonthRevenue > 0) {
+        monthlyGrowth = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
+      } else if (currentMonthRevenue > 0) {
+        monthlyGrowth = 100; // If no previous data but have current, show 100% growth
+      }
+
+      setFinancialStats({
+        totalRevenue,
+        totalExpenses,
+        netRevenue,
+        monthlyGrowth,
+        monthlyGrowthTrend: monthlyGrowth >= 0 ? 'up' : 'down',
+      });
+    } catch (error) {
+      console.error('Error loading financial stats:', error);
+      setDashboardLoadError(true);
+    }
+  };
+
+  const loadOperationsStats = async () => {
+    try {
+      // Load enquiries count
+      const enquiriesResult = await queueQuery(async () => {
+        return await supabase
+          .from('submissions')
+          .select('*', { count: 'exact', head: true });
+      });
+
+      // Load active clients count
+      const clientsResult = await queueQuery(async () => {
+        return await supabase
           .from('clients')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'active');
-
-        return { total: total || 0, active: active || 0 };
       });
 
-      // Load quotes count (if table exists, otherwise use 0)
-      const quotesData = await queueQuery(async () => {
-        try {
-          const { count: total } = await supabase
-            .from('quotes')
-            .select('*', { count: 'exact', head: true });
-          
-          const { count: pending } = await supabase
-            .from('quotes')
-            .select('*', { count: 'exact', head: true })
-            .eq('status', 'pending');
-
-          return { total: total || 0, pending: pending || 0 };
-        } catch {
-          return { total: 0, pending: 0 };
-        }
+      // Load pending quotes count
+      const pendingQuotesResult = await queueQuery(async () => {
+        return await supabase
+          .from('quotes')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'pending');
       });
 
-      setStats({
-        enquiries: {
-          total: enquiriesData.total,
-          new: enquiriesData.new,
-          change: 0, // We'll calculate this later with historical data
-          trend: 'up',
-        },
-        clients: {
-          total: clientsData.total,
-          active: clientsData.active,
-          change: 0,
-          trend: 'up',
-        },
-        quotes: {
-          total: quotesData.total,
-          pending: quotesData.pending,
-          change: 0,
-          trend: 'up',
-        },
+      // Load completed transactions (accepted quotes)
+      const completedQuotesResult = await queueQuery(async () => {
+        return await supabase
+          .from('quotes')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'accepted');
+      });
+
+      const queryResults = [enquiriesResult, clientsResult, pendingQuotesResult, completedQuotesResult];
+      const failedResult = queryResults.find((result) => result.error);
+      if (failedResult?.error) throw failedResult.error;
+
+      setOperationsStats({
+        totalEnquiries: enquiriesResult.count || 0,
+        activeClients: clientsResult.count || 0,
+        pendingQuotes: pendingQuotesResult.count || 0,
+        completedTransactions: completedQuotesResult.count || 0,
       });
     } catch (error) {
-      console.error('Error loading dashboard stats:', error);
+      console.error('Error loading operations stats:', error);
+      setDashboardLoadError(true);
     }
+  };
+
+  const loadChartData = async () => {
+    setIsLoadingChart(true);
+    try {
+      // Calculate date range based on selected period
+      let startDate: Date;
+      let endDate: Date = new Date();
+
+      switch (timePeriod) {
+        case 'weekly':
+          startDate = subDays(endDate, 7);
+          break;
+        case 'monthly':
+          startDate = subMonths(endDate, 6); // Last 6 months
+          break;
+        case 'yearly':
+          startDate = subMonths(endDate, 12); // Last 12 months
+          break;
+        case 'custom':
+          if (!customStartDate || !customEndDate) {
+            setIsLoadingChart(false);
+            return;
+          }
+          startDate = new Date(customStartDate);
+          endDate = new Date(customEndDate);
+          break;
+        default:
+          startDate = subMonths(endDate, 6);
+      }
+
+      // Load transactions within date range
+      const transactions = await queueQuery(async () => {
+        const { data, error } = await supabase
+          .from('financial_transactions')
+          .select('amount, transaction_date')
+          .eq('status', 'active')
+          .gte('transaction_date', format(startDate, 'yyyy-MM-dd'))
+          .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
+          .order('transaction_date', { ascending: true });
+        
+        if (error) throw error;
+        return data || [];
+      });
+
+      // Load expenses within date range
+      const expenses = await queueQuery(async () => {
+        const { data, error } = await supabase
+          .from('expense_transactions')
+          .select('amount, expense_date')
+          .gte('expense_date', format(startDate, 'yyyy-MM-dd'))
+          .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
+          .order('expense_date', { ascending: true });
+        
+        if (error) throw error;
+        return data || [];
+      });
+
+      // Aggregate data by period
+      const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, startDate, endDate);
+      setChartData(aggregated);
+    } catch (error) {
+      console.error('Error loading chart data:', error);
+    } finally {
+      setIsLoadingChart(false);
+    }
+  };
+
+  const aggregateDataByPeriod = (
+    transactions: any[],
+    expenses: any[],
+    period: TimePeriod,
+    startDate: Date,
+    endDate: Date
+  ): ChartDataPoint[] => {
+    const dataMap = new Map<string, { revenue: number; expenses: number }>();
+
+    // Helper to get period key
+    const getPeriodKey = (date: Date): string => {
+      switch (period) {
+        case 'weekly':
+          return format(startOfWeek(date), 'MMM dd');
+        case 'monthly':
+          return format(startOfMonth(date), 'MMM yyyy');
+        case 'yearly':
+          return format(startOfYear(date), 'yyyy');
+        case 'custom':
+          // For custom, group by week if range < 60 days, else by month
+          const daysDiff = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+          if (daysDiff <= 60) {
+            return format(startOfWeek(date), 'MMM dd');
+          } else {
+            return format(startOfMonth(date), 'MMM yyyy');
+          }
+        default:
+          return format(date, 'MMM yyyy');
+      }
+    };
+
+    // Aggregate revenue
+    transactions.forEach(t => {
+      const key = getPeriodKey(new Date(t.transaction_date));
+      const existing = dataMap.get(key) || { revenue: 0, expenses: 0 };
+      dataMap.set(key, { ...existing, revenue: existing.revenue + Number(t.amount) });
+    });
+
+    // Aggregate expenses
+    expenses.forEach(e => {
+      const key = getPeriodKey(new Date(e.expense_date));
+      const existing = dataMap.get(key) || { revenue: 0, expenses: 0 };
+      dataMap.set(key, { ...existing, expenses: existing.expenses + Number(e.amount) });
+    });
+
+    // Convert to array and sort
+    return Array.from(dataMap.entries())
+      .map(([date, values]) => ({
+        date,
+        revenue: Math.round(values.revenue),
+        expenses: Math.round(values.expenses),
+      }))
+      .sort((a, b) => {
+        // Sort chronologically
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateA.getTime() - dateB.getTime();
+      });
   };
 
   const getGreeting = () => {
@@ -148,88 +358,374 @@ function AdminDashboard() {
     return 'Good evening';
   };
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {isLoadingDashboard ? (
+          <DashboardPageSkeleton />
+        ) : dashboardLoadError ? (
+          <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
+            Unable to load dashboard data. Please try again.
+          </div>
+        ) : <>
         {/* Page Header */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {getGreeting()}, {adminUser?.role === 'owner' ? 'Admin' : 'Staff'}
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Here's what's happening across Yahaya Travel & Trade today.
+            Executive overview of Yahaya Travel & Trade operations and financials.
           </p>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Total Enquiries */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Enquiries</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.enquiries.total}</p>
+        {/* Financial Summary Section */}
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Financial Summary</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Total Revenue */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue</p>
+                  <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                    {formatCurrency(financialStats.totalRevenue)}
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                  <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <Inbox className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="mt-4">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  All-time income
+                </span>
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {stats.enquiries.new} new enquiries
-              </span>
+
+            {/* Net Revenue */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Revenue</p>
+                  <p className={`mt-2 text-2xl font-bold ${
+                    financialStats.netRevenue >= 0 
+                      ? 'text-green-600 dark:text-green-400' 
+                      : 'text-red-600 dark:text-red-400'
+                  }`}>
+                    {formatCurrency(financialStats.netRevenue)}
+                  </p>
+                </div>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                  financialStats.netRevenue >= 0
+                    ? 'bg-green-100 dark:bg-green-900/30'
+                    : 'bg-red-100 dark:bg-red-900/30'
+                }`}>
+                  <Wallet className={`h-6 w-6 ${
+                    financialStats.netRevenue >= 0
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`} />
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Revenue - Expenses
+                </span>
+              </div>
+            </div>
+
+            {/* Total Expenses */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Expenses</p>
+                  <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                    {formatCurrency(financialStats.totalExpenses)}
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
+                  <TrendingDown className="h-6 w-6 text-red-600 dark:text-red-400" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  All-time costs
+                </span>
+              </div>
+            </div>
+
+            {/* Monthly Growth */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Growth</p>
+                  <p className={`mt-2 text-2xl font-bold ${
+                    financialStats.monthlyGrowthTrend === 'up'
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`}>
+                    {financialStats.monthlyGrowth >= 0 ? '+' : ''}{financialStats.monthlyGrowth.toFixed(1)}%
+                  </p>
+                </div>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                  financialStats.monthlyGrowthTrend === 'up'
+                    ? 'bg-green-100 dark:bg-green-900/30'
+                    : 'bg-red-100 dark:bg-red-900/30'
+                }`}>
+                  {financialStats.monthlyGrowthTrend === 'up' ? (
+                    <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  ) : (
+                    <TrendingDown className="h-6 w-6 text-red-600 dark:text-red-400" />
+                  )}
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  vs previous month
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Business Performance Section */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Business Performance</h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setTimePeriod('weekly')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                  timePeriod === 'weekly'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                Weekly
+              </button>
+              <button
+                onClick={() => setTimePeriod('monthly')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                  timePeriod === 'monthly'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setTimePeriod('yearly')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                  timePeriod === 'yearly'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                Yearly
+              </button>
+              <button
+                onClick={() => setTimePeriod('custom')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                  timePeriod === 'custom'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                <Calendar className="h-3 w-3 inline mr-1" />
+                Custom
+              </button>
             </div>
           </div>
 
-          {/* Active Clients */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Clients</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.clients.active}</p>
+          {/* Custom Date Range Picker */}
+          {timePeriod === 'custom' && (
+            <div className="mb-4 flex items-center gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From:</label>
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To:</label>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                />
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                of {stats.clients.total} total clients
-              </span>
-            </div>
-          </div>
+          )}
 
-          {/* Pending Quotes */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Quotes</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.quotes.pending}</p>
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            {isLoadingChart ? (
+              <div className="flex items-center justify-center h-80 text-gray-500 dark:text-gray-400">
+                <div className="text-center">
+                  <Activity className="h-8 w-8 mx-auto mb-2 animate-pulse" />
+                  <p className="text-sm">Loading chart data...</p>
+                </div>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                <FileText className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            ) : chartData.length === 0 ? (
+              <div className="flex items-center justify-center h-80 text-gray-500 dark:text-gray-400">
+                <div className="text-center">
+                  <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No financial data available for this period</p>
+                  <p className="text-xs mt-1">Start recording transactions to see your performance chart</p>
+                </div>
               </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {stats.quotes.total} total quotes
-              </span>
-            </div>
+            ) : (
+              <ChartContainer
+                config={{
+                  revenue: {
+                    label: 'Revenue',
+                    color: '#10b981',
+                  },
+                  expenses: {
+                    label: 'Expenses',
+                    color: '#ef4444',
+                  },
+                }}
+                className="h-80 w-full"
+              >
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
+                  <XAxis 
+                    dataKey="date" 
+                    className="text-xs"
+                    tick={{ fill: 'currentColor' }}
+                  />
+                  <YAxis 
+                    className="text-xs"
+                    tick={{ fill: 'currentColor' }}
+                    tickFormatter={(value) => `₦${(value / 1000).toFixed(0)}k`}
+                  />
+                  <ChartTooltip 
+                    content={<ChartTooltipContent />}
+                    formatter={(value: number) => [`₦${value.toLocaleString()}`, '']}
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar 
+                    dataKey="revenue" 
+                    fill="var(--color-revenue)" 
+                    radius={[4, 4, 0, 0]}
+                    name="Revenue"
+                  />
+                  <Bar 
+                    dataKey="expenses" 
+                    fill="var(--color-expenses)" 
+                    radius={[4, 4, 0, 0]}
+                    name="Expenses"
+                  />
+                </BarChart>
+              </ChartContainer>
+            )}
           </div>
+        </div>
 
-          {/* Total Value Placeholder */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Coming Soon</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">—</p>
+        {/* Operations Section */}
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Operations</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Total Enquiries */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Enquiries</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                    {operationsStats.totalEnquiries}
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                  <Inbox className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                <DollarSign className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              <div className="mt-4">
+                <Link 
+                  to="/admin/enquiries"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  View all enquiries →
+                </Link>
               </div>
             </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">Revenue tracking</span>
+
+            {/* Active Clients */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Clients</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                    {operationsStats.activeClients}
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                  <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <Link 
+                  to="/admin/clients"
+                  className="text-xs text-green-600 dark:text-green-400 hover:underline"
+                >
+                  Manage clients →
+                </Link>
+              </div>
+            </div>
+
+            {/* Pending Quotes */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Quotes</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                    {operationsStats.pendingQuotes}
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                  <FileText className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <Link 
+                  to="/admin/quotes"
+                  className="text-xs text-amber-600 dark:text-amber-400 hover:underline"
+                >
+                  View quotes →
+                </Link>
+              </div>
+            </div>
+
+            {/* Completed Transactions */}
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed Deals</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                    {operationsStats.completedTransactions}
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                  <CheckCircle2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Accepted quotes
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -238,6 +734,34 @@ function AdminDashboard() {
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link
+              to="/admin/finance"
+              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-green-500 dark:hover:border-green-400 hover:shadow-md"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                <DollarSign className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Record Income</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Add transaction</p>
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-gray-400" />
+            </Link>
+
+            <Link
+              to="/admin/expenses"
+              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-red-500 dark:hover:border-red-400 hover:shadow-md"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                <TrendingDown className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Record Expense</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Log spending</p>
+              </div>
+              <ArrowUpRight className="h-4 w-4 text-gray-400" />
+            </Link>
+
             <Link
               to="/admin/clients"
               className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md"
@@ -254,9 +778,9 @@ function AdminDashboard() {
 
             <Link
               to="/admin/quotes"
-              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-green-500 dark:hover:border-green-400 hover:shadow-md"
+              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-amber-500 dark:hover:border-amber-400 hover:shadow-md"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                 <FileText className="h-5 w-5" />
               </div>
               <div className="flex-1">
@@ -265,92 +789,6 @@ function AdminDashboard() {
               </div>
               <ArrowUpRight className="h-4 w-4 text-gray-400" />
             </Link>
-
-            <Link
-              to="/admin/enquiries"
-              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-purple-500 dark:hover:border-purple-400 hover:shadow-md"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                <Inbox className="h-5 w-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">View Enquiries</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Check submissions</p>
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-gray-400" />
-            </Link>
-
-            <Link
-              to="/admin/website"
-              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 transition-all hover:border-amber-500 dark:hover:border-amber-400 hover:shadow-md"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
-                <Activity className="h-5 w-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">Edit Website</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Update content</p>
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-gray-400" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Welcome Card */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Welcome to Your Dashboard</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                Your admin dashboard provides real-time insights into your business operations. 
-                Monitor enquiries, manage clients, create quotes, and track your business growth all in one place.
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <Link
-                  to="/admin/enquiries"
-                  className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 p-4 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
-                >
-                  <Inbox className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">View Enquiries</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{stats.enquiries.new} new</p>
-                  </div>
-                </Link>
-                <Link
-                  to="/admin/clients"
-                  className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 p-4 hover:border-green-500 dark:hover:border-green-400 transition-colors"
-                >
-                  <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Manage Clients</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{stats.clients.total} total</p>
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="lg:col-span-1">
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Quick Overview</h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Total Enquiries</span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">{stats.enquiries.total}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Active Clients</span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">{stats.clients.active}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Pending Quotes</span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">{stats.quotes.pending}</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -361,9 +799,9 @@ function AdminDashboard() {
               <Activity className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white">Dashboard Overview</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white">Real-Time Dashboard</h4>
               <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                You're viewing real-time data from your database. Stats update automatically as your business grows.
+                All financial and operational data is pulled directly from your database. Financial metrics update automatically as you record transactions.
               </p>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                 <strong>Your role:</strong> {adminUser?.role === 'owner' ? 'Owner (Full Access)' : 'Editor (Operational Access)'}
@@ -371,6 +809,7 @@ function AdminDashboard() {
             </div>
           </div>
         </div>
+        </>}
       </div>
     </AdminLayout>
   );

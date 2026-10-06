@@ -9,17 +9,14 @@ import type { Quote, CreateRevisionResult } from './types/quotes';
 /**
  * Create a new revision of an existing quote
  * @param parentQuoteId The ID of the quote to revise
- * @param userId The admin user creating the revision
  * @returns The new quote ID and number
  */
 export async function createQuoteRevision(
-  parentQuoteId: string,
-  userId: string
+  parentQuoteId: string
 ): Promise<CreateRevisionResult> {
   try {
     const { data, error } = await supabase.rpc('create_quote_revision', {
       p_parent_quote_id: parentQuoteId,
-      p_user_id: userId,
     });
 
     if (error) throw error;
@@ -166,12 +163,10 @@ export async function getCurrentQuoteVersion(
  * Mark a quote as superseded and create a revision
  * This is a higher-level function that handles the workflow
  * @param quoteId The quote to supersede
- * @param userId The admin user
  * @returns The new revision
  */
-export async function supersede AndCreateRevision(
-  quoteId: string,
-  userId: string
+export async function supersedeAndCreateRevision(
+  quoteId: string
 ): Promise<CreateRevisionResult> {
   try {
     // Verify quote exists and is current
@@ -188,7 +183,7 @@ export async function supersede AndCreateRevision(
     }
 
     // Create revision
-    return await createQuoteRevision(quoteId, userId);
+    return await createQuoteRevision(quoteId);
   } catch (error) {
     console.error('Error in supersede and create revision:', error);
     return {

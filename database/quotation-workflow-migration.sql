@@ -246,37 +246,64 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to create a revised version of a quote
-CREATE OR REPLACE FUNCTION create_quote_revision(
-    p_parent_quote_id UUID,
-    p_user_id UUID
+-- Remove the earlier caller-controlled signature if this migration is being
+-- upgraded from a version that already installed it.
+DROP FUNCTION IF EXISTS public.create_quote_revision(UUID, UUID);
+
+CREATE OR REPLACE FUNCTION public.create_quote_revision(
+    p_parent_quote_id UUID
 )
-RETURNS UUID AS $$
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $$
 DECLARE
     v_new_quote_id UUID;
-    v_parent_quote quotes%ROWTYPE;
+    v_parent_quote public.quotes%ROWTYPE;
     v_new_version_number INT;
+    v_actor_id UUID := auth.uid();
 BEGIN
-    -- Get parent quote
-    SELECT * INTO v_parent_quote
-    FROM quotes
-    WHERE id = p_parent_quote_id;
+    -- Quote access is organization-wide for admins in the current data model.
+    -- SECURITY DEFINER bypasses table RLS, so authorize explicitly here.
+    IF v_actor_id IS NULL OR NOT EXISTS (
+        SELECT 1
+        FROM public.admin_users AS au
+        WHERE au.user_id = v_actor_id
+          AND au.role IN ('editor', 'owner')
+    ) THEN
+        RAISE EXCEPTION 'Not authorized to revise quotes'
+            USING ERRCODE = '42501';
+    END IF;
+
+    -- Lock and verify the parent in the same organization-wide admin scope.
+    SELECT q.* INTO v_parent_quote
+    FROM public.quotes AS q
+    WHERE q.id = p_parent_quote_id
+    FOR UPDATE;
     
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'Parent quote not found';
+        RAISE EXCEPTION 'Quote not found or not available for revision'
+            USING ERRCODE = 'P0002';
+    END IF;
+
+    IF v_parent_quote.is_current_version IS DISTINCT FROM TRUE THEN
+        RAISE EXCEPTION 'Quote not found or not available for revision'
+            USING ERRCODE = 'P0002';
     END IF;
     
     -- Calculate new version number
     v_new_version_number := COALESCE(v_parent_quote.version_number, 1) + 1;
     
     -- Mark parent as superseded
-    UPDATE quotes
+    UPDATE public.quotes
     SET 
         is_current_version = FALSE,
         superseded_by_quote_id = NULL -- Will be updated after insert
     WHERE id = p_parent_quote_id;
     
     -- Create new quote (revision)
-    INSERT INTO quotes (
+    INSERT INTO public.quotes (
         quote_number,
         client_id,
         client_name,
@@ -316,20 +343,23 @@ BEGIN
         NULL, -- New valid_until date will be set by admin
         v_parent_quote.notes,
         v_parent_quote.terms,
-        p_user_id,
+        v_actor_id,
         v_new_version_number,
         p_parent_quote_id,
         TRUE
     ) RETURNING id INTO v_new_quote_id;
     
     -- Update parent with superseded_by link
-    UPDATE quotes
+    UPDATE public.quotes
     SET superseded_by_quote_id = v_new_quote_id
     WHERE id = p_parent_quote_id;
     
     RETURN v_new_quote_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
+
+REVOKE ALL ON FUNCTION public.create_quote_revision(UUID) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.create_quote_revision(UUID) TO authenticated;
 
 -- ============================================================================
 -- STEP 7: Audit triggers for new tables

@@ -1,11 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, GripVertical, Eye, EyeOff, Save, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/website/services')({
   component: () => (
@@ -85,6 +88,7 @@ function ServicesPage() {
 
   const handleSave = async () => {
     if (!editingService) return;
+    const wasCreating = isCreating;
 
     // Validate required fields
     if (
@@ -93,7 +97,7 @@ function ServicesPage() {
       !editingService.summary ||
       !editingService.detail
     ) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields.');
       return;
     }
 
@@ -105,7 +109,7 @@ function ServicesPage() {
 
       if (error) {
         console.error('Error creating service:', error);
-        alert('Failed to create service: ' + error.message);
+        toast.error('Unable to save the service. Please try again.');
         return;
       }
     } else {
@@ -119,7 +123,7 @@ function ServicesPage() {
 
       if (error) {
         console.error('Error updating service:', error);
-        alert('Failed to update service: ' + error.message);
+        toast.error('Unable to save the service. Please try again.');
         return;
       }
     }
@@ -127,21 +131,14 @@ function ServicesPage() {
     setEditingService(null);
     setIsCreating(false);
     await fetchServices();
+    toast.success(wasCreating ? 'Service created successfully.' : 'Service updated successfully.');
   };
 
   const handleDelete = async (service: Service) => {
-    if (!confirm(`Delete "${service.title}"? This cannot be undone.`)) {
-      return;
-    }
-
-    const { error } = await supabase.from('website_services').delete().eq('id', service.id);
-
-    if (error) {
-      console.error('Error deleting service:', error);
-      alert('Failed to delete service');
-    } else {
-      await fetchServices();
-    }
+    const { data, error } = await supabase.from('website_services').delete().eq('id', service.id).select('id').maybeSingle();
+    if (error) throw error;
+    if (!data?.id) throw new Error('No service row was deleted');
+    setServices((current) => current.filter((row) => row.id !== service.id));
   };
 
   const handleToggleStatus = async (service: Service) => {
@@ -157,18 +154,17 @@ function ServicesPage() {
 
     if (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      toast.error('Unable to update service status. Please try again.');
     } else {
       await fetchServices();
+      toast.success(`Service ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`);
     }
   };
 
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading services...</div>
-        </div>
+        <TablePageSkeleton />
       </AdminLayout>
     );
   }
@@ -280,13 +276,7 @@ function ServicesPage() {
                           </>
                         )}
                       </button>
-                      <button
-                        onClick={() => handleDelete(service)}
-                        className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        Delete
-                      </button>
+                      <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete service?" description="Are you sure you want to delete this service? This action cannot be undone." detail={service.title} successMessage="Service deleted successfully." errorMessage="Unable to delete this service. Please try again." onConfirm={() => handleDelete(service)} />
                     </div>
                   </div>
                 </div>

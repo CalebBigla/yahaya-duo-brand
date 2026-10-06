@@ -21,8 +21,16 @@ import {
   User,
   FileText,
   Building2,
+  Pencil,
+  Ban,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
+import { toast } from 'sonner';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export const Route = createFileRoute('/admin/finance')({
   component: () => (
@@ -35,6 +43,7 @@ export const Route = createFileRoute('/admin/finance')({
 });
 
 type FilterDivision = 'all' | 'travel' | 'trade' | 'company';
+type TransactionStatusFilter = 'all' | 'active' | 'voided';
 
 function FinancePage() {
   const [adminUser, setAdminUser] = useState<any>(null);
@@ -42,18 +51,26 @@ function FinancePage() {
   const [categories, setCategories] = useState<FinancialCategory[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
+  const [acceptedQuoteCount, setAcceptedQuoteCount] = useState(0);
   const [filteredTransactions, setFilteredTransactions] = useState<FinancialTransaction[]>([]);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDivision, setFilterDivision] = useState<FilterDivision>('all');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [filterStatus, setFilterStatus] = useState<TransactionStatusFilter>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<FinancialTransaction | null>(null);
+  const [editingTransaction, setEditingTransaction] = useState<FinancialTransaction | null>(null);
+  const [pendingVoid, setPendingVoid] = useState<FinancialTransaction | null>(null);
+  const [voidReason, setVoidReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVoiding, setIsVoiding] = useState(false);
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -72,12 +89,18 @@ function FinancePage() {
     const loadData = async () => {
       const { user } = await checkAdminAccess();
       setAdminUser(user);
+      if (user?.role !== 'owner') {
+        setInitialLoading(false);
+        return;
+      }
       await Promise.all([
         loadTransactions(),
         loadCategories(),
         loadClients(),
         loadQuotes(),
+        loadAcceptedQuoteCount(),
       ]);
+      setInitialLoading(false);
     };
     loadData();
   }, []);
@@ -93,6 +116,10 @@ function FinancePage() {
       filtered = filtered.filter((t) => t.category_id === filterCategory);
     }
 
+    if (filterStatus !== 'all') {
+      filtered = filtered.filter((t) => (t.status ?? 'active') === filterStatus);
+    }
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -104,9 +131,10 @@ function FinancePage() {
     }
 
     setFilteredTransactions(filtered);
-  }, [transactions, searchQuery, filterDivision, filterCategory]);
+  }, [transactions, searchQuery, filterDivision, filterCategory, filterStatus]);
 
   const loadTransactions = async () => {
+    setLoadError(false);
     try {
       const data = await queueQuery(async () => {
         const { data, error } = await supabase
@@ -121,6 +149,7 @@ function FinancePage() {
       setTransactions(data);
     } catch (error) {
       console.error('Error loading transactions:', error);
+      setLoadError(true);
     }
   };
 
@@ -189,6 +218,19 @@ function FinancePage() {
     }
   };
 
+  const loadAcceptedQuoteCount = async () => {
+    try {
+      const { count, error } = await queueQuery(async () => await supabase
+        .from('quotes')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'accepted'));
+      if (error) throw error;
+      setAcceptedQuoteCount(count ?? 0);
+    } catch (error) {
+      console.error('Error loading accepted quote count:', error);
+    }
+  };
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await loadTransactions();
@@ -212,6 +254,24 @@ function FinancePage() {
 
   const handleAdd = () => {
     resetForm();
+    setEditingTransaction(null);
+    setShowAddModal(true);
+  };
+
+  const handleEdit = (transaction: FinancialTransaction) => {
+    setEditingTransaction(transaction);
+    setFormData({
+      amount: String(transaction.amount),
+      division: transaction.division,
+      category_id: transaction.category_id,
+      client_id: transaction.client_id ?? '',
+      quote_id: transaction.quote_id ?? '',
+      payment_method: transaction.payment_method,
+      external_ref: transaction.external_ref ?? '',
+      description: transaction.description,
+      notes: transaction.notes ?? '',
+      transaction_date: transaction.transaction_date,
+    });
     setShowAddModal(true);
   };
 
@@ -238,26 +298,73 @@ function FinancePage() {
         description: formData.description,
         notes: formData.notes || null,
         transaction_date: formData.transaction_date,
-        created_by: user?.id,
       };
 
-      await queueQuery(async () => {
-        const { error } = await supabase
-          .from('financial_transactions')
-          .insert([transactionData]);
+      if (!editingTransaction && !user?.id) throw new Error('No authenticated user for financial record creation');
 
-        if (error) throw error;
+      await queueQuery(async () => {
+        const result = editingTransaction
+          ? await supabase
+              .from('financial_transactions')
+              .update(transactionData)
+              .eq('id', editingTransaction.id)
+              .eq('status', 'active')
+              .select('*')
+              .single()
+          : await supabase
+              .from('financial_transactions')
+              .insert([{ ...transactionData, created_by: user!.id }])
+              .select('*')
+              .single();
+
+        if (result.error) throw result.error;
+        const saved = result.data as FinancialTransaction;
+        setTransactions((current) => editingTransaction
+          ? current.map((transaction) => transaction.id === saved.id ? saved : transaction)
+          : [saved, ...current]);
       });
 
-      await loadTransactions();
       setShowAddModal(false);
+      setEditingTransaction(null);
       resetForm();
-      alert('Income recorded successfully!');
+      toast.success(editingTransaction ? 'Income record updated successfully.' : 'Income recorded successfully.');
     } catch (error) {
-      console.error('Error saving transaction:', error);
-      alert('Failed to record income. Please try again.');
+      console.error('Error saving financial record:', error);
+      toast.error(editingTransaction ? 'Unable to update this financial record. Please try again.' : 'Unable to record income. Please try again.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const confirmVoid = async () => {
+    if (!pendingVoid || !voidReason.trim() || isVoiding) return;
+    setIsVoiding(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.id) throw new Error('No authenticated user for void action');
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .update({
+          status: 'voided',
+          voided_at: new Date().toISOString(),
+          voided_by: user.id,
+          void_reason: voidReason.trim(),
+        })
+        .eq('id', pendingVoid.id)
+        .eq('status', 'active')
+        .select('*')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Financial record was not voided');
+      setTransactions((current) => current.map((transaction) => transaction.id === pendingVoid.id ? data as FinancialTransaction : transaction));
+      setPendingVoid(null);
+      setVoidReason('');
+      toast.success('Financial record voided. Revenue totals have been updated.');
+    } catch (error) {
+      console.error('Unable to void financial record:', error);
+      toast.error('Unable to void this financial record. Please try again.');
+    } finally {
+      setIsVoiding(false);
     }
   };
 
@@ -287,18 +394,25 @@ function FinancePage() {
     return badges[division as keyof typeof badges] || badges.company;
   };
 
+  const activeTransactions = transactions.filter((transaction) => (transaction.status ?? 'active') === 'active');
   const stats = {
-    total: transactions.reduce((sum, t) => sum + Number(t.amount), 0),
-    travel: transactions.filter(t => t.division === 'travel').reduce((sum, t) => sum + Number(t.amount), 0),
-    trade: transactions.filter(t => t.division === 'trade').reduce((sum, t) => sum + Number(t.amount), 0),
-    count: transactions.length,
+    total: activeTransactions.reduce((sum, t) => sum + Number(t.amount), 0),
+    travel: activeTransactions.filter(t => t.division === 'travel').reduce((sum, t) => sum + Number(t.amount), 0),
+    trade: activeTransactions.filter(t => t.division === 'trade').reduce((sum, t) => sum + Number(t.amount), 0),
   };
 
   const filteredCategories = categories.filter(c => c.division === formData.division);
 
+  if (initialLoading) return <AdminLayout adminUser={adminUser}><TablePageSkeleton /></AdminLayout>;
+
+  if (adminUser?.role !== 'owner') {
+    return <AdminLayout adminUser={adminUser}><div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-6 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">You do not have permission to view Finance records.</div></AdminLayout>;
+  }
+
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
+        {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Unable to load financial records. Please try again.</div>}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Finance</h1>
@@ -326,41 +440,41 @@ function FinancePage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="min-w-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">₦{stats.total.toLocaleString()}</p>
+                <p className="mt-2 min-w-0 break-words text-[28px] font-bold text-gray-900 dark:text-white [overflow-wrap:anywhere]">₦{stats.total.toLocaleString()}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
                 <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="min-w-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Travel Revenue</p>
-                <p className="mt-2 text-3xl font-bold text-blue-900 dark:text-blue-400">₦{stats.travel.toLocaleString()}</p>
+                <p className="mt-2 min-w-0 break-words text-[28px] font-bold text-blue-900 dark:text-blue-400 [overflow-wrap:anywhere]">₦{stats.travel.toLocaleString()}</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="min-w-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Trade Revenue</p>
-                <p className="mt-2 text-3xl font-bold text-purple-900 dark:text-purple-400">₦{stats.trade.toLocaleString()}</p>
+                <p className="mt-2 min-w-0 break-words text-[28px] font-bold text-purple-900 dark:text-purple-400 [overflow-wrap:anywhere]">₦{stats.trade.toLocaleString()}</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="min-w-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Transactions</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.count}</p>
+                <p className="mt-2 min-w-0 break-words text-[28px] font-bold text-gray-900 dark:text-white [overflow-wrap:anywhere]">{acceptedQuoteCount.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -390,7 +504,7 @@ function FinancePage() {
           </div>
 
           {showFilters && (
-            <div className="mt-4 grid gap-4 border-t border-gray-200 dark:border-gray-700 pt-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4 border-t border-gray-200 dark:border-gray-700 pt-4 sm:grid-cols-3">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Division</label>
                 <select
@@ -418,6 +532,19 @@ function FinancePage() {
                       {cat.name} ({cat.division})
                     </option>
                   ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Record status</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value as TransactionStatusFilter)}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="all">All records</option>
+                  <option value="active">Active</option>
+                  <option value="voided">Voided</option>
                 </select>
               </div>
             </div>
@@ -454,6 +581,7 @@ function FinancePage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Division</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Category</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Client</th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                   </tr>
@@ -480,6 +608,11 @@ function FinancePage() {
                           ₦{Number(transaction.amount).toLocaleString()}
                         </div>
                       </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${(transaction.status ?? 'active') === 'voided' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'}`}>
+                          {(transaction.status ?? 'active') === 'voided' ? 'Voided' : 'Active'}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                         {getClientName(transaction.client_id)}
                       </td>
@@ -491,6 +624,22 @@ function FinancePage() {
                           >
                             <Eye className="h-4 w-4" />
                           </button>
+                          {(transaction.status ?? 'active') === 'active' && <>
+                            <button
+                              onClick={() => handleEdit(transaction)}
+                              aria-label={`Edit ${transaction.transaction_ref}`}
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => { setPendingVoid(transaction); setVoidReason(''); }}
+                              aria-label={`Void ${transaction.transaction_ref}`}
+                              className="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                            >
+                              <Ban className="h-4 w-4" />Void
+                            </button>
+                          </>}
                         </div>
                       </td>
                     </tr>
@@ -506,7 +655,7 @@ function FinancePage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-2xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 z-10">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Record Income</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{editingTransaction ? 'Edit Income Record' : 'Record Income'}</h2>
               <button
                 onClick={() => setShowAddModal(false)}
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -699,7 +848,7 @@ function FinancePage() {
                   disabled={isSubmitting}
                   className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Recording...' : 'Record Income'}
+                  {isSubmitting ? (editingTransaction ? 'Saving...' : 'Recording...') : (editingTransaction ? 'Save Changes' : 'Record Income')}
                 </button>
               </div>
             </form>
@@ -788,6 +937,43 @@ function FinancePage() {
           </div>
         </div>
       )}
+
+      <AlertDialog open={Boolean(pendingVoid)} onOpenChange={(open) => {
+        if (!open && !isVoiding) {
+          setPendingVoid(null);
+          setVoidReason('');
+        }
+      }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Void financial record?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingVoid?.transaction_ref} will remain in the records for audit purposes and will stop contributing to revenue totals.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <label className="block space-y-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Reason for voiding
+            <textarea
+              required
+              maxLength={1000}
+              rows={3}
+              value={voidReason}
+              onChange={(event) => setVoidReason(event.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+            />
+          </label>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isVoiding}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isVoiding || !voidReason.trim()}
+              onClick={(event) => { event.preventDefault(); void confirmVoid(); }}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {isVoiding ? 'Voiding…' : 'Void Record'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }

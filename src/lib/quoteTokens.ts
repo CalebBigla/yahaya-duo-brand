@@ -122,7 +122,7 @@ export async function getOrCreateQuoteToken(
 export function generateQuoteAccessUrl(token: string): string {
   const baseUrl = typeof window !== 'undefined' 
     ? window.location.origin 
-    : process.env.VITE_PUBLIC_URL || 'https://yahayatravelandtrade.com';
+    : process.env['VITE_PUBLIC_URL'] || 'https://yahayatravelandtrade.com';
   
   return `${baseUrl}/quote/view/${token}`;
 }

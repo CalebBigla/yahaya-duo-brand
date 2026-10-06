@@ -1,11 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Save, X, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/website/testimonials')({
   component: () => (
@@ -83,9 +86,10 @@ function TestimonialsPage() {
 
   const handleSave = async () => {
     if (!editingItem) return;
+    const wasCreating = isCreating;
 
     if (!editingItem.client_name || !editingItem.testimonial) {
-      alert('Please fill in client name and testimonial');
+      toast.error('Please fill in the client name and testimonial.');
       return;
     }
 
@@ -97,7 +101,7 @@ function TestimonialsPage() {
 
       if (error) {
         console.error('Error creating testimonial:', error);
-        alert('Failed to create testimonial: ' + error.message);
+        toast.error('Unable to save this testimonial. Please try again.');
         return;
       }
     } else {
@@ -111,7 +115,7 @@ function TestimonialsPage() {
 
       if (error) {
         console.error('Error updating testimonial:', error);
-        alert('Failed to update testimonial: ' + error.message);
+        toast.error('Unable to save this testimonial. Please try again.');
         return;
       }
     }
@@ -119,21 +123,14 @@ function TestimonialsPage() {
     setEditingItem(null);
     setIsCreating(false);
     await fetchTestimonials();
+    toast.success(wasCreating ? 'Testimonial created successfully.' : 'Testimonial updated successfully.');
   };
 
   const handleDelete = async (item: Testimonial) => {
-    if (!confirm(`Delete testimonial from "${item.client_name}"? This cannot be undone.`)) {
-      return;
-    }
-
-    const { error } = await supabase.from('website_testimonials').delete().eq('id', item.id);
-
-    if (error) {
-      console.error('Error deleting testimonial:', error);
-      alert('Failed to delete testimonial');
-    } else {
-      await fetchTestimonials();
-    }
+    const { data, error } = await supabase.from('website_testimonials').delete().eq('id', item.id).select('id').maybeSingle();
+    if (error) throw error;
+    if (!data?.id) throw new Error('No testimonial row was deleted');
+    setTestimonials((current) => current.filter((row) => row.id !== item.id));
   };
 
   const handleToggleStatus = async (item: Testimonial) => {
@@ -149,18 +146,17 @@ function TestimonialsPage() {
 
     if (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      toast.error('Unable to update testimonial status. Please try again.');
     } else {
       await fetchTestimonials();
+      toast.success(`Testimonial ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`);
     }
   };
 
   if (loading) {
     return (
       <AdminLayout adminUser={adminUser}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-gray-600">Loading testimonials...</div>
-        </div>
+        <TablePageSkeleton />
       </AdminLayout>
     );
   }
@@ -250,13 +246,7 @@ function TestimonialsPage() {
                   >
                     {item.status === 'published' ? 'Unpublish' : 'Publish'}
                   </button>
-                  <button
-                    onClick={() => handleDelete(item)}
-                    className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Delete
-                  </button>
+                  <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete testimonial?" description="Are you sure you want to delete this testimonial? This action cannot be undone." detail={`Testimonial from ${item.client_name}`} successMessage="Testimonial deleted successfully." errorMessage="Unable to delete this testimonial. Please try again." onConfirm={() => handleDelete(item)} />
                 </div>
               </div>
             ))}

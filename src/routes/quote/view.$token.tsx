@@ -99,6 +99,11 @@ function PublicQuoteView() {
       }
 
       const quoteId = validation.validation.quote_id;
+      if (!quoteId) {
+        setError('Invalid quotation link. Please check the URL and try again.');
+        setIsLoading(false);
+        return;
+      }
 
       // Check if already responded
       const responseCheck = await hasQuoteBeenResponded(quoteId);
@@ -141,9 +146,9 @@ function PublicQuoteView() {
     try {
       const response = {
         response_type: selectedResponse,
-        response_notes: responseNotes || undefined,
-        requested_changes: selectedResponse === 'revision_requested' ? requestedChanges : undefined,
-        decline_reason: selectedResponse === 'declined' ? declineReason : undefined,
+        ...(responseNotes ? { response_notes: responseNotes } : {}),
+        ...(selectedResponse === 'revision_requested' && requestedChanges ? { requested_changes: requestedChanges } : {}),
+        ...(selectedResponse === 'declined' && declineReason ? { decline_reason: declineReason } : {}),
       };
 
       const result = await submitClientResponse(quote.id, token, response);

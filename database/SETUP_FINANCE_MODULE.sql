@@ -44,6 +44,14 @@ CREATE TABLE IF NOT EXISTS financial_transactions (
     description TEXT NOT NULL CHECK (LENGTH(description) <= 500 AND LENGTH(description) > 0),
     notes TEXT CHECK (LENGTH(notes) <= 2000),
     transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'voided')),
+    voided_at TIMESTAMPTZ,
+    voided_by UUID REFERENCES auth.users(id),
+    void_reason TEXT CHECK (void_reason IS NULL OR LENGTH(void_reason) <= 1000),
+    CONSTRAINT financial_transactions_void_metadata_check CHECK (
+        (status = 'active' AND voided_at IS NULL AND voided_by IS NULL)
+        OR (status = 'voided' AND voided_at IS NOT NULL AND voided_by IS NOT NULL)
+    ),
     created_by UUID NOT NULL REFERENCES auth.users(id),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -55,6 +63,7 @@ CREATE INDEX IF NOT EXISTS idx_financial_transactions_category ON financial_tran
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_client ON financial_transactions(client_id);
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_quote ON financial_transactions(quote_id);
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_date ON financial_transactions(transaction_date DESC);
+CREATE INDEX IF NOT EXISTS idx_financial_transactions_status_date ON financial_transactions(status, transaction_date DESC);
 
 -- ============================================================================
 -- TABLE: expense_transactions
@@ -187,7 +196,7 @@ CREATE TRIGGER audit_financial_categories_trigger
     EXECUTE FUNCTION audit_content_changes();
 
 CREATE TRIGGER audit_financial_transactions_trigger
-    AFTER INSERT OR UPDATE OR DELETE ON financial_transactions
+    AFTER INSERT OR UPDATE ON financial_transactions
     FOR EACH ROW 
     EXECUTE FUNCTION audit_content_changes();
 
@@ -215,6 +224,7 @@ DROP POLICY IF EXISTS "Owners can update financial_transactions" ON financial_tr
 DROP POLICY IF EXISTS "Owners can read expense_transactions" ON expense_transactions;
 DROP POLICY IF EXISTS "Owners can insert expense_transactions" ON expense_transactions;
 DROP POLICY IF EXISTS "Owners can update expense_transactions" ON expense_transactions;
+DROP POLICY IF EXISTS "Owners can delete expense_transactions" ON expense_transactions;
 
 -- Categories: Owner read/write
 CREATE POLICY "Owners can read financial_categories" 
@@ -267,6 +277,8 @@ CREATE POLICY "Owners can update financial_transactions"
         WHERE user_id = auth.uid() AND role = 'owner'
     ));
 
+REVOKE DELETE ON TABLE financial_transactions FROM PUBLIC, anon, authenticated;
+
 -- Expenses: Owner read/write only
 CREATE POLICY "Owners can read expense_transactions" 
     ON expense_transactions FOR SELECT TO authenticated
@@ -286,6 +298,13 @@ CREATE POLICY "Owners can update expense_transactions"
     ON expense_transactions FOR UPDATE TO authenticated
     USING (EXISTS (
         SELECT 1 FROM admin_users 
+        WHERE user_id = auth.uid() AND role = 'owner'
+    ));
+
+CREATE POLICY "Owners can delete expense_transactions"
+    ON expense_transactions FOR DELETE TO authenticated
+    USING (EXISTS (
+        SELECT 1 FROM admin_users
         WHERE user_id = auth.uid() AND role = 'owner'
     ));
 

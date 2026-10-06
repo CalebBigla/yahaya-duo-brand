@@ -19,7 +19,7 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { CountryCarousel } from "@/components/travel/CountryCarousel";
 import { TourPackagesCards } from "@/components/travel/TourPackagesCards";
 import { travelServices, site } from "@/lib/site";
-import { getPublishedServices } from "@/lib/queries/website";
+import { getPublishedServices, getPublishedVisaDestinations } from "@/lib/queries/website";
 import travelImg from "@/assets/travel.jpg";
 
 // Page hero image
@@ -156,59 +156,6 @@ const serviceDetails = {
   },
 };
 
-// Visa destination quick reference
-const visaDestinations = [
-  {
-    country: "Saudi Arabia",
-    types: "Umrah, Hajj, Tourism, Business",
-    timeline: "Variable by season",
-    notes: "Vaccination certificate mandatory. Pilgrimage visas through licensed agents.",
-  },
-  {
-    country: "Qatar",
-    types: "Tourism, Business, Work, Transit",
-    timeline: "3-5 working days",
-    notes: "Sponsor or hotel booking required. Fast processing available.",
-  },
-  {
-    country: "China",
-    types: "Tourism, Business, Study, Work",
-    timeline: "4-7 working days",
-    notes: "Invitation letter often required. Apply at Chinese Visa Application Center.",
-  },
-  {
-    country: "Turkey",
-    types: "Tourism, Business, Work, Transit",
-    timeline: "3-7 working days",
-    notes: "E-visa available online. Hotel confirmation and travel insurance recommended.",
-  },
-  {
-    country: "Dubai (UAE)",
-    types: "Tourism, Business, Work, Transit",
-    timeline: "3-5 working days",
-    notes: "Sponsor or hotel booking required. Fast-track options available for urgent cases.",
-  },
-  {
-    country: "Egypt",
-    types: "Tourism, Business",
-    timeline: "5-7 working days",
-    notes:
-      "Hotel booking and return ticket confirmation required. E-visa available for some nationalities.",
-  },
-  {
-    country: "Cyprus",
-    types: "Tourism, Business",
-    timeline: "5-10 working days",
-    notes: "Travel insurance and hotel confirmation required.",
-  },
-  {
-    country: "Schengen Countries",
-    types: "Tourism, Business, Study, Work",
-    timeline: "15 working days",
-    notes: "Travel insurance mandatory. Biometrics required. Multiple entry options available.",
-  },
-];
-
 // Document checklist for visa applicants
 const visaChecklist = [
   "Valid passport with at least 6 months validity and blank pages",
@@ -226,18 +173,27 @@ const visaChecklist = [
 ];
 
 function TravelPage() {
-  const [selectedDestination, setSelectedDestination] = useState<string>(
-    visaDestinations[0]?.country ?? "",
-  );
+  const [selectedDestination, setSelectedDestination] = useState<string>("");
   const [showChecklist, setShowChecklist] = useState(false);
   const { data: publishedServices } = useQuery({
     queryKey: ["website", "services", "travel"],
     queryFn: () => getPublishedServices("travel"),
     staleTime: 60_000,
   });
+  const {
+    data: publishedVisaDestinations,
+    isLoading: visaDestinationsLoading,
+    isError: visaDestinationsError,
+  } = useQuery({
+    queryKey: ["website", "visa-destinations"],
+    queryFn: getPublishedVisaDestinations,
+    staleTime: 60_000,
+  });
+  const visaDestinations = publishedVisaDestinations ?? [];
   const services = publishedServices ?? travelServices;
 
-  const destination = visaDestinations.find((d) => d.country === selectedDestination);
+  const activeDestination = selectedDestination || visaDestinations[0]?.country;
+  const destination = visaDestinations.find((d) => d.country === activeDestination);
 
   return (
     <>
@@ -355,26 +311,33 @@ function TravelPage() {
             </p>
           </div>
 
+          {visaDestinationsLoading ? (
+            <div aria-label="Loading visa destinations" className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="h-24 animate-pulse rounded-xl border-2 border-primary-foreground/10 bg-primary-deep/70" />
+              ))}
+            </div>
+          ) : visaDestinations.length > 0 ? <>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visaDestinations.map((dest) => (
               <button
                 key={dest.country}
                 onClick={() => setSelectedDestination(dest.country)}
                 className={`rounded-xl border-2 p-4 text-left transition-all ${
-                  selectedDestination === dest.country
+                  activeDestination === dest.country
                     ? "border-accent bg-accent-soft"
                     : "border-primary-foreground/20 bg-primary-deep hover:border-accent/50"
                 }`}
               >
                 <h3
-                  className={`font-bold ${selectedDestination === dest.country ? "text-accent-foreground" : "text-primary-foreground"}`}
+                  className={`font-bold ${activeDestination === dest.country ? "text-accent-foreground" : "text-primary-foreground"}`}
                 >
                   {dest.country}
                 </h3>
                 <p
-                  className={`mt-1 text-xs ${selectedDestination === dest.country ? "text-accent-foreground/80" : "text-primary-foreground/60"}`}
+                  className={`mt-1 text-xs ${activeDestination === dest.country ? "text-accent-foreground/80" : "text-primary-foreground/60"}`}
                 >
-                  {dest.timeline}
+                  {dest.processing_time}
                 </p>
               </button>
             ))}
@@ -388,7 +351,7 @@ function TravelPage() {
                     Visa Types
                   </p>
                   <p className="mt-1 text-sm font-semibold text-primary-foreground">
-                    {destination.types}
+                    {destination.visa_types}
                   </p>
                 </div>
                 <div>
@@ -396,7 +359,7 @@ function TravelPage() {
                     Processing Time
                   </p>
                   <p className="mt-1 text-sm font-semibold text-primary-foreground">
-                    {destination.timeline}
+                    {destination.processing_time}
                   </p>
                 </div>
               </div>
@@ -418,6 +381,13 @@ function TravelPage() {
             </a>{" "}
             for your specific case.
           </p>
+          </> : (
+            <p role={visaDestinationsError ? "alert" : undefined} className="mt-8 rounded-xl border border-primary-foreground/20 bg-primary-deep p-6 text-center text-sm text-primary-foreground/75">
+              {visaDestinationsError
+                ? "Visa destination information is temporarily unavailable. Please contact us for destination requirements."
+                : "Visa destination information will be available soon. Please contact us for destination requirements."}
+            </p>
+          )}
         </div>
       </section>
 
