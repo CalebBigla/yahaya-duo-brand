@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
-import { signIn, getCurrentSession } from '@/lib/auth';
+import { signIn, checkAdminAccess } from '@/lib/auth';
 import { Mail, Lock, AlertCircle, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export const Route = createFileRoute('/admin/login')({
@@ -19,15 +19,16 @@ function AdminLogin() {
   const [isRateLimited, setIsRateLimited] = useState(false);
 
   useEffect(() => {
-    // Check if already logged in
-    const checkExistingSession = async () => {
-      const session = await getCurrentSession();
-      if (session) {
+    // Only redirect an existing session if it is authorized for the admin area.
+    let active = true;
+    const checkExistingAdmin = async () => {
+      const access = await checkAdminAccess();
+      if (active && access.isAdmin) {
         navigate({ to: '/admin' });
       }
     };
 
-    checkExistingSession();
+    void checkExistingAdmin();
 
     // Check for timeout parameter
     const params = new URLSearchParams(window.location.search);
@@ -35,6 +36,10 @@ function AdminLogin() {
       setShowTimeout(true);
       setError('Your session has expired due to inactivity. Please sign in again.');
     }
+
+    return () => {
+      active = false;
+    };
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,14 +80,14 @@ function AdminLogin() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 px-4">
-      <div className="w-full max-w-md h-screen flex flex-col justify-center py-12">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 px-4 py-4 sm:py-6">
+      <div className="flex w-full max-w-md flex-col justify-center py-2 sm:py-4">
         {/* Logo and Title */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-2xl">
-            <Shield className="h-10 w-10 text-white" />
+        <div className="mb-5 text-center sm:mb-6">
+          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-sm">
+            <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
             Admin Dashboard
           </h1>
           <p className="mt-2 text-sm text-blue-100/70">
@@ -91,9 +96,9 @@ function AdminLogin() {
         </div>
 
         {/* Login Form */}
-        <div className="rounded-2xl border border-white/10 bg-white shadow-2xl p-8">
+        <div className="rounded-2xl border border-white/10 bg-white p-6 shadow-2xl sm:p-7">
           {showTimeout && (
-            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
               <div className="flex gap-3">
                 <AlertCircle className="h-5 w-5 shrink-0 text-amber-600" />
                 <div className="text-sm text-amber-800">
@@ -104,7 +109,7 @@ function AdminLogin() {
           )}
 
           {error && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
               <div className="flex gap-3">
                 <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
                 <div className="text-sm text-red-800">{error}</div>
@@ -112,7 +117,7 @@ function AdminLogin() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Field */}
             <div>
               <label
@@ -129,7 +134,7 @@ function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-50 disabled:text-gray-500"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-50 disabled:text-gray-500"
                   placeholder="admin@example.com"
                   disabled={isLoading || isRateLimited}
                   autoComplete="email"
@@ -161,7 +166,7 @@ function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-12 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-50 disabled:text-gray-500"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-12 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-50 disabled:text-gray-500"
                   placeholder="••••••••••••"
                   disabled={isLoading || isRateLimited}
                   autoComplete="current-password"
@@ -186,7 +191,7 @@ function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading || isRateLimited}
-              className="w-full rounded-lg bg-blue-600 py-3.5 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-400 flex items-center justify-center gap-2"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -207,7 +212,7 @@ function AdminLogin() {
           </form>
 
           {/* Security Notice */}
-          <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
             <p className="text-xs text-gray-600 leading-relaxed">
               <strong className="text-gray-900">Security Notice:</strong> This area is
               restricted to authorized personnel only. All access attempts are logged and
@@ -217,7 +222,7 @@ function AdminLogin() {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-blue-100/70">
+        <p className="mt-4 text-center text-xs text-blue-100/70">
           © {new Date().getFullYear()} Yahaya Travel and Trade Co Ltd. All rights reserved.
         </p>
       </div>

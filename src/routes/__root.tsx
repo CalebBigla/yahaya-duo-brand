@@ -273,20 +273,30 @@ function AdminDashboardShell() {
   }, [navigate]);
 
   const shellUser = auth.status === 'authenticated' ? auth.user : null;
+  if (auth.status === 'checking') {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900" aria-live="polite" aria-busy="true">
+        <p className="sr-only">Verifying access and loading the admin dashboard.</p>
+        <AdminRouteSkeleton pathname="/admin" />
+      </div>
+    );
+  }
+
+  if (auth.status === 'error') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
+        <div role="alert" className="max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
+          <p>{auth.errorMessage}</p>
+          <button onClick={() => window.location.reload()} className="mt-4 rounded bg-red-700 px-4 py-2 font-medium text-white">Reload page</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AdminLayout adminUser={shellUser}>
       <AdminAuthContext.Provider value={auth}>
-        {auth.status === 'checking' ? (
-          <div aria-live="polite" aria-busy="true">
-            <p className="sr-only">Verifying access and loading the admin dashboard.</p>
-            <AdminRouteSkeleton pathname="/admin" />
-          </div>
-        ) : auth.status === 'error' ? (
-          <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-6 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
-            <p>{auth.errorMessage}</p>
-            <button onClick={() => window.location.reload()} className="mt-4 rounded bg-red-700 px-4 py-2 font-medium text-white">Reload page</button>
-          </div>
-        ) : <Outlet />}
+        <Outlet />
       </AdminAuthContext.Provider>
     </AdminLayout>
   );
