@@ -3,7 +3,7 @@
  * Includes sidebar navigation, header, and main content area with dark mode support
  */
 import { ReactNode, useContext, useState, useEffect } from 'react';
-import { Link, useLocation } from '@tantml:router';
+import { Link, useLocation } from '@tanstack/react-router';
 import {
   LayoutDashboard,
   Inbox,
