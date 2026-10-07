@@ -551,7 +551,7 @@ function QuotesPage() {
     sent: quotes.filter(q => q.status === 'sent').length,
     pending: quotes.filter(q => q.status === 'pending').length,
     accepted: quotes.filter(q => q.status === 'accepted').length,
-    totalValue: quotes.reduce((sum, q) => sum + Number(q.total_amount), 0),
+    rejected: quotes.filter(q => q.status === 'rejected').length,
   };
 
   const totals = calculateTotals();
@@ -650,11 +650,11 @@ function QuotesPage() {
           <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Value</p>
-                <p className="mt-2 text-2xl font-bold text-blue-900 dark:text-blue-400">₦{stats.totalValue.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Rejected Quotes</p>
+                <p className="mt-2 text-3xl font-bold text-red-900 dark:text-red-400">{stats.rejected}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <DollarSign className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
+                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </div>
@@ -995,10 +995,24 @@ function QuotesPage() {
                   </label>
                   <input
                     type="date"
+                    min={new Date().toISOString().split('T')[0]}
                     value={formData.valid_until}
-                    onChange={(e) => setFormData({ ...formData, valid_until: e.target.value })}
+                    onChange={(e) => {
+                      const selectedDate = new Date(e.target.value);
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      
+                      if (selectedDate < today) {
+                        toast.error('Quote validity date cannot be in the past');
+                        return;
+                      }
+                      setFormData({ ...formData, valid_until: e.target.value });
+                    }}
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Must be today or a future date
+                  </p>
                 </div>
               </div>
 

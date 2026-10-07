@@ -112,16 +112,22 @@ function PublicQuoteView() {
         setExistingResponse(responseCheck.response);
       }
 
-      // Fetch quote details
-      const { data, error: quoteError } = await supabase
-        .from('quotes')
-        .select('*')
-        .eq('id', quoteId)
-        .single();
+      // Retrieve through a token-scoped RPC. Public clients cannot SELECT from
+      // quotes directly because its RLS policy is admin-only.
+      const { data, error: quoteError } = await supabase.rpc(
+        'get_public_quote_by_token',
+        { p_token: token },
+      );
 
       if (quoteError) throw quoteError;
 
-      setQuote(data);
+      const authorizedQuote = Array.isArray(data) ? data[0] : data;
+      if (!authorizedQuote || authorizedQuote.id !== quoteId) {
+        setError('Invalid or expired quotation link. Please contact us for assistance.');
+        return;
+      }
+
+      setQuote(authorizedQuote as Quote);
     } catch (err) {
       console.error('Error loading quote:', err);
       setError('Failed to load quotation. Please try again or contact us.');

@@ -28,7 +28,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { format, subDays, subMonths, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from 'date-fns';
 import { DashboardPageSkeleton } from '@/components/admin/SkeletonLoader';
 
@@ -63,7 +63,7 @@ interface ChartDataPoint {
   expenses: number;
 }
 
-type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'custom';
+type TimePeriod = 'week' | 'month' | 'year' | 'all';
 
 function AdminDashboard() {
   const [adminUser, setAdminUser] = useState<any>(null);
@@ -81,9 +81,7 @@ function AdminDashboard() {
     completedTransactions: 0,
   });
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>('monthly');
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('month');
   const [isLoadingChart, setIsLoadingChart] = useState(true);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
   const [dashboardLoadError, setDashboardLoadError] = useState(false);
@@ -110,7 +108,7 @@ function AdminDashboard() {
     };
 
     void loadAdminData();
-  }, []);
+  }, [timePeriod]); // Re-load when time period changes
 
   useEffect(() => {
     if (adminUser?.role !== 'owner') {
@@ -118,22 +116,56 @@ function AdminDashboard() {
       return;
     }
     void loadChartData();
-  }, [timePeriod, customStartDate, customEndDate, adminUser?.role]);
+  }, [timePeriod, adminUser?.role]);
+
+  const getDateRangeForPeriod = (period: TimePeriod): { startDate: Date | null; endDate: Date } => {
+    const endDate = new Date();
+    let startDate: Date | null = null;
+
+    switch (period) {
+      case 'week':
+        startDate = subDays(endDate, 7);
+        break;
+      case 'month':
+        startDate = subMonths(endDate, 1);
+        break;
+      case 'year':
+        startDate = subMonths(endDate, 12);
+        break;
+      case 'all':
+        startDate = null; // No start date filter
+        break;
+    }
+
+    return { startDate, endDate };
+  };
 
   const loadFinancialStats = async () => {
     setFinancialStatsError(false);
     try {
+      // Get date range based on time period
+      const { startDate, endDate } = getDateRangeForPeriod(timePeriod);
+      
       const pageSize = 1000;
       const transactions: Array<{ amount: number; transaction_date: string }> = [];
       for (let from = 0; ; from += pageSize) {
         const page = await queueQuery(async () => {
-          const { data, error } = await supabase
+          let query = supabase
             .from('financial_transactions')
             .select('amount, transaction_date')
             .eq('status', 'active')
             .order('transaction_date', { ascending: true })
-            .order('id', { ascending: true })
-            .range(from, from + pageSize - 1);
+            .order('id', { ascending: true });
+          
+          // Apply date filter if not "all time"
+          if (startDate) {
+            query = query.gte('transaction_date', format(startDate, 'yyyy-MM-dd'));
+          }
+          if (endDate) {
+            query = query.lte('transaction_date', format(endDate, 'yyyy-MM-dd'));
+          }
+          
+          const { data, error } = await query.range(from, from + pageSize - 1);
           if (error) throw error;
           return data ?? [];
         });
@@ -144,12 +176,21 @@ function AdminDashboard() {
       const expenses: Array<{ amount: number; expense_date: string }> = [];
       for (let from = 0; ; from += pageSize) {
         const page = await queueQuery(async () => {
-          const { data, error } = await supabase
+          let query = supabase
             .from('expense_transactions')
             .select('amount, expense_date')
             .order('expense_date', { ascending: true })
-            .order('id', { ascending: true })
-            .range(from, from + pageSize - 1);
+            .order('id', { ascending: true });
+          
+          // Apply date filter if not "all time"
+          if (startDate) {
+            query = query.gte('expense_date', format(startDate, 'yyyy-MM-dd'));
+          }
+          if (endDate) {
+            query = query.lte('expense_date', format(endDate, 'yyyy-MM-dd'));
+          }
+          
+          const { data, error } = await query.range(from, from + pageSize - 1);
           if (error) throw error;
           return data ?? [];
         });
@@ -204,35 +245,78 @@ function AdminDashboard() {
   const loadOperationsStats = async () => {
     setOperationsStatsError(false);
     try {
-      // Load enquiries count
+      // Get date range based on time period
+      const { startDate, endDate } = getDateRangeForPeriod(timePeriod);
+
+      // Load enquiries count with date filter
       const enquiriesResult = await queueQuery(async () => {
-        return await supabase
+        let query = supabase
           .from('submissions')
           .select('*', { count: 'exact', head: true });
+        
+        // Apply date filter if not "all time"
+        if (startDate) {
+          query = query.gte('created_at', startDate.toISOString());
+        }
+        if (endDate) {
+          query = query.lte('created_at', endDate.toISOString());
+        }
+        
+        return await query;
       });
 
-      // Load active clients count
+      // Load active clients count with date filter
       const clientsResult = await queueQuery(async () => {
-        return await supabase
+        let query = supabase
           .from('clients')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'active');
+        
+        // Apply date filter if not "all time"
+        if (startDate) {
+          query = query.gte('created_at', startDate.toISOString());
+        }
+        if (endDate) {
+          query = query.lte('created_at', endDate.toISOString());
+        }
+        
+        return await query;
       });
 
-      // Load pending quotes count
+      // Load pending quotes count with date filter
       const pendingQuotesResult = await queueQuery(async () => {
-        return await supabase
+        let query = supabase
           .from('quotes')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'pending');
+        
+        // Apply date filter if not "all time"
+        if (startDate) {
+          query = query.gte('created_at', startDate.toISOString());
+        }
+        if (endDate) {
+          query = query.lte('created_at', endDate.toISOString());
+        }
+        
+        return await query;
       });
 
-      // Load completed transactions (accepted quotes)
+      // Load completed transactions (accepted quotes) with date filter
       const completedQuotesResult = await queueQuery(async () => {
-        return await supabase
+        let query = supabase
           .from('quotes')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'accepted');
+        
+        // Apply date filter if not "all time"
+        if (startDate) {
+          query = query.gte('updated_at', startDate.toISOString());
+        }
+        if (endDate) {
+          query = query.lte('updated_at', endDate.toISOString());
+        }
+        
+        return await query;
       });
 
       const queryResults = [enquiriesResult, clientsResult, pendingQuotesResult, completedQuotesResult];
@@ -255,37 +339,11 @@ function AdminDashboard() {
     setIsLoadingChart(true);
     setChartLoadError(false);
     try {
-      // Calculate date range based on selected period
-      let startDate: Date;
-      let endDate: Date = new Date();
-
-      switch (timePeriod) {
-        case 'weekly':
-          startDate = subDays(endDate, 7);
-          break;
-        case 'monthly':
-          startDate = subMonths(endDate, 6); // Last 6 months
-          break;
-        case 'yearly':
-          startDate = subMonths(endDate, 12); // Last 12 months
-          break;
-        case 'custom':
-          if (!customStartDate || !customEndDate) {
-            setChartData([]);
-            setIsLoadingChart(false);
-            return;
-          }
-          startDate = new Date(customStartDate);
-          endDate = new Date(customEndDate);
-          if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || startDate > endDate) {
-            setChartData([]);
-            setIsLoadingChart(false);
-            return;
-          }
-          break;
-        default:
-          startDate = subMonths(endDate, 6);
-      }
+      // Get date range based on selected period
+      const { startDate, endDate } = getDateRangeForPeriod(timePeriod);
+      
+      // For "all time", use a far past date
+      const effectiveStartDate = startDate || subMonths(new Date(), 120); // 10 years back
 
       // Load transactions within date range
       const pageSize = 1000;
@@ -296,7 +354,7 @@ function AdminDashboard() {
             .from('financial_transactions')
             .select('amount, transaction_date')
             .eq('status', 'active')
-            .gte('transaction_date', format(startDate, 'yyyy-MM-dd'))
+            .gte('transaction_date', format(effectiveStartDate, 'yyyy-MM-dd'))
             .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
             .order('transaction_date', { ascending: true })
             .order('id', { ascending: true })
@@ -314,7 +372,7 @@ function AdminDashboard() {
           const { data, error } = await supabase
             .from('expense_transactions')
             .select('amount, expense_date')
-            .gte('expense_date', format(startDate, 'yyyy-MM-dd'))
+            .gte('expense_date', format(effectiveStartDate, 'yyyy-MM-dd'))
             .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
             .order('expense_date', { ascending: true })
             .order('id', { ascending: true })
@@ -327,7 +385,7 @@ function AdminDashboard() {
       }
 
       // Aggregate data by period
-      const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, startDate, endDate);
+      const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, effectiveStartDate, endDate);
       setChartData(aggregated);
     } catch (error) {
       console.error('Error loading chart data:', error);
@@ -347,22 +405,17 @@ function AdminDashboard() {
   ): ChartDataPoint[] => {
     const dataMap = new Map<string, { revenue: number; expenses: number }>();
 
-    const customDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    const customByWeek = period === 'custom' && customDays <= 60;
-
     // Use sortable ISO dates as keys so periods remain chronological across years.
     const getPeriodKey = (date: Date): string => {
       switch (period) {
-        case 'weekly':
-          return format(startOfWeek(date), 'yyyy-MM-dd');
-        case 'monthly':
-          return format(startOfMonth(date), 'yyyy-MM-dd');
-        case 'yearly':
-          return format(startOfYear(date), 'yyyy-MM-dd');
-        case 'custom':
-          return customByWeek
-            ? format(startOfWeek(date), 'yyyy-MM-dd')
-            : format(startOfMonth(date), 'yyyy-MM-dd');
+        case 'week':
+          return format(date, 'yyyy-MM-dd'); // Daily for week view
+        case 'month':
+          return format(startOfWeek(date), 'yyyy-MM-dd'); // Weekly for month view
+        case 'year':
+          return format(startOfMonth(date), 'yyyy-MM-dd'); // Monthly for year view
+        case 'all':
+          return format(startOfMonth(date), 'yyyy-MM-dd'); // Monthly for all time view
         default:
           return format(startOfMonth(date), 'yyyy-MM-dd');
       }
@@ -383,11 +436,11 @@ function AdminDashboard() {
     });
 
     // Convert to array and sort
-    const labelFormat = period === 'yearly'
-      ? 'yyyy'
-      : period === 'weekly' || customByWeek
-        ? 'MMM dd'
-        : 'MMM yyyy';
+    const labelFormat = period === 'week'
+      ? 'MMM dd'
+      : period === 'year' || period === 'all'
+        ? 'MMM yyyy'
+        : 'MMM dd';
 
     return Array.from(dataMap.entries())
       .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
@@ -425,126 +478,164 @@ function AdminDashboard() {
           </div>
         ) : <>
         {/* Page Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {getGreeting()}, {adminUser?.role === 'owner' ? 'Admin' : 'Staff'}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Executive overview of Yahaya Travel & Trade operations and financials.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {getGreeting()}, {adminUser?.role === 'owner' ? 'Admin' : 'Staff'}
+            </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Executive overview of Yahaya Travel & Trade operations and financials.
+            </p>
+          </div>
+          
+          {/* Time Period Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Period:</span>
+            <button
+              onClick={() => setTimePeriod('week')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                timePeriod === 'week'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              Week
+            </button>
+            <button
+              onClick={() => setTimePeriod('month')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                timePeriod === 'month'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              Month
+            </button>
+            <button
+              onClick={() => setTimePeriod('year')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                timePeriod === 'year'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              Year
+            </button>
+            <button
+              onClick={() => setTimePeriod('all')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                timePeriod === 'all'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              All Time
+            </button>
+          </div>
         </div>
 
         {/* Financial Summary Section: finance data is owner-only under Finance RLS. */}
         {adminUser?.role === 'owner' && <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Financial Summary</h2>
           {financialStatsError ? (
             <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">
               Unable to load financial summary. Confirm the Finance schema migration is applied, then refresh.
             </div>
           ) : <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Total Revenue */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue</p>
-                  <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Revenue</p>
+                  <p className="mt-3 text-xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(financialStats.totalRevenue)}
                   </p>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    All income in period
+                  </p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                  <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                  <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  All-time income
-                </span>
               </div>
             </div>
 
             {/* Net Revenue */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Revenue</p>
-                  <p className={`mt-2 text-2xl font-bold ${
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Net Revenue</p>
+                  <p className={`mt-3 text-xl font-bold ${
                     financialStats.netRevenue >= 0 
                       ? 'text-green-600 dark:text-green-400' 
                       : 'text-red-600 dark:text-red-400'
                   }`}>
                     {formatCurrency(financialStats.netRevenue)}
                   </p>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Revenue - Expenses
+                  </p>
                 </div>
-                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
                   financialStats.netRevenue >= 0
                     ? 'bg-green-100 dark:bg-green-900/30'
                     : 'bg-red-100 dark:bg-red-900/30'
                 }`}>
-                  <Wallet className={`h-6 w-6 ${
+                  <Wallet className={`h-5 w-5 ${
                     financialStats.netRevenue >= 0
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
                   }`} />
                 </div>
               </div>
-              <div className="mt-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Revenue - Expenses
-                </span>
-              </div>
             </div>
 
             {/* Total Expenses */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Expenses</p>
-                  <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Expenses</p>
+                  <p className="mt-3 text-xl font-bold text-gray-900 dark:text-white">
                     {formatCurrency(financialStats.totalExpenses)}
                   </p>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    All costs in period
+                  </p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
-                  <TrendingDown className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
+                  <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  All-time costs
-                </span>
               </div>
             </div>
 
             {/* Monthly Growth */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Growth</p>
-                  <p className={`mt-2 text-2xl font-bold ${
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Monthly Growth</p>
+                  <p className={`mt-3 text-xl font-bold ${
                     financialStats.monthlyGrowthTrend === 'up'
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
                   }`}>
                     {financialStats.monthlyGrowth === null
-                      ? 'New revenue'
+                      ? 'New'
                       : `${financialStats.monthlyGrowth >= 0 ? '+' : ''}${financialStats.monthlyGrowth.toFixed(1)}%`}
                   </p>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    {financialStats.monthlyGrowth === null ? 'No prior revenue' : 'vs previous month'}
+                  </p>
                 </div>
-                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
                   financialStats.monthlyGrowthTrend === 'up'
                     ? 'bg-green-100 dark:bg-green-900/30'
                     : 'bg-red-100 dark:bg-red-900/30'
                 }`}>
                   {financialStats.monthlyGrowthTrend === 'up' ? (
-                    <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
                   ) : (
-                    <TrendingDown className="h-6 w-6 text-red-600 dark:text-red-400" />
+                    <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
                   )}
                 </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {financialStats.monthlyGrowth === null ? 'No revenue in the previous month' : 'vs previous month'}
-                </span>
               </div>
             </div>
           </div>}
@@ -552,76 +643,7 @@ function AdminDashboard() {
 
         {/* Business Performance Section */}
         {adminUser?.role === 'owner' && <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Business Performance</h2>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setTimePeriod('weekly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  timePeriod === 'weekly'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                Weekly
-              </button>
-              <button
-                onClick={() => setTimePeriod('monthly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  timePeriod === 'monthly'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setTimePeriod('yearly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  timePeriod === 'yearly'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                Yearly
-              </button>
-              <button
-                onClick={() => setTimePeriod('custom')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  timePeriod === 'custom'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                <Calendar className="h-3 w-3 inline mr-1" />
-                Custom
-              </button>
-            </div>
-          </div>
-
-          {/* Custom Date Range Picker */}
-          {timePeriod === 'custom' && (
-            <div className="mb-4 flex items-center gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From:</label>
-                <input
-                  type="date"
-                  value={customStartDate}
-                  onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To:</label>
-                <input
-                  type="date"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          )}
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Business Performance</h2>
 
           <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
             {isLoadingChart ? (
@@ -634,10 +656,6 @@ function AdminDashboard() {
             ) : chartLoadError ? (
               <div role="alert" className="flex h-80 items-center justify-center text-center text-sm text-red-700 dark:text-red-300">
                 Unable to load performance data. Confirm the Finance schema migration is applied, then try again.
-              </div>
-            ) : timePeriod === 'custom' && (!customStartDate || !customEndDate) ? (
-              <div className="flex h-80 items-center justify-center text-center text-sm text-gray-500 dark:text-gray-400">
-                Choose both dates to view custom period performance.
               </div>
             ) : chartData.length === 0 ? (
               <div className="flex items-center justify-center h-80 text-gray-500 dark:text-gray-400">
@@ -661,7 +679,7 @@ function AdminDashboard() {
                 }}
                 className="h-80 w-full"
               >
-                <BarChart data={chartData}>
+                <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
                   <XAxis 
                     dataKey="date" 
@@ -678,19 +696,25 @@ function AdminDashboard() {
                     formatter={(value: number) => [`₦${value.toLocaleString()}`, '']}
                   />
                   <ChartLegend content={<ChartLegendContent />} />
-                  <Bar 
+                  <Line 
+                    type="monotone"
                     dataKey="revenue" 
-                    fill="var(--color-revenue)" 
-                    radius={[4, 4, 0, 0]}
+                    stroke="var(--color-revenue)" 
+                    strokeWidth={2}
+                    dot={{ fill: 'var(--color-revenue)', r: 4 }}
+                    activeDot={{ r: 6 }}
                     name="Revenue"
                   />
-                  <Bar 
+                  <Line 
+                    type="monotone"
                     dataKey="expenses" 
-                    fill="var(--color-expenses)" 
-                    radius={[4, 4, 0, 0]}
+                    stroke="var(--color-expenses)" 
+                    strokeWidth={2}
+                    dot={{ fill: 'var(--color-expenses)', r: 4 }}
+                    activeDot={{ r: 6 }}
                     name="Expenses"
                   />
-                </BarChart>
+                </LineChart>
               </ChartContainer>
             )}
           </div>
@@ -705,91 +729,83 @@ function AdminDashboard() {
             </div>
           ) : <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Total Enquiries */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Enquiries</p>
-                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Enquiries</p>
+                  <p className="mt-3 text-2xl font-bold text-gray-900 dark:text-white">
                     {operationsStats.totalEnquiries}
                   </p>
+                  <Link 
+                    to="/admin/enquiries"
+                    className="mt-2 inline-flex items-center text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    View all →
+                  </Link>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                  <Inbox className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                  <Inbox className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
-              </div>
-              <div className="mt-4">
-                <Link 
-                  to="/admin/enquiries"
-                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  View all enquiries →
-                </Link>
               </div>
             </div>
 
             {/* Active Clients */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Clients</p>
-                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Active Clients</p>
+                  <p className="mt-3 text-2xl font-bold text-gray-900 dark:text-white">
                     {operationsStats.activeClients}
                   </p>
+                  <Link 
+                    to="/admin/clients"
+                    className="mt-2 inline-flex items-center text-xs text-green-600 dark:text-green-400 hover:underline"
+                  >
+                    Manage clients →
+                  </Link>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                  <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                  <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-              </div>
-              <div className="mt-4">
-                <Link 
-                  to="/admin/clients"
-                  className="text-xs text-green-600 dark:text-green-400 hover:underline"
-                >
-                  Manage clients →
-                </Link>
               </div>
             </div>
 
             {/* Pending Quotes */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Quotes</p>
-                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Pending Quotes</p>
+                  <p className="mt-3 text-2xl font-bold text-gray-900 dark:text-white">
                     {operationsStats.pendingQuotes}
                   </p>
+                  <Link 
+                    to="/admin/quotes"
+                    className="mt-2 inline-flex items-center text-xs text-amber-600 dark:text-amber-400 hover:underline"
+                  >
+                    View quotes →
+                  </Link>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                  <FileText className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                  <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
-              </div>
-              <div className="mt-4">
-                <Link 
-                  to="/admin/quotes"
-                  className="text-xs text-amber-600 dark:text-amber-400 hover:underline"
-                >
-                  View quotes →
-                </Link>
               </div>
             </div>
 
-            {/* Completed Transactions */}
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed Deals</p>
-                  <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            {/* Completed Deals */}
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Completed Deals</p>
+                  <p className="mt-3 text-2xl font-bold text-gray-900 dark:text-white">
                     {operationsStats.completedTransactions}
                   </p>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Accepted quotes
+                  </p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                  <CheckCircle2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                  <CheckCircle2 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  Accepted quotes
-                </span>
               </div>
             </div>
           </div>}

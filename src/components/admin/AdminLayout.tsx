@@ -2,8 +2,8 @@
  * Admin Layout - Shell structure for admin dashboard
  * Includes sidebar navigation, header, and main content area with dark mode support
  */
-import { ReactNode, useContext, useState } from 'react';
-import { Link, useLocation } from '@tanstack/react-router';
+import { ReactNode, useContext, useState, useEffect } from 'react';
+import { Link, useLocation } from '@tantml:router';
 import {
   LayoutDashboard,
   Inbox,
@@ -29,6 +29,9 @@ import {
 import { signOut, type AdminUser } from '@/lib/auth';
 import { useTheme } from '@/lib/theme';
 import { AdminAuthContext } from '@/components/admin/AdminAuthContext';
+import { NotificationPanel } from '@/components/admin/NotificationPanel';
+import { supabase } from '@/lib/supabase';
+import { queueQuery } from '@/lib/queryQueue';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -55,8 +58,68 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const isOwner = adminUser?.role === 'owner';
+
+  // Load notification count
+  useEffect(() => {
+    const loadNotificationCount = async () => {
+      try {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        // Count new enquiries
+        const enquiriesResult = await queueQuery(async () => {
+          const { count, error } = await supabase
+            .from('submissions')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'new')
+            .gte('created_at', sevenDaysAgo.toISOString());
+          
+          if (error) throw error;
+          return count || 0;
+        });
+
+        // Count recently accepted quotes
+        const acceptedResult = await queueQuery(async () => {
+          const { count, error } = await supabase
+            .from('quotes')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'accepted')
+            .gte('updated_at', sevenDaysAgo.toISOString());
+          
+          if (error) throw error;
+          return count || 0;
+        });
+
+        // Count recently rejected quotes
+        const rejectedResult = await queueQuery(async () => {
+          const { count, error } = await supabase
+            .from('quotes')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'rejected')
+            .gte('updated_at', sevenDaysAgo.toISOString());
+          
+          if (error) throw error;
+          return count || 0;
+        });
+
+        const total = enquiriesResult + acceptedResult + rejectedResult;
+        setNotificationCount(total);
+      } catch (error) {
+        console.error('Error loading notification count:', error);
+      }
+    };
+
+    if (adminUser) {
+      loadNotificationCount();
+      // Refresh count every 2 minutes
+      const interval = setInterval(loadNotificationCount, 120000);
+      return () => clearInterval(interval);
+    }
+  }, [adminUser]);
 
   // Protected admin routes reuse the persistent shell mounted by the root route.
   if (sharedAdminAuth) return <>{children}</>;
@@ -71,8 +134,8 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
         { name: 'Clients', path: '/admin/clients', icon: UsersIcon },
         { name: 'Quotes', path: '/admin/quotes', icon: FileText },
         { name: 'Finance', path: '/admin/finance', icon: DollarSign },
-        ...(isOwner ? [{ name: 'Audit Log', path: '/admin/audit-log', icon: ClipboardList }] : []),
         { name: 'Expenses', path: '/admin/expenses', icon: TrendingDown },
+        ...(isOwner ? [{ name: 'Audit Log', path: '/admin/audit-log', icon: ClipboardList }] : []),
       ],
     },
   ];
@@ -362,9 +425,16 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
             </div>
 
             {/* Notifications */}
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button 
+              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
               <Bell className="h-5 w-5" />
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
+              {notificationCount > 0 && (
+                <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                  {notificationCount > 9 ? '9+' : notificationCount}
+                </span>
+              )}
             </button>
 
             {/* Profile */}
@@ -387,6 +457,12 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">{children}</main>
       </div>
+
+      {/* Notification Panel */}
+      <NotificationPanel 
+        isOpen={isNotificationOpen} 
+        onClose={() => setIsNotificationOpen(false)} 
+      />
 
       {/* Mobile Sidebar */}
       {isMobileMenuOpen && (
