@@ -492,7 +492,7 @@ function Index() {
       {/* Travels & Tours - Compact Section */}
       <section className="border-y border-border bg-secondary/40 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+          <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
             <AnimatedSection animation="fade-up">
               <div>
                 <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
@@ -536,7 +536,7 @@ function Index() {
                   src={bentoTravelCoupleImg}
                   alt="Travel services"
                   loading="lazy"
-                  className="h-64 w-full object-cover lg:h-80"
+                  className="h-64 w-full object-cover md:h-72 lg:h-80"
                 />
               </div>
             </AnimatedSection>
@@ -547,7 +547,7 @@ function Index() {
       {/* Sourcing & Procurement Highlight */}
       <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="fade-up">
               <div>
                 <span className="inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent">
@@ -619,7 +619,7 @@ function Index() {
                   src={bentoTradeLogisticsImg}
                   alt="Supply chain operations"
                   loading="lazy"
-                  className="h-full w-full rounded-3xl object-cover shadow-elevated"
+                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px] lg:min-h-[500px]"
                 />
               </div>
             </AnimatedSection>
@@ -862,7 +862,7 @@ function Index() {
       {/* Stats Section - Business Scale */}
       <section className="gradient-mesh py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="fade-up">
               <div>
                 <h2 className="text-3xl font-bold text-primary sm:text-4xl">
@@ -897,7 +897,7 @@ function Index() {
                   src={bentoTravelCoupleImg}
                   alt="Travel and business services"
                   loading="lazy"
-                  className="h-full w-full rounded-3xl object-cover shadow-elevated"
+                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px]"
                 />
                 <div className="absolute -bottom-6 -left-6 -right-6 h-32 bg-gradient-to-t from-background to-transparent" />
               </div>
@@ -967,7 +967,7 @@ function Index() {
       {/* Key Features with Composite Images */}
       <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
-          <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
               <h2 className="text-3xl font-bold text-primary sm:text-4xl">
                 Why businesses trust our supply chain
@@ -1024,13 +1024,13 @@ function Index() {
                   src={featuresPetroleumImg}
                   alt="Trade operations"
                   loading="lazy"
-                  className="h-96 w-full rounded-3xl object-cover shadow-elevated"
+                  className="h-80 w-full rounded-3xl object-cover shadow-elevated md:h-96"
                 />
                 <img
                   src={featuresLogisticsImg}
                   alt="Logistics network"
                   loading="lazy"
-                  className="absolute -bottom-8 -left-8 h-48 w-64 rounded-2xl object-cover shadow-elevated"
+                  className="absolute -bottom-6 -left-6 h-40 w-56 rounded-2xl object-cover shadow-elevated md:-bottom-8 md:-left-8 md:h-48 md:w-64"
                 />
               </div>
             </AnimatedSection>
@@ -1041,14 +1041,14 @@ function Index() {
       {/* Trust Section with Worker Photo */}
       <section className="border-y border-border bg-primary py-16 text-primary-foreground sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
         <div className="container-page">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="scale" delay={0}>
               <div className="relative">
                 <img
                   src={trustWorkerImg}
                   alt="Field operations"
                   loading="lazy"
-                  className="h-full w-full rounded-3xl object-cover shadow-elevated"
+                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px]"
                 />
               </div>
             </AnimatedSection>

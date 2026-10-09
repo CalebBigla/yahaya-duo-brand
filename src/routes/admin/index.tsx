@@ -3,7 +3,7 @@ import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { queueQuery } from '@/lib/queryQueue';
 import {
@@ -92,10 +92,13 @@ function AdminDashboard() {
         const { user } = await checkAdminAccess();
         if (!user) throw new Error('No authorized admin session');
         setAdminUser(user);
-        await Promise.all([
-          user.role === 'owner' ? loadFinancialStats() : Promise.resolve(),
-          loadOperationsStats(),
-        ]);
+        
+        // Load stats in parallel for faster loading
+        const promises = [loadOperationsStats()];
+        if (user.role === 'owner') {
+          promises.push(loadFinancialStats());
+        }
+        await Promise.all(promises);
       } catch (error) {
         console.error('Unable to load dashboard access:', error);
         setDashboardLoadError(true);
@@ -158,84 +161,81 @@ function AdminDashboard() {
       // Get date range based on time period
       const { startDate, endDate } = getDateRangeForPeriod(timePeriod);
       
-      const pageSize = 1000;
-      const transactions: Array<{ amount: number; transaction_date: string }> = [];
-      for (let from = 0; ; from += pageSize) {
-        const page = await queueQuery(async () => {
-          let query = supabase
-            .from('financial_transactions')
-            .select('amount, transaction_date')
-            .eq('status', 'active')
-            .order('transaction_date', { ascending: true })
-            .order('id', { ascending: true });
-          
-          // Apply date filter if not "all time"
-          if (startDate) {
-            query = query.gte('transaction_date', format(startDate, 'yyyy-MM-dd'));
-          }
-          if (endDate) {
-            query = query.lte('transaction_date', format(endDate, 'yyyy-MM-dd'));
-          }
-          
-          const { data, error } = await query.range(from, from + pageSize - 1);
-          if (error) throw error;
-          return data ?? [];
-        });
-        transactions.push(...page);
-        if (page.length < pageSize) break;
-      }
+      // Use aggregation queries instead of fetching all records for better performance
+      const buildDateFilter = (dateColumn: string) => {
+        let conditions = [`${dateColumn} <= '${format(endDate, 'yyyy-MM-dd')}'`];
+        if (startDate) {
+          conditions.push(`${dateColumn} >= '${format(startDate, 'yyyy-MM-dd')}'`);
+        }
+        return conditions.join(' AND ');
+      };
 
-      const expenses: Array<{ amount: number; expense_date: string }> = [];
-      for (let from = 0; ; from += pageSize) {
-        const page = await queueQuery(async () => {
-          let query = supabase
-            .from('expense_transactions')
-            .select('amount, expense_date')
-            .order('expense_date', { ascending: true })
-            .order('id', { ascending: true });
-          
-          // Apply date filter if not "all time"
-          if (startDate) {
-            query = query.gte('expense_date', format(startDate, 'yyyy-MM-dd'));
-          }
-          if (endDate) {
-            query = query.lte('expense_date', format(endDate, 'yyyy-MM-dd'));
-          }
-          
-          const { data, error } = await query.range(from, from + pageSize - 1);
+      // Parallel queries with aggregation for faster loading
+      const [transactionsResult, expensesResult, currentMonthRevenueResult, previousMonthRevenueResult] = await Promise.all([
+        // Total revenue in period
+        queueQuery(async () => {
+          const { data, error } = await supabase
+            .from('financial_transactions')
+            .select('amount')
+            .eq('status', 'active')
+            .gte('transaction_date', startDate ? format(startDate, 'yyyy-MM-dd') : '1900-01-01')
+            .lte('transaction_date', format(endDate, 'yyyy-MM-dd'));
           if (error) throw error;
           return data ?? [];
-        });
-        expenses.push(...page);
-        if (page.length < pageSize) break;
-      }
+        }),
+        
+        // Total expenses in period
+        queueQuery(async () => {
+          const { data, error } = await supabase
+            .from('expense_transactions')
+            .select('amount')
+            .gte('expense_date', startDate ? format(startDate, 'yyyy-MM-dd') : '1900-01-01')
+            .lte('expense_date', format(endDate, 'yyyy-MM-dd'));
+          if (error) throw error;
+          return data ?? [];
+        }),
+        
+        // Current month revenue for growth calculation
+        queueQuery(async () => {
+          const now = new Date();
+          const monthStart = format(new Date(now.getFullYear(), now.getMonth(), 1), 'yyyy-MM-dd');
+          const monthEnd = format(new Date(now.getFullYear(), now.getMonth() + 1, 0), 'yyyy-MM-dd');
+          const { data, error } = await supabase
+            .from('financial_transactions')
+            .select('amount')
+            .eq('status', 'active')
+            .gte('transaction_date', monthStart)
+            .lte('transaction_date', monthEnd);
+          if (error) throw error;
+          return data ?? [];
+        }),
+        
+        // Previous month revenue for growth calculation
+        queueQuery(async () => {
+          const now = new Date();
+          const prevMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+          const prevYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+          const monthStart = format(new Date(prevYear, prevMonth, 1), 'yyyy-MM-dd');
+          const monthEnd = format(new Date(prevYear, prevMonth + 1, 0), 'yyyy-MM-dd');
+          const { data, error } = await supabase
+            .from('financial_transactions')
+            .select('amount')
+            .eq('status', 'active')
+            .gte('transaction_date', monthStart)
+            .lte('transaction_date', monthEnd);
+          if (error) throw error;
+          return data ?? [];
+        }),
+      ]);
 
       // Calculate totals
-      const totalRevenue = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
-      const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+      const totalRevenue = transactionsResult.reduce((sum, t) => sum + Number(t.amount), 0);
+      const totalExpenses = expensesResult.reduce((sum, e) => sum + Number(e.amount), 0);
       const netRevenue = totalRevenue - totalExpenses;
 
       // Calculate monthly growth
-      const now = new Date();
-      const currentMonth = now.getMonth();
-      const currentYear = now.getFullYear();
-      
-      const currentMonthRevenue = transactions
-        .filter(t => {
-          const date = new Date(t.transaction_date);
-          return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-        })
-        .reduce((sum, t) => sum + Number(t.amount), 0);
-
-      const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-      const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-      
-      const previousMonthRevenue = transactions
-        .filter(t => {
-          const date = new Date(t.transaction_date);
-          return date.getMonth() === previousMonth && date.getFullYear() === previousYear;
-        })
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+      const currentMonthRevenue = currentMonthRevenueResult.reduce((sum, t) => sum + Number(t.amount), 0);
+      const previousMonthRevenue = previousMonthRevenueResult.reduce((sum, t) => sum + Number(t.amount), 0);
 
       const monthlyGrowth = previousMonthRevenue > 0
         ? ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
@@ -260,76 +260,71 @@ function AdminDashboard() {
       // Get date range based on time period
       const { startDate, endDate } = getDateRangeForPeriod(timePeriod);
 
-      // Load enquiries count with date filter
-      const enquiriesResult = await queueQuery(async () => {
-        let query = supabase
-          .from('submissions')
-          .select('*', { count: 'exact', head: true });
+      // Load all counts in parallel for faster loading
+      const [enquiriesResult, clientsResult, pendingQuotesResult, completedQuotesResult] = await Promise.all([
+        queueQuery(async () => {
+          let query = supabase
+            .from('submissions')
+            .select('*', { count: 'exact', head: true });
+          
+          if (startDate) {
+            query = query.gte('created_at', startDate.toISOString());
+          }
+          if (endDate) {
+            query = query.lte('created_at', endDate.toISOString());
+          }
+          
+          return await query;
+        }),
         
-        // Apply date filter if not "all time"
-        if (startDate) {
-          query = query.gte('created_at', startDate.toISOString());
-        }
-        if (endDate) {
-          query = query.lte('created_at', endDate.toISOString());
-        }
+        queueQuery(async () => {
+          let query = supabase
+            .from('clients')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'active');
+          
+          if (startDate) {
+            query = query.gte('created_at', startDate.toISOString());
+          }
+          if (endDate) {
+            query = query.lte('created_at', endDate.toISOString());
+          }
+          
+          return await query;
+        }),
         
-        return await query;
-      });
-
-      // Load active clients count with date filter
-      const clientsResult = await queueQuery(async () => {
-        let query = supabase
-          .from('clients')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'active');
+        queueQuery(async () => {
+          let query = supabase
+            .from('quotes')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'pending');
+          
+          if (startDate) {
+            query = query.gte('created_at', startDate.toISOString());
+          }
+          if (endDate) {
+            query = query.lte('created_at', endDate.toISOString());
+          }
+          
+          return await query;
+        }),
         
-        // Apply date filter if not "all time"
-        if (startDate) {
-          query = query.gte('created_at', startDate.toISOString());
-        }
-        if (endDate) {
-          query = query.lte('created_at', endDate.toISOString());
-        }
-        
-        return await query;
-      });
-
-      // Load pending quotes count with date filter
-      const pendingQuotesResult = await queueQuery(async () => {
-        let query = supabase
-          .from('quotes')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'pending');
-        
-        // Apply date filter if not "all time"
-        if (startDate) {
-          query = query.gte('created_at', startDate.toISOString());
-        }
-        if (endDate) {
-          query = query.lte('created_at', endDate.toISOString());
-        }
-        
-        return await query;
-      });
-
-      // Load completed transactions (accepted quotes) with date filter
-      const completedQuotesResult = await queueQuery(async () => {
-        let query = supabase
-          .from('quotes')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'accepted');
-        
-        // Apply date filter if not "all time"
-        if (startDate) {
-          query = query.gte('updated_at', startDate.toISOString());
-        }
-        if (endDate) {
-          query = query.lte('updated_at', endDate.toISOString());
-        }
-        
-        return await query;
-      });
+        queueQuery(async () => {
+          let query = supabase
+            .from('quotes')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'accepted');
+          
+          if (startDate) {
+            query = query.gte('updated_at', startDate.toISOString());
+          }
+          if (endDate) {
+            query = query.lte('updated_at', endDate.toISOString());
+          }
+          
+          return await query;
+        }),
+      ]);
 
       const queryResults = [enquiriesResult, clientsResult, pendingQuotesResult, completedQuotesResult];
       const failedResult = queryResults.find((result) => result.error);
@@ -354,57 +349,44 @@ function AdminDashboard() {
       // Chart ranges stay scoped to the selected period; All Time has no lower bound.
       const { startDate, endDate } = getChartDateRangeForPeriod(timePeriod);
 
-      // Load transactions within date range
-      const pageSize = 1000;
-      const transactions: Array<{ amount: number; transaction_date: string }> = [];
-      for (let from = 0; ; from += pageSize) {
-        const page = await queueQuery(async () => {
+      // Load transactions and expenses in parallel with optimized queries
+      const [transactionsResult, expensesResult] = await Promise.all([
+        queueQuery(async () => {
           let query = supabase
             .from('financial_transactions')
             .select('amount, transaction_date')
-            .eq('status', 'active');
+            .eq('status', 'active')
+            .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
+            .order('transaction_date', { ascending: true });
 
           if (startDate) {
             query = query.gte('transaction_date', format(startDate, 'yyyy-MM-dd'));
           }
 
-          const { data, error } = await query
-            .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
-            .order('transaction_date', { ascending: true })
-            .order('id', { ascending: true })
-            .range(from, from + pageSize - 1);
+          const { data, error } = await query;
           if (error) throw error;
           return data ?? [];
-        });
-        transactions.push(...page);
-        if (page.length < pageSize) break;
-      }
-
-      const expenses: Array<{ amount: number; expense_date: string }> = [];
-      for (let from = 0; ; from += pageSize) {
-        const page = await queueQuery(async () => {
+        }),
+        
+        queueQuery(async () => {
           let query = supabase
             .from('expense_transactions')
-            .select('amount, expense_date');
+            .select('amount, expense_date')
+            .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
+            .order('expense_date', { ascending: true });
 
           if (startDate) {
             query = query.gte('expense_date', format(startDate, 'yyyy-MM-dd'));
           }
 
-          const { data, error } = await query
-            .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
-            .order('expense_date', { ascending: true })
-            .order('id', { ascending: true })
-            .range(from, from + pageSize - 1);
+          const { data, error } = await query;
           if (error) throw error;
           return data ?? [];
-        });
-        expenses.push(...page);
-        if (page.length < pageSize) break;
-      }
+        }),
+      ]);
 
       // Aggregate data by period
-      const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, endDate);
+      const aggregated = aggregateDataByPeriod(transactionsResult, expensesResult, timePeriod, endDate);
       setChartData(aggregated);
     } catch (error) {
       console.error('Error loading chart data:', error);
@@ -479,21 +461,23 @@ function AdminDashboard() {
       }));
   };
 
-  const getGreeting = () => {
+  const getGreeting = useMemo(() => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
     if (hour < 18) return 'Good afternoon';
     return 'Good evening';
-  };
+  }, []);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
+  const formatCurrency = useMemo(() => {
+    return (amount: number) => {
+      return new Intl.NumberFormat('en-NG', {
+        style: 'currency',
+        currency: 'NGN',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    };
+  }, []);
 
   return (
     <AdminLayout adminUser={adminUser}>
@@ -509,7 +493,7 @@ function AdminDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {getGreeting()}, {adminUser?.role === 'owner' ? 'Admin' : 'Staff'}
+              {getGreeting}, {adminUser?.role === 'owner' ? 'Admin' : 'Staff'}
             </h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Executive overview of Yahaya Travel & Trade operations and financials.
