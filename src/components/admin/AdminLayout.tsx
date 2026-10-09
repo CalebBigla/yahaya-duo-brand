@@ -144,7 +144,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
     title: 'SITE',
     items: [
       { name: 'Website', path: '/admin/website', icon: Globe },
-      { name: 'Media', path: '/admin/media', icon: Image },
+      // { name: 'Media', path: '/admin/media', icon: Image },
     ],
   };
 

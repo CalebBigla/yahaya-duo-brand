@@ -217,8 +217,8 @@ function WebsitePage() {
         {moduleLoadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Some CMS module details could not be loaded.</div>}
         {/* Header */}
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Website CMS</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Website CMS</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage all public-facing website content with draft/publish workflow
           </p>
         </div>
@@ -262,17 +262,17 @@ function WebsitePage() {
               <Link
                 key={module.href}
                 to={module.href}
-                className="block bg-white border rounded-lg p-5 hover:border-teal-500 hover:shadow-md transition-all group"
+                className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-teal-500 dark:hover:border-teal-500 hover:shadow-md transition-all group"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-2 bg-teal-50 rounded-lg group-hover:bg-teal-100 transition-colors">
-                    <Icon className="w-6 h-6 text-teal-600" />
+                  <div className="p-2 bg-teal-50 dark:bg-teal-900/30 rounded-lg group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 transition-colors">
+                    <Icon className="w-6 h-6 text-teal-600 dark:text-teal-400" />
                   </div>
                   {getStatusBadge(module.status)}
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{module.title}</h3>
-                <p className="text-sm text-gray-600 mb-3">{module.description}</p>
-                <div className="text-xs text-gray-500">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{module.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{module.description}</p>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   {module.itemCount} {module.itemCount === 1 ? 'item' : 'items'}
                 </div>
               </Link>
@@ -281,9 +281,9 @@ function WebsitePage() {
         </div>
 
         {/* Quick Guide */}
-        <div className="bg-teal-50 border border-teal-200 rounded-lg p-5">
-          <h3 className="font-semibold text-teal-900 mb-2">📖 Quick Guide</h3>
-          <ul className="text-sm text-teal-800 space-y-1">
+        <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-lg p-5">
+          <h3 className="font-semibold text-teal-900 dark:text-teal-100 mb-2">📖 Quick Guide</h3>
+          <ul className="text-sm text-teal-800 dark:text-teal-200 space-y-1">
             <li>
               • <strong>Draft:</strong> Save changes without making them live
             </li>
