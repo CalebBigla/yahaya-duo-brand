@@ -117,9 +117,9 @@ export function SendQuoteModal({ quote, onClose, onSent }: SendQuoteModalProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-2xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-6">
+      <div className="w-full max-w-2xl flex flex-col max-h-[90vh] rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-t-lg">
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Send Quote to Client</h2>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -128,14 +128,15 @@ export function SendQuoteModal({ quote, onClose, onSent }: SendQuoteModalProps) 
           </div>
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Close modal"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Loading State */}
           {isGenerating && (
             <div className="flex items-center justify-center py-8">
@@ -273,19 +274,19 @@ export function SendQuoteModal({ quote, onClose, onSent }: SendQuoteModalProps) 
           )}
         </div>
 
-        {/* Footer Actions */}
+        {/* Sticky Footer Actions */}
         {!isGenerating && !error && (
-          <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 p-6">
+          <div className="sticky bottom-0 z-10 flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-b-lg">
             <button
               onClick={onClose}
-              className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleMarkAsSent}
               disabled={isSending}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSending ? (
                 <>
