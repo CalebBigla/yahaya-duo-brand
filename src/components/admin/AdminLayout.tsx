@@ -70,40 +70,53 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+        // Get viewed notifications from localStorage
+        const viewedNotificationsStr = localStorage.getItem('yahaya_viewed_notifications');
+        const viewedNotifications = viewedNotificationsStr ? new Set(JSON.parse(viewedNotificationsStr)) : new Set();
+
         // Count new enquiries
         const enquiriesResult = await queueQuery(async () => {
-          const { count, error } = await supabase
+          const { data, error } = await supabase
             .from('submissions')
-            .select('*', { count: 'exact', head: true })
+            .select('id')
             .eq('status', 'new')
             .gte('created_at', sevenDaysAgo.toISOString());
           
           if (error) throw error;
-          return count || 0;
+          
+          // Filter out viewed notifications
+          const unviewed = (data || []).filter(item => !viewedNotifications.has(`enquiry-${item.id}`));
+          return unviewed.length;
         });
 
         // Count recently accepted quotes
         const acceptedResult = await queueQuery(async () => {
-          const { count, error } = await supabase
+          const { data, error } = await supabase
             .from('quotes')
-            .select('*', { count: 'exact', head: true })
+            .select('id')
             .eq('status', 'accepted')
             .gte('updated_at', sevenDaysAgo.toISOString());
           
           if (error) throw error;
-          return count || 0;
+          
+          // Filter out viewed notifications
+          const unviewed = (data || []).filter(item => !viewedNotifications.has(`quote-accepted-${item.id}`));
+          return unviewed.length;
         });
 
         // Count recently rejected quotes
         const rejectedResult = await queueQuery(async () => {
-          const { count, error } = await supabase
+          const { data, error } = await supabase
             .from('quotes')
-            .select('*', { count: 'exact', head: true })
+            .select('id')
             .eq('status', 'rejected')
             .gte('updated_at', sevenDaysAgo.toISOString());
           
           if (error) throw error;
-          return count || 0;
+          
+          // Filter out viewed notifications
+          const unviewed = (data || []).filter(item => !viewedNotifications.has(`quote-rejected-${item.id}`));
+          return unviewed.length;
         });
 
         const total = enquiriesResult + acceptedResult + rejectedResult;
@@ -159,6 +172,11 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
   const handleSignOut = async () => {
     await signOut();
     window.location.href = '/admin/login';
+  };
+
+  const handleNotificationViewed = () => {
+    // Decrement count by 1, but don't go below 0
+    setNotificationCount(prev => Math.max(0, prev - 1));
   };
 
   const isActive = (path: string) => {
@@ -461,7 +479,8 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
       {/* Notification Panel */}
       <NotificationPanel 
         isOpen={isNotificationOpen} 
-        onClose={() => setIsNotificationOpen(false)} 
+        onClose={() => setIsNotificationOpen(false)}
+        onNotificationViewed={handleNotificationViewed}
       />
 
       {/* Mobile Sidebar */}

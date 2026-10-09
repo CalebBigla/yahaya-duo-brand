@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 interface NotificationPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  onNotificationViewed?: () => void;
 }
 
 interface Notification {
@@ -20,9 +21,32 @@ interface Notification {
   isNew: boolean;
 }
 
-export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
+// Local storage key for viewed notifications
+const VIEWED_NOTIFICATIONS_KEY = 'yahaya_viewed_notifications';
+
+// Get viewed notifications from localStorage
+function getViewedNotifications(): Set<string> {
+  try {
+    const stored = localStorage.getItem(VIEWED_NOTIFICATIONS_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+// Save viewed notifications to localStorage
+function saveViewedNotifications(viewed: Set<string>) {
+  try {
+    localStorage.setItem(VIEWED_NOTIFICATIONS_KEY, JSON.stringify(Array.from(viewed)));
+  } catch (error) {
+    console.error('Error saving viewed notifications:', error);
+  }
+}
+
+export function NotificationPanel({ isOpen, onClose, onNotificationViewed }: NotificationPanelProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewedNotifications, setViewedNotifications] = useState<Set<string>>(getViewedNotifications());
 
   useEffect(() => {
     if (isOpen) {
@@ -53,14 +77,17 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
       });
 
       enquiriesResult.forEach((enquiry) => {
+        const notificationId = `enquiry-${enquiry.id}`;
+        const isViewed = viewedNotifications.has(notificationId);
+        
         notificationsList.push({
-          id: `enquiry-${enquiry.id}`,
+          id: notificationId,
           type: 'enquiry',
           title: 'New Enquiry',
           message: `${enquiry.name} sent a ${enquiry.form_type} enquiry`,
           link: '/admin/enquiries',
           created_at: enquiry.created_at,
-          isNew: enquiry.status === 'new',
+          isNew: !isViewed,
         });
       });
 
@@ -82,14 +109,17 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
       });
 
       acceptedQuotesResult.forEach((quote) => {
+        const notificationId = `quote-accepted-${quote.id}`;
+        const isViewed = viewedNotifications.has(notificationId);
+        
         notificationsList.push({
-          id: `quote-accepted-${quote.id}`,
+          id: notificationId,
           type: 'quote_accepted',
           title: 'Quote Accepted',
           message: `${quote.client_name} accepted ${quote.quote_number}`,
           link: '/admin/quotes',
           created_at: quote.updated_at,
-          isNew: true,
+          isNew: !isViewed,
         });
       });
 
@@ -111,14 +141,17 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
       });
 
       rejectedQuotesResult.forEach((quote) => {
+        const notificationId = `quote-rejected-${quote.id}`;
+        const isViewed = viewedNotifications.has(notificationId);
+        
         notificationsList.push({
-          id: `quote-rejected-${quote.id}`,
+          id: notificationId,
           type: 'quote_rejected',
           title: 'Quote Rejected',
           message: `${quote.client_name} rejected ${quote.quote_number}`,
           link: '/admin/quotes',
           created_at: quote.updated_at,
-          isNew: true,
+          isNew: !isViewed,
         });
       });
 
@@ -154,6 +187,23 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
         return 'bg-green-100 dark:bg-green-900/30';
       case 'quote_rejected':
         return 'bg-red-100 dark:bg-red-900/30';
+    }
+  };
+
+  const markAsViewed = (notificationId: string) => {
+    const updated = new Set(viewedNotifications);
+    updated.add(notificationId);
+    setViewedNotifications(updated);
+    saveViewedNotifications(updated);
+    
+    // Update the notification in the list
+    setNotifications(prev => 
+      prev.map(n => n.id === notificationId ? { ...n, isNew: false } : n)
+    );
+    
+    // Notify parent to update count
+    if (onNotificationViewed) {
+      onNotificationViewed();
     }
   };
 
@@ -207,7 +257,12 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
                 <Link
                   key={notification.id}
                   to={notification.link}
-                  onClick={onClose}
+                  onClick={() => {
+                    if (notification.isNew) {
+                      markAsViewed(notification.id);
+                    }
+                    onClose();
+                  }}
                   className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <div className="flex gap-3">
