@@ -25,11 +25,9 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
 } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
-import { format, subDays, subMonths, startOfWeek, startOfMonth, startOfYear, endOfWeek, endOfMonth, endOfYear } from 'date-fns';
+import { differenceInCalendarYears, format, subDays, subMonths, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
 import { DashboardPageSkeleton } from '@/components/admin/SkeletonLoader';
 
 export const Route = createFileRoute('/admin/')({
@@ -59,8 +57,7 @@ interface OperationsStats {
 
 interface ChartDataPoint {
   date: string;
-  revenue: number;
-  expenses: number;
+  netMovement: number;
 }
 
 type TimePeriod = 'week' | 'month' | 'year' | 'all';
@@ -138,6 +135,21 @@ function AdminDashboard() {
     }
 
     return { startDate, endDate };
+  };
+
+  const getChartDateRangeForPeriod = (period: TimePeriod): { startDate: Date | null; endDate: Date } => {
+    const endDate = new Date();
+    switch (period) {
+      case 'week':
+        return { startDate: startOfWeek(endDate, { weekStartsOn: 1 }), endDate };
+      case 'month':
+        return { startDate: subMonths(endDate, 1), endDate };
+      case 'year':
+        return { startDate: subMonths(endDate, 12), endDate };
+      case 'all':
+        return { startDate: null, endDate };
+    }
+    return { startDate: null, endDate };
   };
 
   const loadFinancialStats = async () => {
@@ -339,22 +351,24 @@ function AdminDashboard() {
     setIsLoadingChart(true);
     setChartLoadError(false);
     try {
-      // Get date range based on selected period
-      const { startDate, endDate } = getDateRangeForPeriod(timePeriod);
-      
-      // For "all time", use a far past date
-      const effectiveStartDate = startDate || subMonths(new Date(), 120); // 10 years back
+      // Chart ranges stay scoped to the selected period; All Time has no lower bound.
+      const { startDate, endDate } = getChartDateRangeForPeriod(timePeriod);
 
       // Load transactions within date range
       const pageSize = 1000;
       const transactions: Array<{ amount: number; transaction_date: string }> = [];
       for (let from = 0; ; from += pageSize) {
         const page = await queueQuery(async () => {
-          const { data, error } = await supabase
+          let query = supabase
             .from('financial_transactions')
             .select('amount, transaction_date')
-            .eq('status', 'active')
-            .gte('transaction_date', format(effectiveStartDate, 'yyyy-MM-dd'))
+            .eq('status', 'active');
+
+          if (startDate) {
+            query = query.gte('transaction_date', format(startDate, 'yyyy-MM-dd'));
+          }
+
+          const { data, error } = await query
             .lte('transaction_date', format(endDate, 'yyyy-MM-dd'))
             .order('transaction_date', { ascending: true })
             .order('id', { ascending: true })
@@ -369,10 +383,15 @@ function AdminDashboard() {
       const expenses: Array<{ amount: number; expense_date: string }> = [];
       for (let from = 0; ; from += pageSize) {
         const page = await queueQuery(async () => {
-          const { data, error } = await supabase
+          let query = supabase
             .from('expense_transactions')
-            .select('amount, expense_date')
-            .gte('expense_date', format(effectiveStartDate, 'yyyy-MM-dd'))
+            .select('amount, expense_date');
+
+          if (startDate) {
+            query = query.gte('expense_date', format(startDate, 'yyyy-MM-dd'));
+          }
+
+          const { data, error } = await query
             .lte('expense_date', format(endDate, 'yyyy-MM-dd'))
             .order('expense_date', { ascending: true })
             .order('id', { ascending: true })
@@ -385,7 +404,7 @@ function AdminDashboard() {
       }
 
       // Aggregate data by period
-      const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, effectiveStartDate, endDate);
+      const aggregated = aggregateDataByPeriod(transactions, expenses, timePeriod, endDate);
       setChartData(aggregated);
     } catch (error) {
       console.error('Error loading chart data:', error);
@@ -400,22 +419,30 @@ function AdminDashboard() {
     transactions: Array<{ amount: number; transaction_date: string }>,
     expenses: Array<{ amount: number; expense_date: string }>,
     period: TimePeriod,
-    startDate: Date,
     endDate: Date
   ): ChartDataPoint[] => {
     const dataMap = new Map<string, { revenue: number; expenses: number }>();
+    const dataDates = [
+      ...transactions.map((transaction) => new Date(transaction.transaction_date)),
+      ...expenses.map((expense) => new Date(expense.expense_date)),
+    ].filter((date) => !Number.isNaN(date.getTime()));
+    const earliestDate = dataDates.length > 0
+      ? dataDates.reduce((earliest, date) => date < earliest ? date : earliest)
+      : endDate;
+    const allTimeUsesYearlyBuckets = period === 'all' && differenceInCalendarYears(endDate, earliestDate) > 5;
 
     // Use sortable ISO dates as keys so periods remain chronological across years.
     const getPeriodKey = (date: Date): string => {
       switch (period) {
         case 'week':
-          return format(date, 'yyyy-MM-dd'); // Daily for week view
         case 'month':
-          return format(startOfWeek(date), 'yyyy-MM-dd'); // Weekly for month view
+          return format(date, 'yyyy-MM-dd'); // Daily for week and month views
         case 'year':
           return format(startOfMonth(date), 'yyyy-MM-dd'); // Monthly for year view
         case 'all':
-          return format(startOfMonth(date), 'yyyy-MM-dd'); // Monthly for all time view
+          return allTimeUsesYearlyBuckets
+            ? format(startOfYear(date), 'yyyy-MM-dd')
+            : format(startOfMonth(date), 'yyyy-MM-dd');
         default:
           return format(startOfMonth(date), 'yyyy-MM-dd');
       }
@@ -437,17 +464,18 @@ function AdminDashboard() {
 
     // Convert to array and sort
     const labelFormat = period === 'week'
-      ? 'MMM dd'
-      : period === 'year' || period === 'all'
+      ? 'EEE'
+      : period === 'year' || (period === 'all' && !allTimeUsesYearlyBuckets)
         ? 'MMM yyyy'
-        : 'MMM dd';
+        : period === 'all'
+          ? 'yyyy'
+          : 'MMM d';
 
     return Array.from(dataMap.entries())
       .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
       .map(([periodStart, values]) => ({
         date: format(new Date(`${periodStart}T12:00:00`), labelFormat),
-        revenue: Math.round(values.revenue),
-        expenses: Math.round(values.expenses),
+        netMovement: Math.round(values.revenue - values.expenses),
       }));
   };
 
@@ -668,13 +696,9 @@ function AdminDashboard() {
             ) : (
               <ChartContainer
                 config={{
-                  revenue: {
-                    label: 'Revenue',
-                    color: '#10b981',
-                  },
-                  expenses: {
-                    label: 'Expenses',
-                    color: '#ef4444',
+                  netMovement: {
+                    label: 'Net movement',
+                    color: '#2563eb',
                   },
                 }}
                 className="h-80 w-full"
@@ -689,30 +713,25 @@ function AdminDashboard() {
                   <YAxis 
                     className="text-xs"
                     tick={{ fill: 'currentColor' }}
-                    tickFormatter={(value) => `₦${(value / 1000).toFixed(0)}k`}
+                    tickFormatter={(value: number) => new Intl.NumberFormat('en-NG', {
+                      style: 'currency',
+                      currency: 'NGN',
+                      notation: 'compact',
+                      maximumFractionDigits: 1,
+                    }).format(value)}
                   />
                   <ChartTooltip 
                     content={<ChartTooltipContent />}
-                    formatter={(value: number) => [`₦${value.toLocaleString()}`, '']}
-                  />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Line 
-                    type="monotone"
-                    dataKey="revenue" 
-                    stroke="var(--color-revenue)" 
-                    strokeWidth={2}
-                    dot={{ fill: 'var(--color-revenue)', r: 4 }}
-                    activeDot={{ r: 6 }}
-                    name="Revenue"
+                    formatter={(value: number) => [formatCurrency(value), 'Net movement']}
                   />
                   <Line 
                     type="monotone"
-                    dataKey="expenses" 
-                    stroke="var(--color-expenses)" 
+                    dataKey="netMovement"
+                    stroke="var(--color-netMovement)"
                     strokeWidth={2}
-                    dot={{ fill: 'var(--color-expenses)', r: 4 }}
+                    dot={{ fill: 'var(--color-netMovement)', r: 4 }}
                     activeDot={{ r: 6 }}
-                    name="Expenses"
+                    name="Net movement"
                   />
                 </LineChart>
               </ChartContainer>

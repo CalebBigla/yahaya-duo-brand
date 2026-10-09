@@ -237,27 +237,27 @@ function EnquiriesPage() {
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
-        {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Unable to load enquiries. Please try again.</div>}
+        {loadError && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">Unable to load enquiries. Please try again.</div>}
         {/* Page Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Enquiries</h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Manage customer enquiries and form submissions
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
               <Download className="h-4 w-4" />
               Export CSV
@@ -267,57 +267,57 @@ function EnquiriesPage() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Enquiries</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Enquiries</p>
+                <p className="mt-3 break-words text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <MessageSquare className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">New</p>
-                <p className="mt-2 text-3xl font-bold text-blue-900 dark:text-blue-400">{stats.new}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">New</p>
+                <p className="mt-3 break-words text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.new}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <Circle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <Circle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Read</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.read}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Read</p>
+                <p className="mt-3 break-words text-2xl font-bold text-gray-900 dark:text-white">{stats.read}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
-                <Eye className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+              <div className="ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
+                <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Responded</p>
-                <p className="mt-2 text-3xl font-bold text-green-900 dark:text-green-400">{stats.responded}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Responded</p>
+                <p className="mt-3 break-words text-2xl font-bold text-green-700 dark:text-green-400">{stats.responded}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {/* Search */}
             <div className="relative flex-1">
@@ -327,14 +327,14 @@ function EnquiriesPage() {
                 placeholder="Search by name, email, phone, message..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 py-2 pl-10 pr-4 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500"
               />
             </div>
 
             {/* Filter Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -412,7 +412,7 @@ function EnquiriesPage() {
         </div>
 
         {/* Enquiries List - Table Format */}
-        <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
           {filteredSubmissions.length === 0 ? (
             <div className="py-12 text-center">
               <MessageSquare className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" />
@@ -420,12 +420,12 @@ function EnquiriesPage() {
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {searchQuery || filterStatus !== 'all' || filterType !== 'all'
                   ? 'Try adjusting your filters'
-                  : submissions.length === 0 ? 'Loading enquiries...' : 'Enquiries will appear here when customers submit forms'}
+                  : submissions.length === 0 ? 'Enquiries will appear here when customers submit forms' : 'No enquiries match your current view'}
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[900px]">
                 <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -468,14 +468,14 @@ function EnquiriesPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">{enquiry.name}</div>
+                        <div className="break-words text-sm font-medium text-gray-900 dark:text-white">{enquiry.name}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="space-y-1">
                           {enquiry.email && (
                             <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400">
                               <Mail className="h-3 w-3" />
-                              <span>{enquiry.email}</span>
+                              <span className="break-all">{enquiry.email}</span>
                             </div>
                           )}
                           {enquiry.phone && (
@@ -523,11 +523,11 @@ function EnquiriesPage() {
       {/* Detail Modal */}
       {selectedEnquiry && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-3xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl">
+          <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between gap-4 border-b border-gray-200 p-5 dark:border-gray-700 sm:p-6">
               <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Enquiry Details</h2>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Enquiry Details</h2>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   Submitted {format(new Date(selectedEnquiry.created_at), 'MMMM dd, yyyy • HH:mm')}
                 </p>
@@ -541,7 +541,7 @@ function EnquiriesPage() {
             </div>
 
             {/* Modal Content */}
-            <div className="max-h-[calc(100vh-16rem)] overflow-y-auto p-6">
+            <div className="min-h-0 overflow-y-auto p-5 sm:p-6">
               <div className="space-y-6">
                 {/* Status and Type */}
                 <div className="flex items-center gap-3">
