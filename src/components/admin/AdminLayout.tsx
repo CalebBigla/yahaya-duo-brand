@@ -151,7 +151,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
   const generalNav: NavSection = {
     title: 'GENERAL',
     items: [
-      ...(isOwner ? [{ name: 'Team', path: '/admin/team', icon: UsersIcon }] : []),
+      // ...(isOwner ? [{ name: 'Team', path: '/admin/team', icon: UsersIcon }] : []),
       { name: 'Settings', path: '/admin/settings', icon: Settings },
     ],
   };
