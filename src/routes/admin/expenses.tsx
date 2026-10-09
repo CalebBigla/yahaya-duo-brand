@@ -294,30 +294,30 @@ function ExpensesPage() {
           </Button>
         </div>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Total Expenses"
             value={formatCurrency(stats.totalExpenses)}
-            icon={<TrendingDown className="w-6 h-6" />}
+            icon={<TrendingDown className="h-5 w-5" />}
             color="bg-red-500"
             subtitle={`${stats.expenseCount} transactions`}
           />
           <StatCard
             title="Travel Expenses"
             value={formatCurrency(stats.travelExpenses)}
-            icon={<Plane className="w-6 h-6" />}
+            icon={<Plane className="h-5 w-5" />}
             color="bg-blue-500"
           />
           <StatCard
             title="Trade Expenses"
             value={formatCurrency(stats.tradeExpenses)}
-            icon={<ShoppingCart className="w-6 h-6" />}
+            icon={<ShoppingCart className="h-5 w-5" />}
             color="bg-green-500"
           />
           <StatCard
             title="Company Expenses"
             value={formatCurrency(stats.companyExpenses)}
-            icon={<Building2 className="w-6 h-6" />}
+            icon={<Building2 className="h-5 w-5" />}
             color="bg-purple-500"
           />
         </div>
@@ -607,16 +607,35 @@ function StatCard({
   color: string; 
   subtitle?: string;
 }) {
+  // Map color classes to consistent bg classes
+  const bgColorMap: Record<string, string> = {
+    'bg-red-500': 'bg-red-100 dark:bg-red-900/30',
+    'bg-blue-500': 'bg-blue-100 dark:bg-blue-900/30',
+    'bg-green-500': 'bg-green-100 dark:bg-green-900/30',
+    'bg-purple-500': 'bg-purple-100 dark:bg-purple-900/30',
+  };
+  
+  const iconColorMap: Record<string, string> = {
+    'bg-red-500': 'text-red-600 dark:text-red-400',
+    'bg-blue-500': 'text-blue-600 dark:text-blue-400',
+    'bg-green-500': 'text-green-600 dark:text-green-400',
+    'bg-purple-500': 'text-purple-600 dark:text-purple-400',
+  };
+  
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className={`${color} text-white p-3 rounded-lg`}>
-          {icon}
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</p>
+          <p className="mt-3 text-xl font-bold text-gray-900 dark:text-white">{value}</p>
+          {subtitle && <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>}
+        </div>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${bgColorMap[color] || 'bg-gray-100 dark:bg-gray-700'}`}>
+          <div className={iconColorMap[color] || 'text-gray-600 dark:text-gray-400'}>
+            {icon}
+          </div>
         </div>
       </div>
-      <h3 className="text-sm font-medium text-gray-600 mb-1">{title}</h3>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-      {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
     </div>
   );
 }
