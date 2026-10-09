@@ -28,6 +28,15 @@ import { CreateQuoteFromEnquiry } from '@/components/quotes/CreateQuoteFromEnqui
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 
 export const Route = createFileRoute('/admin/enquiries')({
+  beforeLoad: async () => {
+    const result = await checkAdminAccess();
+    if (!result.isAdmin) {
+      throw new Error('Unauthorized');
+    }
+  },
+  onError: ({ navigate }) => {
+    navigate({ to: '/admin/login' });
+  },
   component: () => (
     <ThemeProvider>
       <AdminGuard>

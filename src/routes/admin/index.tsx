@@ -31,6 +31,16 @@ import { differenceInCalendarYears, format, subDays, subMonths, startOfWeek, sta
 import { DashboardPageSkeleton } from '@/components/admin/SkeletonLoader';
 
 export const Route = createFileRoute('/admin/')({
+  beforeLoad: async ({ location }) => {
+    const result = await checkAdminAccess();
+    if (!result.isAdmin) {
+      throw new Error('Unauthorized');
+    }
+  },
+  onError: ({ error, navigate }) => {
+    // Redirect to login if unauthorized
+    navigate({ to: '/admin/login' });
+  },
   component: () => (
     <ThemeProvider>
       <AdminGuard>

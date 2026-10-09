@@ -39,6 +39,15 @@ import { toast } from 'sonner';
 import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
 
 export const Route = createFileRoute('/admin/quotes')({
+  beforeLoad: async () => {
+    const result = await checkAdminAccess();
+    if (!result.isAdmin) {
+      throw new Error('Unauthorized');
+    }
+  },
+  onError: ({ navigate }) => {
+    navigate({ to: '/admin/login' });
+  },
   component: () => (
     <ThemeProvider>
       <AdminGuard>
