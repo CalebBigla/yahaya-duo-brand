@@ -83,68 +83,38 @@ export async function submitClientResponse(
   ipHash?: string
 ): Promise<{ success: boolean; response_id?: string; error?: string }> {
   try {
-    // Validate token first
-    const { data: tokenData, error: tokenError } = await supabase.rpc(
-      'validate_quote_token',
-      { p_token: token }
-    );
+    // Call the secure RPC function that handles validation, insertion, and status update
+    const { data, error } = await supabase.rpc('submit_public_quote_response', {
+      p_quote_id: quoteId,
+      p_token: token,
+      p_response_type: response.response_type,
+      p_response_notes: response.response_notes || null,
+      p_requested_changes: response.requested_changes || null,
+      p_decline_reason: response.decline_reason || null,
+      p_client_ip_hash: ipHash || null,
+    });
 
-    if (tokenError) throw tokenError;
-
-    const validation = Array.isArray(tokenData) ? tokenData[0] : tokenData;
-
-    if (!validation?.is_valid) {
-      throw new Error('Invalid or expired token');
+    if (error) {
+      console.error('RPC error:', error);
+      throw error;
     }
 
-    if (validation.quote_id !== quoteId) {
-      throw new Error('Token does not match quote');
+    // The RPC function returns JSON with { success, response_id?, error? }
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid response from server');
     }
 
-    // Check if quote has already been responded to
-    const { data: existingResponses, error: checkError } = await supabase
-      .from('quote_responses')
-      .select('id, response_type')
-      .eq('quote_id', quoteId)
-      .limit(1);
-
-    if (checkError) throw checkError;
-
-    if (existingResponses && existingResponses.length > 0) {
-      throw new Error(
-        'This quotation has already been responded to. Please contact us if you need to make changes.'
-      );
+    if (!data.success) {
+      return {
+        success: false,
+        error: data.error || 'Failed to submit response',
+      };
     }
 
-    // Insert response
-    const { data, error } = await supabase
-      .from('quote_responses')
-      .insert([
-        {
-          quote_id: quoteId,
-          response_type: response.response_type,
-          response_method: 'online',
-          response_notes: response.response_notes || null,
-          requested_changes: response.requested_changes || null,
-          decline_reason: response.decline_reason || null,
-          client_ip_hash: ipHash || null,
-          recorded_by: null, // NULL indicates online submission
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    // Update quote status
-    const newStatus = getStatusFromResponseType(response.response_type);
-    
-    await supabase
-      .from('quotes')
-      .update({ status: newStatus })
-      .eq('id', quoteId);
-
-    return { success: true, response_id: data.id };
+    return {
+      success: true,
+      response_id: data.response_id,
+    };
   } catch (error) {
     console.error('Error submitting client response:', error);
     return {
