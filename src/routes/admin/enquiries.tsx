@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -28,14 +28,11 @@ import { CreateQuoteFromEnquiry } from '@/components/quotes/CreateQuoteFromEnqui
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 
 export const Route = createFileRoute('/admin/enquiries')({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const result = await checkAdminAccess();
     if (!result.isAdmin) {
-      throw new Error('Unauthorized');
+      throw redirect({ to: '/admin/login', search: { redirect: location.href } });
     }
-  },
-  onError: ({ navigate }) => {
-    navigate({ to: '/admin/login' });
   },
   component: () => (
     <ThemeProvider>

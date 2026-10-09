@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -34,12 +34,8 @@ export const Route = createFileRoute('/admin/')({
   beforeLoad: async ({ location }) => {
     const result = await checkAdminAccess();
     if (!result.isAdmin) {
-      throw new Error('Unauthorized');
+      throw redirect({ to: '/admin/login', search: { redirect: location.href } });
     }
-  },
-  onError: ({ error, navigate }) => {
-    // Redirect to login if unauthorized
-    navigate({ to: '/admin/login' });
   },
   component: () => (
     <ThemeProvider>

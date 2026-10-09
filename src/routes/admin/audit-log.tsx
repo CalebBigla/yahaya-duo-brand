@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { AdminGuard } from '@/components/admin/AdminGuard';
@@ -8,14 +8,11 @@ import { checkAdminAccess, type AdminUser } from '@/lib/auth';
 import { supabase, type Database } from '@/lib/supabase';
 
 export const Route = createFileRoute('/admin/audit-log')({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const result = await checkAdminAccess();
     if (!result.isAdmin) {
-      throw new Error('Unauthorized');
+      throw redirect({ to: '/admin/login', search: { redirect: location.href } });
     }
-  },
-  onError: ({ navigate }) => {
-    navigate({ to: '/admin/login' });
   },
   component: () => <ThemeProvider><AdminGuard><AuditLogPage /></AdminGuard></ThemeProvider>,
 });
