@@ -363,50 +363,50 @@ function ClientsPage() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Clients</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Clients</p>
+                <p className="mt-3 text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <UsersIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
-                <p className="mt-2 text-3xl font-bold text-green-900 dark:text-green-400">{stats.active}</p>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <UsersIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Prospects</p>
-                <p className="mt-2 text-3xl font-bold text-blue-900 dark:text-blue-400">{stats.prospect}</p>
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Active</p>
+                <p className="mt-3 text-2xl font-bold text-green-900 dark:text-green-400">{stats.active}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                <AlertCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Corporate</p>
-                <p className="mt-2 text-3xl font-bold text-orange-900 dark:text-orange-400">{stats.corporate}</p>
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Prospects</p>
+                <p className="mt-3 text-2xl font-bold text-blue-900 dark:text-blue-400">{stats.prospect}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                <Building2 className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Corporate</p>
+                <p className="mt-3 text-2xl font-bold text-orange-900 dark:text-orange-400">{stats.corporate}</p>
+              </div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                <Building2 className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
             </div>
           </div>
