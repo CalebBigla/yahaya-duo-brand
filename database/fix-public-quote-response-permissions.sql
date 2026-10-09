@@ -125,7 +125,7 @@ BEGIN
         recorded_by
     ) VALUES (
         p_quote_id,
-        p_response_type::response_type,
+        p_response_type,
         'online',
         p_response_notes,
         p_requested_changes,
