@@ -132,6 +132,7 @@ export function AdminLayout({ children, adminUser }: AdminLayoutProps) {
       const interval = setInterval(loadNotificationCount, 120000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [adminUser]);
 
   // Protected admin routes reuse the persistent shell mounted by the root route.
