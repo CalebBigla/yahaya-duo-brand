@@ -18,7 +18,7 @@ export type FieldDef = {
 };
 
 function buildSchema(fields: FieldDef[]) {
-  const shape: Record<string, z.ZodTypeAny> = {};
+  const shape: Record<string, z.ZodType<string, string>> = {};
   for (const f of fields) {
     const max = f.maxLength ?? (f.type === "textarea" ? 1000 : 120);
     let base = z.string().trim().max(max, { message: `Keep this under ${max} characters` });
@@ -30,7 +30,7 @@ function buildSchema(fields: FieldDef[]) {
     }
     shape[f.name] = f.required
       ? base.min(f.type === "tel" ? 7 : 2, { message: `${f.label} is required` })
-      : base.optional().or(z.literal(""));
+      : base.or(z.literal(""));
   }
   return z.object(shape);
 }
