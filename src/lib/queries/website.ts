@@ -100,6 +100,19 @@ export interface WebsiteSeo {
   twitter_card_type: "summary" | "summary_large_image";
 }
 
+// Explicit public columns for the single-row CMS tables. They also have a draft_data
+// column holding unpublished edits, which must never be sent to the public site
+// (anon has no SELECT privilege on it, so select("*") would fail).
+const HOMEPAGE_PUBLIC_COLUMNS =
+  "id, hero_title, hero_subtitle, hero_cta_text, hero_cta_link, hero_image_url, " +
+  "stats_years_experience, stats_clients_served, stats_destinations, stats_success_rate, " +
+  "mission_title, mission_content, vision_title, vision_content";
+
+const SETTINGS_PUBLIC_COLUMNS =
+  "id, company_name, company_short_name, sub_brand, rc_number, email, phone_primary, " +
+  "phone_secondary, whatsapp_number, address_street, address_locality, address_region, " +
+  "address_country, business_hours, facebook_url, instagram_url, twitter_url, linkedin_url, tiktok_url";
+
 async function readPublished<T>(
   table: string,
   options?: {
@@ -107,9 +120,13 @@ async function readPublished<T>(
     pageSlug?: string;
     featured?: boolean;
     limit?: number;
+    columns?: string;
   },
 ) {
-  let query = supabase.from(table).select("*").eq("status", "published");
+  let query = supabase
+    .from(table)
+    .select(options?.columns ?? "*")
+    .eq("status", "published");
 
   if (options?.division) query = query.eq("division", options.division);
   if (options?.pageSlug) query = query.eq("page_slug", options.pageSlug);
@@ -126,7 +143,9 @@ async function readPublished<T>(
 }
 
 export async function getPublishedHomepage() {
-  const rows = await readPublished<HomepageContent>("website_homepage");
+  const rows = await readPublished<HomepageContent>("website_homepage", {
+    columns: HOMEPAGE_PUBLIC_COLUMNS,
+  });
   return rows?.[0] ?? null;
 }
 
@@ -136,7 +155,9 @@ export async function getPublishedServices(division: "travel" | "trade") {
 }
 
 export async function getPublishedSettings() {
-  const rows = await readPublished<WebsiteSettings>("website_settings");
+  const rows = await readPublished<WebsiteSettings>("website_settings", {
+    columns: SETTINGS_PUBLIC_COLUMNS,
+  });
   return rows?.[0] ?? null;
 }
 

@@ -8,6 +8,7 @@ import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { Save, Eye, Upload, AlertCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { contentFields, withDraft } from '@/lib/cmsDraft';
 
 export const Route = createFileRoute('/admin/website/homepage')({
   component: () => (
@@ -44,6 +45,8 @@ function HomepagePage() {
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<HomepageData | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  // True when draft_data holds saved changes that are not live yet.
+  const [hasDraft, setHasDraft] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -65,7 +68,9 @@ function HomepagePage() {
         await createDefaultHomepage();
       }
     } else {
-      setData(homepage);
+      const editor = withDraft(homepage);
+      setData(editor.data as HomepageData);
+      setHasDraft(editor.hasDraft);
     }
     setLoading(false);
   };
@@ -99,12 +104,14 @@ function HomepagePage() {
     }
   };
 
+  // Saves to draft_data only. The live columns and status are not touched, so the
+  // public website keeps showing the published version.
   const handleSaveDraft = async () => {
     if (!data) return;
     setSaving(true);
     const { error } = await supabase
       .from('website_homepage')
-      .update({ ...data, status: 'draft', updated_by: adminUser?.user_id })
+      .update({ draft_data: contentFields(data), updated_by: adminUser?.user_id })
       .eq('id', data.id);
 
     if (error) {
@@ -113,7 +120,29 @@ function HomepagePage() {
     } else {
       setHasChanges(false);
       await fetchHomepage();
-      toast.success('Homepage changes saved successfully.');
+      toast.success('Draft saved. The live website is unchanged until you publish.');
+    }
+    setSaving(false);
+  };
+
+  const handleDiscardDraft = async () => {
+    if (!data) return;
+    if (!confirm('Discard the saved draft? The editor will go back to the live version.')) {
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase
+      .from('website_homepage')
+      .update({ draft_data: null, updated_by: adminUser?.user_id })
+      .eq('id', data.id);
+
+    if (error) {
+      console.error('Error discarding draft:', error);
+      toast.error('Unable to discard the draft. Please try again.');
+    } else {
+      setHasChanges(false);
+      await fetchHomepage();
+      toast.success('Draft discarded.');
     }
     setSaving(false);
   };
@@ -127,10 +156,11 @@ function HomepagePage() {
     const { error } = await supabase
       .from('website_homepage')
       .update({
-        ...data,
+        ...contentFields(data),
         status: 'published',
         published_at: new Date().toISOString(),
         updated_by: adminUser?.user_id,
+        draft_data: null,
       })
       .eq('id', data.id);
 
@@ -188,6 +218,11 @@ function HomepagePage() {
                 Last updated: {new Date(data.updated_at).toLocaleString()}
               </p>
             </div>
+            {hasDraft && (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                Unpublished changes
+              </span>
+            )}
           </div>
         ) : (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center gap-3">
@@ -370,24 +405,36 @@ function HomepagePage() {
         </div>
 
         {/* Save Bar */}
-        {hasChanges && (
+        {(hasChanges || hasDraft) && (
           <div className="sticky bottom-0 bg-white border-t shadow-lg p-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">You have unsaved changes</div>
+            <div className="text-sm text-gray-600">
+              {hasChanges ? 'You have unsaved changes' : 'You have a saved draft that is not published yet'}
+            </div>
             <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  fetchHomepage();
-                  setHasChanges(false);
-                }}
-                className="px-4 py-2 text-gray-700 hover:text-gray-900"
-                disabled={saving}
-              >
-                Discard
-              </button>
+              {hasChanges ? (
+                <button
+                  onClick={() => {
+                    fetchHomepage();
+                    setHasChanges(false);
+                  }}
+                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  disabled={saving}
+                >
+                  Discard
+                </button>
+              ) : (
+                <button
+                  onClick={handleDiscardDraft}
+                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  disabled={saving}
+                >
+                  Discard draft
+                </button>
+              )}
               <button
                 onClick={handleSaveDraft}
-                className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 flex items-center gap-2"
-                disabled={saving}
+                className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 flex items-center gap-2 disabled:opacity-50"
+                disabled={saving || !hasChanges}
               >
                 <Save className="w-4 h-4" />
                 Save Draft
