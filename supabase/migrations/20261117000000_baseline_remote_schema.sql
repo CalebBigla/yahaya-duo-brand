@@ -1,0 +1,11 @@
+-- ============================================================================
+-- BASELINE PLACEHOLDER — intentionally empty.
+--
+-- Replace this file with the output of `supabase db pull` against production,
+-- following docs/MIGRATIONS.md ("1. Create the baseline").
+--
+-- Until then the repo cannot rebuild the database from scratch. The migrations
+-- that follow this one are written as incremental changes on top of the
+-- current production schema.
+-- ============================================================================
+SELECT 1;

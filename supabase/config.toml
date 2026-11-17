@@ -1,0 +1,14 @@
+# Supabase CLI configuration.
+# Only project-local settings live here; credentials and the project ref are
+# never committed. Link the CLI to a project with `supabase link` (see docs/MIGRATIONS.md).
+# Any setting not listed uses the Supabase CLI default.
+
+project_id = "yahaya-travel-trade"
+
+[db]
+# Match this to the production Postgres major version
+# (Supabase dashboard -> Project Settings -> Infrastructure) before running `supabase start`.
+major_version = 15
+
+[db.seed]
+enabled = false
