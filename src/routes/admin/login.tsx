@@ -7,6 +7,21 @@ export const Route = createFileRoute('/admin/login')({
   component: AdminLogin,
 });
 
+/**
+ * Where to go after signing in: the ?redirect target if it is a relative path inside
+ * /admin, otherwise the dashboard. Anything else (absolute URLs, "//host",
+ * backslashes, the login page itself) is ignored so the parameter cannot be used
+ * as an open redirect.
+ */
+function getPostLoginTarget(search: string): string {
+  const target = new URLSearchParams(search).get('redirect');
+  if (!target) return '/admin';
+  if (!/^\/admin(?:[/?#]|$)/.test(target)) return '/admin';
+  if (target.startsWith('//') || target.includes('\\')) return '/admin';
+  if (/^\/admin\/login(?:[/?#]|$)/.test(target)) return '/admin';
+  return target;
+}
+
 function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -24,7 +39,7 @@ function AdminLogin() {
     const checkExistingAdmin = async () => {
       const access = await checkAdminAccess();
       if (active && access.isAdmin) {
-        navigate({ to: '/admin' });
+        navigate({ href: getPostLoginTarget(window.location.search), replace: true });
       }
     };
 
@@ -65,7 +80,7 @@ function AdminLogin() {
       if (result.success) {
         // Reset attempt count on successful login
         setAttemptCount(0);
-        navigate({ to: '/admin' });
+        navigate({ href: getPostLoginTarget(window.location.search), replace: true });
       } else {
         // Increment attempt count on failure
         setAttemptCount(prev => prev + 1);

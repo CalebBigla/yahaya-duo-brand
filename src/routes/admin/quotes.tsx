@@ -39,6 +39,9 @@ import { toast } from 'sonner';
 import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
 
 export const Route = createFileRoute('/admin/quotes')({
+  // The admin session lives in localStorage, so auth can only be checked in the browser.
+  // Without this, beforeLoad ran during SSR, found no session and 307-redirected to login.
+  ssr: false,
   beforeLoad: async ({ location }) => {
     const result = await checkAdminAccess();
     if (!result.isAdmin) {

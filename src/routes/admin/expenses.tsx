@@ -36,6 +36,9 @@ import {
 } from 'lucide-react';
 
 export const Route = createFileRoute('/admin/expenses')({
+  // The admin session lives in localStorage, so auth can only be checked in the browser.
+  // Without this, beforeLoad ran during SSR, found no session and 307-redirected to login.
+  ssr: false,
   beforeLoad: async ({ location }) => {
     const result = await checkAdminAccess();
     if (!result.isAdmin) {
