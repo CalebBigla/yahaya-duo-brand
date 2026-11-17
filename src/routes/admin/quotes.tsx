@@ -113,6 +113,11 @@ interface Enquiry {
 
 type FilterStatus = 'all' | 'draft' | 'sent' | 'pending' | 'accepted' | 'rejected' | 'expired' | 'revision_requested';
 
+// Only drafts can be edited. Once a quote has gone to the client its terms are fixed;
+// the database enforces the same rule (quotes_lock_non_draft trigger).
+const LOCKED_QUOTE_MESSAGE = "Sent quotes can't be edited. A revision feature is coming.";
+const isQuoteEditable = (quote: Pick<Quote, 'status'>) => quote.status === 'draft';
+
 function QuotesPage() {
   const [adminUser, setAdminUser] = useState<any>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
@@ -293,6 +298,10 @@ function QuotesPage() {
   };
 
   const handleEdit = (quote: Quote) => {
+    if (!isQuoteEditable(quote)) {
+      toast.error(LOCKED_QUOTE_MESSAGE);
+      return;
+    }
     setSelectedQuote(quote);
     setFormData({
       enquiry_id: quote.enquiry_id || '',
@@ -425,10 +434,14 @@ function QuotesPage() {
         valid_until: formData.valid_until || null,
         notes: formData.notes || null,
         terms: formData.terms || null,
-        status: 'draft' as const,
       };
 
       if (showEditModal && selectedQuote) {
+        // Only drafts can be edited; status is left as it is (it used to be forced
+        // back to 'draft', which reopened sent and accepted quotes).
+        if (!isQuoteEditable(selectedQuote)) {
+          throw new Error(LOCKED_QUOTE_MESSAGE);
+        }
         // Update existing quote
         await queueQuery(async () => {
           const { error } = await supabase
@@ -448,7 +461,7 @@ function QuotesPage() {
 
           const { error } = await supabase
             .from('quotes')
-            .insert([{ ...quoteData, quote_number: quoteNumberData }]);
+            .insert([{ ...quoteData, status: 'draft' as const, quote_number: quoteNumberData }]);
 
           if (error) throw error;
         });
@@ -830,13 +843,16 @@ function QuotesPage() {
                           >
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button
-                            onClick={() => handleEdit(quote)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            title="Edit quote"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </button>
+                          <span title={isQuoteEditable(quote) ? 'Edit quote' : LOCKED_QUOTE_MESSAGE}>
+                            <button
+                              onClick={() => handleEdit(quote)}
+                              disabled={!isQuoteEditable(quote)}
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                              aria-label={isQuoteEditable(quote) ? `Edit quote ${quote.quote_number}` : LOCKED_QUOTE_MESSAGE}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </button>
+                          </span>
                           <DeleteConfirmation
                             trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete quote" aria-label={`Delete quote ${quote.quote_number}`}><Trash2 className="h-4 w-4" /></button>}
                             title="Delete quote?"
@@ -1363,15 +1379,18 @@ function QuotesPage() {
                   <Download className="h-4 w-4" />
                   Download PDF
                 </button>
-                <button
-                  onClick={() => {
-                    setShowViewModal(false);
-                    handleEdit(selectedQuote);
-                  }}
-                  className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                >
-                  Edit Quote
-                </button>
+                <span title={isQuoteEditable(selectedQuote) ? undefined : LOCKED_QUOTE_MESSAGE}>
+                  <button
+                    onClick={() => {
+                      setShowViewModal(false);
+                      handleEdit(selectedQuote);
+                    }}
+                    disabled={!isQuoteEditable(selectedQuote)}
+                    className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:disabled:hover:bg-gray-800"
+                  >
+                    Edit Quote
+                  </button>
+                </span>
                 <button
                   onClick={() => setShowViewModal(false)}
                   className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
