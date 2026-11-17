@@ -26,13 +26,44 @@ function buildSchema(fields: FieldDef[]) {
       base = base.email({ message: "Enter a valid email address" });
     }
     if (f.type === "tel") {
-      base = base.regex(/^[0-9+()\-\s]*$/, { message: "Enter a valid phone number" });
+      base = base
+        .regex(/^[0-9+()\-\s]*$/, { message: "Enter a valid phone number" })
+        .refine((v) => v === "" || countDigits(v) >= MIN_PHONE_DIGITS, {
+          message: `Enter a phone number with at least ${MIN_PHONE_DIGITS} digits, e.g. 0803 123 4567`,
+        });
     }
     shape[f.name] = f.required
-      ? base.min(f.type === "tel" ? 7 : 2, { message: `${f.label} is required` })
+      ? base.min(f.type === "tel" ? 1 : 2, { message: `${f.label} is required` })
       : base.or(z.literal(""));
   }
   return z.object(shape);
+}
+
+// The database requires phone numbers of at least 10 characters (submissions.valid_phone).
+const MIN_PHONE_DIGITS = 10;
+const countDigits = (value: string) => value.replace(/\D/g, "").length;
+
+// Fields stored in their own submissions column. Everything else goes into submissions.details.
+const COLUMN_FIELDS = new Set([
+  "name",
+  "email",
+  "phone",
+  "division",
+  "destination",
+  "dates",
+  "service",
+  "message",
+]);
+
+function buildDetails(fields: FieldDef[], values: Record<string, string>, timelineUsedAsDates: boolean) {
+  const details: Record<string, string> = {};
+  for (const f of fields) {
+    if (COLUMN_FIELDS.has(f.name)) continue;
+    if (f.name === "timeline" && timelineUsedAsDates) continue;
+    const value = (values[f.name] ?? "").trim();
+    if (value) details[f.name] = value;
+  }
+  return details;
 }
 
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -68,6 +99,7 @@ export function InquiryForm({
 
     try {
       // Map form values to database fields
+      const timelineUsedAsDates = !values['dates'] && !!values['timeline'];
       const submission = {
         form_type: formType,
         name: values['name'] || null,
@@ -78,6 +110,9 @@ export function InquiryForm({
         dates: values['dates'] || values['timeline'] || null,
         service: values['service'] || null,
         message: values['message'] || null,
+        // Only fields currently on the form, so stale values from a previously selected
+        // trade service are not sent.
+        details: buildDetails(fields, values, timelineUsedAsDates),
         status: 'new' as const,
       };
 

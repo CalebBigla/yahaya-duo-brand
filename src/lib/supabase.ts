@@ -63,6 +63,7 @@ export type Database = {
           dates: string | null;
           service: string | null;
           message: string | null;
+          details: Record<string, string> | null;
           status: 'new' | 'read' | 'responded';
           created_at: string;
           ip_hash: string | null;

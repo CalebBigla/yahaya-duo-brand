@@ -54,9 +54,21 @@ interface Submission {
   dates: string | null;
   service: string | null;
   message: string | null;
+  details?: Record<string, unknown> | null;
   status: 'new' | 'read' | 'responded';
   created_at: string;
   ip_hash: string | null;
+}
+
+// "delivery_location" / "deliveryLocation" -> "Delivery location"
+function formatDetailKey(key: string) {
+  const spaced = key.replace(/[_-]+/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim().toLowerCase();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+function getDetailEntries(details: Submission['details']) {
+  if (!details || typeof details !== 'object') return [];
+  return Object.entries(details).filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '');
 }
 
 type FilterStatus = 'all' | 'new' | 'read' | 'responded';
@@ -618,6 +630,21 @@ function EnquiriesPage() {
                         </div>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {/* Additional form fields (submissions.details) */}
+                {getDetailEntries(selectedEnquiry.details).length > 0 && (
+                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Additional Details</h3>
+                    <dl className="space-y-2">
+                      {getDetailEntries(selectedEnquiry.details).map(([key, value]) => (
+                        <div key={key} className="flex gap-2 text-sm">
+                          <dt className="font-medium text-gray-700 dark:text-gray-300 w-24 shrink-0">{formatDetailKey(key)}:</dt>
+                          <dd className="text-gray-900 dark:text-white whitespace-pre-wrap break-words min-w-0">{String(value)}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </div>
                 )}
 

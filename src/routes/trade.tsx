@@ -161,7 +161,8 @@ function TradePage() {
   const getFormFields = () => {
     const baseFields = [
       { name: "company", label: "Company name", required: true },
-      { name: "contact", label: "Contact name", required: true },
+      // Maps to submissions.name (NOT NULL); the company name is stored in submissions.details.
+      { name: "name", label: "Contact name", required: true },
       { name: "phone", label: "Phone number", type: "tel" as const, required: true },
       { name: "email", label: "Email address", type: "email" as const },
       {
