@@ -17,7 +17,8 @@ import {
   Users as UsersIcon,
   Plus,
   Edit,
-  Trash2,
+  Archive,
+  ArchiveRestore,
   X,
   ChevronDown,
   Download,
@@ -68,7 +69,8 @@ interface Client {
   updated_at: string;
 }
 
-type FilterStatus = 'all' | 'active' | 'inactive' | 'prospect';
+// Archived clients have status 'inactive'; they are hidden unless "Show archived" is on.
+type FilterStatus = 'all' | 'active' | 'prospect';
 type FilterType = 'all' | 'individual' | 'corporate';
 
 function ClientsPage() {
@@ -78,6 +80,7 @@ function ClientsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [filterType, setFilterType] = useState<FilterType>('all');
+  const [showArchived, setShowArchived] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -117,6 +120,11 @@ function ClientsPage() {
     // Apply filters and search
     let filtered = clients;
 
+    // Hide archived clients unless requested
+    if (!showArchived) {
+      filtered = filtered.filter((client) => client.status !== 'inactive');
+    }
+
     // Filter by status
     if (filterStatus !== 'all') {
       filtered = filtered.filter((client) => client.status === filterStatus);
@@ -141,7 +149,7 @@ function ClientsPage() {
     }
 
     setFilteredClients(filtered);
-  }, [clients, searchQuery, filterStatus, filterType]);
+  }, [clients, searchQuery, filterStatus, filterType, showArchived]);
 
   const loadClients = async () => {
     try {
@@ -250,13 +258,33 @@ function ClientsPage() {
     }
   };
 
-  const handleDelete = async (client: Client) => {
-    await queueQuery(async () => {
-      const { data, error } = await supabase.from('clients').delete().eq('id', client.id).select('id').maybeSingle();
+  // Clients are archived (status 'inactive'), never deleted: deleting would lose their
+  // quote history, and the database now blocks deleting a client that has quotes.
+  const setClientStatus = async (client: Client, status: Client['status']) => {
+    const updated = await queueQuery(async () => {
+      const { data, error } = await supabase
+        .from('clients')
+        .update({ status })
+        .eq('id', client.id)
+        .select('*')
+        .maybeSingle();
       if (error) throw error;
-      if (!data?.id) throw new Error('No client row was deleted');
+      if (!data?.id) throw new Error('No client row was updated');
+      return data as Client;
     });
-    setClients((current) => current.filter((row) => row.id !== client.id));
+    setClients((current) => current.map((row) => (row.id === client.id ? updated : row)));
+  };
+
+  const handleArchive = (client: Client) => setClientStatus(client, 'inactive');
+
+  const handleRestore = async (client: Client) => {
+    try {
+      await setClientStatus(client, 'active');
+      toast.success('Client restored.');
+    } catch (error) {
+      console.error('Error restoring client:', error);
+      toast.error('Unable to restore this client. Please try again.');
+    }
   };
 
   const exportToCSV = () => {
@@ -290,7 +318,7 @@ function ClientsPage() {
   const getStatusBadge = (status: string) => {
     const badges = {
       active: { label: 'Active', class: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400', icon: CheckCircle },
-      inactive: { label: 'Inactive', class: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', icon: Circle },
+      inactive: { label: 'Archived', class: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', icon: Circle },
       prospect: { label: 'Prospect', class: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400', icon: AlertCircle },
     };
     
@@ -447,7 +475,7 @@ function ClientsPage() {
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                 <div className="flex flex-wrap gap-2">
-                  {['all', 'active', 'prospect', 'inactive'].map((status) => (
+                  {['all', 'active', 'prospect'].map((status) => (
                     <button
                       key={status}
                       onClick={() => setFilterStatus(status as FilterStatus)}
@@ -460,6 +488,18 @@ function ClientsPage() {
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </button>
                   ))}
+                  <button
+                    onClick={() => setShowArchived(!showArchived)}
+                    aria-pressed={showArchived}
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                      showArchived
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <Archive className="h-3.5 w-3.5" />
+                    Show archived
+                  </button>
                 </div>
               </div>
 
@@ -484,14 +524,15 @@ function ClientsPage() {
             </div>
           )}
 
-          {(searchQuery || filterStatus !== 'all' || filterType !== 'all') && (
+          {(searchQuery || filterStatus !== 'all' || filterType !== 'all' || showArchived) && (
             <div className="mt-3 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="font-medium">Showing {filteredClients.length} of {clients.length} clients</span>
-              {(filterStatus !== 'all' || filterType !== 'all') && (
+              {(filterStatus !== 'all' || filterType !== 'all' || showArchived) && (
                 <button
                   onClick={() => {
                     setFilterStatus('all');
                     setFilterType('all');
+                    setShowArchived(false);
                     setSearchQuery('');
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:underline"
@@ -510,7 +551,7 @@ function ClientsPage() {
               <UsersIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" />
               <h3 className="mt-4 text-sm font-medium text-gray-900 dark:text-white">No clients found</h3>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                {searchQuery || filterStatus !== 'all' || filterType !== 'all'
+                {searchQuery || filterStatus !== 'all' || filterType !== 'all' || (!showArchived && clients.length > 0)
                   ? 'Try adjusting your filters'
                   : clients.length === 0 ? 'Get started by adding your first client' : 'Loading clients...'}
               </p>
@@ -629,15 +670,28 @@ function ClientsPage() {
                           >
                             <Edit className="h-4 w-4" />
                           </button>
-                          <DeleteConfirmation
-                            trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete client" aria-label={`Delete ${client.name}`}><Trash2 className="h-4 w-4" /></button>}
-                            title="Delete client?"
-                            description="Are you sure you want to delete this client? This action cannot be undone."
-                            detail={client.name}
-                            successMessage="Client deleted successfully."
-                            errorMessage="Unable to delete this client. Please try again."
-                            onConfirm={() => handleDelete(client)}
-                          />
+                          {client.status === 'inactive' ? (
+                            <button
+                              onClick={() => handleRestore(client)}
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
+                              title="Restore client"
+                              aria-label={`Restore ${client.name}`}
+                            >
+                              <ArchiveRestore className="h-4 w-4" />
+                            </button>
+                          ) : (
+                            <DeleteConfirmation
+                              trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20" title="Archive client" aria-label={`Archive ${client.name}`}><Archive className="h-4 w-4" /></button>}
+                              title="Archive client?"
+                              description="The client will be hidden from lists and pickers. Their quotes and payments are kept, and you can restore them any time from Filters → Show archived."
+                              detail={client.name}
+                              successMessage="Client archived."
+                              errorMessage="Unable to archive this client. Please try again."
+                              confirmLabel="Archive"
+                              busyLabel="Archiving…"
+                              onConfirm={() => handleArchive(client)}
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -824,7 +878,7 @@ function ClientsPage() {
                   >
                     <option value="prospect">Prospect</option>
                     <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+                    <option value="inactive">Archived</option>
                   </select>
                 </div>
 

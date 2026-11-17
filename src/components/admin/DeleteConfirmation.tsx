@@ -14,9 +14,11 @@ interface DeleteConfirmationProps {
   successMessage: string;
   errorMessage: string;
   onConfirm: () => Promise<void>;
+  confirmLabel?: string;
+  busyLabel?: string;
 }
 
-export function DeleteConfirmation({ trigger, title, description, detail, successMessage, errorMessage, onConfirm }: DeleteConfirmationProps) {
+export function DeleteConfirmation({ trigger, title, description, detail, successMessage, errorMessage, onConfirm, confirmLabel = 'Delete', busyLabel = 'Deleting…' }: DeleteConfirmationProps) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -47,7 +49,7 @@ export function DeleteConfirmation({ trigger, title, description, detail, succes
         <AlertDialogFooter>
           <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={(event) => { event.preventDefault(); void confirm(); }} disabled={busy} className="bg-red-600 text-white hover:bg-red-700 focus:ring-red-600">
-            {busy ? 'Deleting…' : 'Delete'}
+            {busy ? busyLabel : confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
