@@ -6,14 +6,141 @@ For each migration, run the **before** checks first, apply the migration (see `d
 
 Apply the migrations in this order:
 
-| # | File | Task |
-|---|---|---|
-| 0 | `20261117000000_baseline_remote_schema.sql` | T08 baseline (placeholder until you run `supabase db pull`) |
-| 1 | `20261117000100_t01_submissions_details.sql` | T01 |
-| 2 | `20261117000200_t02_quotes_client_fk_restrict.sql` | T02 |
-| 3 | `20261117000300_t04_close_quote_security_holes.sql` | T04 |
+| # | File | Task | When |
+|---|---|---|---|
+| 0 | `20261117000000_baseline_remote_schema.sql` | T08 baseline (placeholder until you run `supabase db pull`) | first |
+| 1 | `20261117000100_t01_submissions_details.sql` | T01 | **before** deploying the frontend |
+| 2 | `20261117000200_t02_quotes_client_fk_restrict.sql` | T02 | before deploying |
+| 3 | `20261117000300_t04_close_quote_security_holes.sql` | T04 | before deploying |
+| 4 | `20261117000400_t06_cms_drafts_and_singletons.sql` | T06 | **after** deploying the frontend |
+| 5 | `20261117000500_t07_lock_non_draft_quotes.sql` | T07 | after deploying |
 
-**Deploy order matters.** Apply migration 1 (T01) *before* deploying the new frontend. The new enquiry forms send a `details` field, and until that column exists **every** enquiry form fails, not just Trade.
+### Deploy sequence
+
+1. Run every **before** check below.
+2. Apply migrations 1–3 (T01, T02, T04).
+3. Deploy the `fix/p0-audit` frontend to Render.
+4. Apply migrations 4–5 (T06, T07).
+5. Run every **after** check, then click through the manual test checklist in the PR description.
+
+Why this order:
+- **T01 first:** the new enquiry forms send a `details` field. Until that column exists, **every** enquiry form fails, not just Trade.
+- **T06 after:** it removes anon's table-wide `SELECT` on `website_homepage` and `website_settings`. The *old* frontend reads them with `select('*')`, which would fail. The public site would then fall back to hard-coded text until the new frontend is live.
+- **T07 after:** it works with either frontend. The old frontend could still try to edit a sent quote, and the trigger would correctly refuse with "Unable to save the quote". Applying it after the deploy just avoids staff hitting that.
+
+With the CLI you can apply in two steps by moving the T06/T07 files aside for the first `supabase db push`, or apply each file in the SQL editor and then run `supabase migration repair --status applied <version>` (see `docs/MIGRATIONS.md`).
+
+---
+
+## T01: `submissions.details`
+
+### Before
+```sql
+-- Expect 0 rows (column not there yet)
+SELECT column_name FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'submissions' AND column_name = 'details';
+
+-- Expect: one row "Public insert access to submissions" with with_check = true
+SELECT policyname, roles, cmd, with_check FROM pg_policies
+WHERE schemaname = 'public' AND tablename = 'submissions' AND cmd = 'INSERT';
+```
+
+### After
+```sql
+-- Expect: details | jsonb | YES | '{}'::jsonb
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'submissions' AND column_name = 'details';
+
+-- Expect: 1 row, submissions_details_shape
+SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint
+WHERE conrelid = 'public.submissions'::regclass AND conname = 'submissions_details_shape';
+```
+Then submit the Trade form on staging and confirm the row has `form_type = 'trade'`, `name` = contact name, and `details` containing `company` plus the service-specific fields.
+
+## T02: client delete no longer cascades to quotes
+
+### Before
+```sql
+-- Expect confdeltype = 'c' (CASCADE) today
+SELECT conname, confdeltype FROM pg_constraint
+WHERE conrelid = 'public.quotes'::regclass AND contype = 'f'
+  AND confrelid = 'public.clients'::regclass;
+
+-- Expect a CHECK that lists 'active', 'inactive', 'prospect'
+SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint
+WHERE conrelid = 'public.clients'::regclass AND contype = 'c';
+
+-- Existing statuses. Every row must be active / inactive / prospect.
+-- Note how many are 'inactive': the Clients page will now show them as "Archived"
+-- and hide them unless "Show archived" is ticked.
+SELECT status, count(*) FROM public.clients GROUP BY status;
+```
+
+### After
+```sql
+-- Expect exactly 1 row: quotes_client_id_fkey | r   ('r' = RESTRICT)
+SELECT conname, confdeltype FROM pg_constraint
+WHERE conrelid = 'public.quotes'::regclass AND contype = 'f'
+  AND confrelid = 'public.clients'::regclass;
+```
+
+## T06: CMS drafts and single-row tables
+
+### Before
+```sql
+-- Each count MUST be exactly 1. If either is 2+, stop and send me the rows (id, status, updated_at):
+-- the unique index would fail, and we need to decide which row is the real one.
+SELECT 'website_homepage' AS t, count(*) FROM public.website_homepage
+UNION ALL
+SELECT 'website_settings', count(*) FROM public.website_settings;
+
+-- Current status of each row. 'draft' here means the public site is ALREADY showing fallback text
+-- (someone clicked Save before this fix). Re-publish it from the admin after deploying.
+SELECT 'website_homepage' AS t, status, published_at, updated_at FROM public.website_homepage
+UNION ALL
+SELECT 'website_settings', status, published_at, updated_at FROM public.website_settings;
+```
+
+### After
+```sql
+-- Expect 2 rows (draft_data on both tables)
+SELECT table_name, column_name FROM information_schema.columns
+WHERE table_schema = 'public' AND column_name = 'draft_data'
+  AND table_name IN ('website_homepage', 'website_settings');
+
+-- Expect 2 rows: website_homepage_singleton, website_settings_singleton
+SELECT indexname FROM pg_indexes
+WHERE schemaname = 'public' AND indexname LIKE 'website_%_singleton';
+
+-- anon must NOT be able to read draft_data, but can read the public columns.
+-- Expect: f, t, f, t
+SELECT has_column_privilege('anon', 'public.website_homepage', 'draft_data', 'SELECT')  AS home_draft,
+       has_column_privilege('anon', 'public.website_homepage', 'hero_title', 'SELECT')  AS home_title,
+       has_column_privilege('anon', 'public.website_settings', 'draft_data', 'SELECT')  AS settings_draft,
+       has_column_privilege('anon', 'public.website_settings', 'phone_primary', 'SELECT') AS settings_phone;
+```
+Then open the public home page and contact page in a private window and confirm they show the CMS content, not the hard-coded fallback.
+
+## T07: quote lock trigger
+
+### Before
+```sql
+-- How many quotes will be locked. 'revision_requested' quotes can no longer be edited in place.
+SELECT status, count(*) FROM public.quotes GROUP BY status ORDER BY status;
+
+-- Does the live quotes table have a currency column? (The trigger handles either case.)
+SELECT column_name FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'quotes' AND column_name = 'currency';
+```
+
+### After
+```sql
+-- Expect 1 row: quotes_lock_non_draft | O (enabled)
+SELECT tgname, tgenabled FROM pg_trigger
+WHERE tgrelid = 'public.quotes'::regclass AND tgname = 'quotes_lock_non_draft';
+```
+To prove it works **on staging only**, take a quote that is not a draft and try changing its total in the SQL editor. It must fail with `field "total_amount" can no longer be changed`. Don't run this on production.
 
 ---
 
