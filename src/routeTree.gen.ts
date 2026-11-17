@@ -17,13 +17,11 @@ import { Route as MediaRouteImport } from './routes/media'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TestEnvRouteImport } from './routes/test-env'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAuditLogRouteImport } from './routes/admin/audit-log'
 import { Route as AdminClientsRouteImport } from './routes/admin/clients'
-import { Route as AdminDebugRouteImport } from './routes/admin/debug'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
 import { Route as AdminExpensesRouteImport } from './routes/admin/expenses'
 import { Route as AdminFinanceRouteImport } from './routes/admin/finance'
@@ -85,11 +83,6 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestEnvRoute = TestEnvRouteImport.update({
-  id: '/test-env',
-  path: '/test-env',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TradeRoute = TradeRouteImport.update({
   id: '/trade',
   path: '/trade',
@@ -113,11 +106,6 @@ const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
 const AdminClientsRoute = AdminClientsRouteImport.update({
   id: '/admin/clients',
   path: '/admin/clients',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminDebugRoute = AdminDebugRouteImport.update({
-  id: '/admin/debug',
-  path: '/admin/debug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
@@ -232,12 +220,10 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRouteWithChildren
   '/terms': typeof TermsRoute
-  '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/clients': typeof AdminClientsRoute
-  '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/expenses': typeof AdminExpensesRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -269,12 +255,10 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRouteWithChildren
   '/terms': typeof TermsRoute
-  '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/clients': typeof AdminClientsRoute
-  '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/expenses': typeof AdminExpensesRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -307,12 +291,10 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRouteWithChildren
   '/terms': typeof TermsRoute
-  '/test-env': typeof TestEnvRoute
   '/trade': typeof TradeRoute
   '/travel': typeof TravelRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/clients': typeof AdminClientsRoute
-  '/admin/debug': typeof AdminDebugRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/expenses': typeof AdminExpensesRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -346,12 +328,10 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/quote'
     | '/terms'
-    | '/test-env'
     | '/trade'
     | '/travel'
     | '/admin/audit-log'
     | '/admin/clients'
-    | '/admin/debug'
     | '/admin/enquiries'
     | '/admin/expenses'
     | '/admin/finance'
@@ -383,12 +363,10 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/quote'
     | '/terms'
-    | '/test-env'
     | '/trade'
     | '/travel'
     | '/admin/audit-log'
     | '/admin/clients'
-    | '/admin/debug'
     | '/admin/enquiries'
     | '/admin/expenses'
     | '/admin/finance'
@@ -420,12 +398,10 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/quote'
     | '/terms'
-    | '/test-env'
     | '/trade'
     | '/travel'
     | '/admin/audit-log'
     | '/admin/clients'
-    | '/admin/debug'
     | '/admin/enquiries'
     | '/admin/expenses'
     | '/admin/finance'
@@ -458,12 +434,10 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   QuoteRoute: typeof QuoteRouteWithChildren
   TermsRoute: typeof TermsRoute
-  TestEnvRoute: typeof TestEnvRoute
   TradeRoute: typeof TradeRoute
   TravelRoute: typeof TravelRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AdminClientsRoute: typeof AdminClientsRoute
-  AdminDebugRoute: typeof AdminDebugRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminExpensesRoute: typeof AdminExpensesRoute
   AdminFinanceRoute: typeof AdminFinanceRoute
@@ -536,13 +510,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test-env': {
-      id: '/test-env'
-      path: '/test-env'
-      fullPath: '/test-env'
-      preLoaderRoute: typeof TestEnvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/trade': {
       id: '/trade'
       path: '/trade'
@@ -576,13 +543,6 @@ declare module '@tanstack/react-router' {
       path: '/admin/clients'
       fullPath: '/admin/clients'
       preLoaderRoute: typeof AdminClientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/debug': {
-      id: '/admin/debug'
-      path: '/admin/debug'
-      fullPath: '/admin/debug'
-      preLoaderRoute: typeof AdminDebugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/enquiries': {
@@ -773,12 +733,10 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   QuoteRoute: QuoteRouteWithChildren,
   TermsRoute: TermsRoute,
-  TestEnvRoute: TestEnvRoute,
   TradeRoute: TradeRoute,
   TravelRoute: TravelRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AdminClientsRoute: AdminClientsRoute,
-  AdminDebugRoute: AdminDebugRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminExpensesRoute: AdminExpensesRoute,
   AdminFinanceRoute: AdminFinanceRoute,
