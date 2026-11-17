@@ -4,6 +4,7 @@
  */
 
 import { supabase } from './supabase';
+import { buildWhatsAppUrl } from './phone';
 import type { TokenValidation, QuoteAccessToken } from './types/quotes';
 
 /**
@@ -128,15 +129,19 @@ export function generateQuoteAccessUrl(token: string): string {
 }
 
 /**
- * Generate WhatsApp share link with quote
+ * Generate a WhatsApp link that opens a chat with the CLIENT, pre-filled with the quote link.
  * @param token The access token
  * @param clientName Client's name for personalization
- * @returns WhatsApp URL
+ * @param clientPhone Client's phone number in any common format (see normalizePhoneForWhatsApp)
+ * @returns WhatsApp URL, or null when the client has no usable phone number
  */
-export function generateWhatsAppShareLink(token: string, clientName: string): string {
+export function generateWhatsAppShareLink(
+  token: string,
+  clientName: string,
+  clientPhone: string | null | undefined,
+): string | null {
   const quoteUrl = generateQuoteAccessUrl(token);
-  const whatsappNumber = '2349127650968'; // From site config
-  
+
   const message = `Hello ${clientName},
 
 Thank you for your enquiry. We've prepared a detailed quotation for you.
@@ -151,7 +156,7 @@ If you have any questions, feel free to reach out.
 Best regards,
 Yahaya Travel and Trade Co Ltd`;
 
-  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  return buildWhatsAppUrl(clientPhone, message);
 }
 
 /**
