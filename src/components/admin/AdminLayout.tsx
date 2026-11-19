@@ -29,6 +29,7 @@ import {
   PanelLeftOpen,
   Check,
   ChevronsUpDown,
+  Fuel,
   type LucideIcon,
 } from 'lucide-react';
 import { signOut, type AdminUser } from '@/lib/auth';
@@ -128,6 +129,7 @@ function AdminShell({ children, adminUser }: AdminLayoutProps) {
       items: [
         { name: 'Finance', path: '/admin/finance', icon: Wallet },
         { name: 'Expenses', path: '/admin/expenses', icon: Receipt },
+        ...(isOwner ? [{ name: 'Oil Trade', path: '/admin/oil-trade', icon: Fuel }] : []),
       ],
     },
     {

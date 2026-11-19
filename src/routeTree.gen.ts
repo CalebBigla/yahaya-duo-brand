@@ -28,6 +28,7 @@ import { Route as AdminFinanceRouteImport } from './routes/admin/finance'
 import { Route as AdminForgotPasswordRouteImport } from './routes/admin/forgot-password'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminOilTradeRouteImport } from './routes/admin/oil-trade'
 import { Route as AdminQuotesRouteImport } from './routes/admin/quotes'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin/reset-password'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
@@ -138,6 +139,11 @@ const AdminMediaRoute = AdminMediaRouteImport.update({
   path: '/admin/media',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOilTradeRoute = AdminOilTradeRouteImport.update({
+  id: '/admin/oil-trade',
+  path: '/admin/oil-trade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminQuotesRoute = AdminQuotesRouteImport.update({
   id: '/admin/quotes',
   path: '/admin/quotes',
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/oil-trade': typeof AdminOilTradeRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/oil-trade': typeof AdminOilTradeRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -301,6 +309,7 @@ export interface FileRoutesById {
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/oil-trade': typeof AdminOilTradeRoute
   '/admin/quotes': typeof AdminQuotesRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -338,6 +347,7 @@ export interface FileRouteTypes {
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/media'
+    | '/admin/oil-trade'
     | '/admin/quotes'
     | '/admin/reset-password'
     | '/admin/settings'
@@ -373,6 +383,7 @@ export interface FileRouteTypes {
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/media'
+    | '/admin/oil-trade'
     | '/admin/quotes'
     | '/admin/reset-password'
     | '/admin/settings'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/media'
+    | '/admin/oil-trade'
     | '/admin/quotes'
     | '/admin/reset-password'
     | '/admin/settings'
@@ -444,6 +456,7 @@ export interface RootRouteChildren {
   AdminForgotPasswordRoute: typeof AdminForgotPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMediaRoute: typeof AdminMediaRoute
+  AdminOilTradeRoute: typeof AdminOilTradeRoute
   AdminQuotesRoute: typeof AdminQuotesRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -585,6 +598,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/media'
       fullPath: '/admin/media'
       preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/oil-trade': {
+      id: '/admin/oil-trade'
+      path: '/admin/oil-trade'
+      fullPath: '/admin/oil-trade'
+      preLoaderRoute: typeof AdminOilTradeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/quotes': {
@@ -743,6 +763,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminForgotPasswordRoute: AdminForgotPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMediaRoute: AdminMediaRoute,
+  AdminOilTradeRoute: AdminOilTradeRoute,
   AdminQuotesRoute: AdminQuotesRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminSettingsRoute: AdminSettingsRoute,
