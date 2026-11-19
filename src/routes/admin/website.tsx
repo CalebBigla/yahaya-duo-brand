@@ -198,21 +198,21 @@ function WebsitePage() {
     switch (status) {
       case 'published':
         return (
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-800 text-xs font-medium">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 dark:bg-emerald-500/15 text-green-800 dark:text-emerald-300 text-xs font-medium">
             <CheckCircle2 className="w-3 h-3" />
             Published
           </div>
         );
       case 'draft':
         return (
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-amber-500/15 text-yellow-800 dark:text-amber-300 text-xs font-medium">
             <Clock className="w-3 h-3" />
             Draft
           </div>
         );
       case 'empty':
         return (
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400 text-xs font-medium">
             <AlertCircle className="w-3 h-3" />
             Empty
           </div>
@@ -223,10 +223,10 @@ function WebsitePage() {
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
-        {moduleLoadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Some CMS module details could not be loaded.</div>}
+        {moduleLoadError && <div role="alert" className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 p-4 text-sm text-red-800 dark:text-rose-300">Some CMS module details could not be loaded.</div>}
         {/* Header */}
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Website CMS</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Website CMS</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage all public-facing website content with draft/publish workflow
           </p>
@@ -234,29 +234,29 @@ function WebsitePage() {
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="bg-green-50 dark:bg-emerald-500/10 border border-green-200 dark:border-emerald-500/30 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-700 font-medium">Published Content</p>
+                <p className="text-sm text-green-700 dark:text-emerald-300 font-medium">Published Content</p>
                 <p className="text-2xl font-bold text-green-900 mt-1">{publishedContent}</p>
               </div>
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
           </div>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-yellow-50 dark:bg-amber-500/10 border border-yellow-200 dark:border-amber-500/30 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-yellow-700 font-medium">Draft Items</p>
+                <p className="text-sm text-yellow-700 dark:text-amber-300 font-medium">Draft Items</p>
                 <p className="text-2xl font-bold text-yellow-900 mt-1">{draftItems}</p>
               </div>
               <Clock className="w-8 h-8 text-yellow-600" />
             </div>
           </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-700 font-medium">Total Modules</p>
-                <p className="text-2xl font-bold text-blue-900 mt-1">8</p>
+                <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Total Modules</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100 mt-1">8</p>
               </div>
               <Settings className="w-8 h-8 text-blue-600" />
             </div>

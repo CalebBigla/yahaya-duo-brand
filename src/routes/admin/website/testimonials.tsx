@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ModalFrame } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -165,8 +166,8 @@ function TestimonialsPage() {
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Testimonials Management</h1>
-          <p className="text-gray-600 mt-1">Manage client reviews and feedback</p>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Testimonials Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage client reviews and feedback</p>
         </div>
 
         <div>
@@ -180,8 +181,8 @@ function TestimonialsPage() {
         </div>
 
         {testimonials.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed">
-            <p className="text-gray-600">
+          <div className="text-center py-12 bg-gray-50 dark:bg-white/5 rounded-lg border-2 border-dashed">
+            <p className="text-gray-600 dark:text-gray-400">
               No testimonials yet. Click "Add Testimonial" to create one.
             </p>
           </div>
@@ -190,32 +191,32 @@ function TestimonialsPage() {
             {testimonials.map((item) => (
               <div
                 key={item.id}
-                className="flex h-full flex-col rounded-lg border bg-white p-5 transition-colors hover:border-teal-300"
+                className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-900 p-5 transition-colors hover:border-teal-300"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-semibold text-gray-900">{item.client_name}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{item.client_name}</h3>
                       {item.featured && (
-                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-medium rounded">
+                        <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300 text-xs font-medium rounded">
                           ⭐ Featured
                         </span>
                       )}
                       {item.status === 'published' ? (
-                        <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
+                        <span className="px-2 py-0.5 bg-green-100 dark:bg-emerald-500/15 text-green-800 dark:text-emerald-300 text-xs font-medium rounded">
                           <Eye className="w-3 h-3 inline" /> Published
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                        <span className="px-2 py-0.5 bg-yellow-100 dark:bg-amber-500/15 text-yellow-800 dark:text-amber-300 text-xs font-medium rounded">
                           <EyeOff className="w-3 h-3 inline" /> Draft
                         </span>
                       )}
                     </div>
                     {item.client_title && (
-                      <p className="text-sm text-gray-600 mb-2">{item.client_title}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{item.client_title}</p>
                     )}
-                    <p className="line-clamp-5 text-gray-700 mb-2">"{item.testimonial}"</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <p className="line-clamp-5 text-gray-700 dark:text-gray-300 mb-2">"{item.testimonial}"</p>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                       {item.rating && (
                         <div className="flex items-center gap-1">
                           {Array.from({ length: 5 }).map((_, i) => (
@@ -235,7 +236,7 @@ function TestimonialsPage() {
                 <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     onClick={() => setEditingItem(item)}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 flex items-center gap-1"
+                    className="px-3 py-1 text-sm bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-1"
                   >
                     <Edit2 className="w-3 h-3" />
                     Edit
@@ -246,7 +247,7 @@ function TestimonialsPage() {
                   >
                     {item.status === 'published' ? 'Unpublish' : 'Publish'}
                   </button>
-                  <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete testimonial?" description="Are you sure you want to delete this testimonial? This action cannot be undone." detail={`Testimonial from ${item.client_name}`} successMessage="Testimonial deleted successfully." errorMessage="Unable to delete this testimonial. Please try again." onConfirm={() => handleDelete(item)} />
+                  <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 dark:bg-rose-500/15 text-red-700 dark:text-rose-300 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete testimonial?" description="Are you sure you want to delete this testimonial? This action cannot be undone." detail={`Testimonial from ${item.client_name}`} successMessage="Testimonial deleted successfully." errorMessage="Unable to delete this testimonial. Please try again." onConfirm={() => handleDelete(item)} />
                 </div>
               </div>
             ))}
@@ -254,10 +255,10 @@ function TestimonialsPage() {
         )}
 
         {editingItem && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">
+          <ModalFrame label={isCreating ? 'Add testimonial' : 'Edit testimonial'} onClose={() => { setEditingItem(null); setIsCreating(false); }}>
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white dark:bg-gray-900 border-b px-6 py-4 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                   {isCreating ? 'Add Testimonial' : 'Edit Testimonial'}
                 </h2>
                 <button
@@ -265,7 +266,7 @@ function TestimonialsPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -273,7 +274,7 @@ function TestimonialsPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Client Name *
                   </label>
                   <input
@@ -288,7 +289,7 @@ function TestimonialsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Client Title/Role
                   </label>
                   <input
@@ -303,7 +304,7 @@ function TestimonialsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Testimonial * (max 1000 characters)
                   </label>
                   <textarea
@@ -316,14 +317,14 @@ function TestimonialsPage() {
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                     placeholder="Write the testimonial here..."
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {editingItem.testimonial.length}/1000 characters
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rating</label>
                     <select
                       value={editingItem.rating || 5}
                       onChange={(e) =>
@@ -339,7 +340,7 @@ function TestimonialsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Service Division
                     </label>
                     <select
@@ -357,7 +358,7 @@ function TestimonialsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Client Photo URL
                   </label>
                   <input
@@ -379,19 +380,19 @@ function TestimonialsPage() {
                     onChange={(e) => setEditingItem({ ...editingItem, featured: e.target.checked })}
                     className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                   />
-                  <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+                  <label htmlFor="featured" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Featured (show on homepage)
                   </label>
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-gray-50 border-t px-6 py-4 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-gray-50 dark:bg-white/5 border-t px-6 py-4 flex justify-end gap-3">
                 <button
                   onClick={() => {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Cancel
                 </button>
@@ -404,7 +405,7 @@ function TestimonialsPage() {
                 </button>
               </div>
             </div>
-          </div>
+          </ModalFrame>
         )}
       </div>
     </AdminLayout>

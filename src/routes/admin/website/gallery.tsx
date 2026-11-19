@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ModalFrame } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { CardGridPageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -175,8 +176,8 @@ function GalleryPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
-          <p className="text-gray-600 mt-1">Manage images organized by category</p>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Gallery Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage images organized by category</p>
         </div>
 
         {/* Category Filter */}
@@ -186,7 +187,7 @@ function GalleryPage() {
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               activeCategory === 'all'
                 ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/15'
             }`}
           >
             All ({items.length})
@@ -198,7 +199,7 @@ function GalleryPage() {
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeCategory === cat.value
                   ? 'bg-teal-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/15'
               }`}
             >
               {cat.label} ({items.filter((i) => i.category === cat.value).length})
@@ -219,17 +220,17 @@ function GalleryPage() {
 
         {/* Gallery Grid */}
         {filteredItems.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed">
-            <p className="text-gray-600">No images yet. Click "Add Image" to upload one.</p>
+          <div className="text-center py-12 bg-gray-50 dark:bg-white/5 rounded-lg border-2 border-dashed">
+            <p className="text-gray-600 dark:text-gray-400">No images yet. Click "Add Image" to upload one.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white border rounded-lg overflow-hidden hover:border-teal-300 transition-colors"
+                className="bg-white dark:bg-gray-900 border rounded-lg overflow-hidden hover:border-teal-300 transition-colors"
               >
-                <div className="aspect-video bg-gray-100 relative">
+                <div className="aspect-video bg-gray-100 dark:bg-white/10 relative">
                   <img
                     src={item.image_url}
                     alt={item.alt_text || item.title}
@@ -254,16 +255,16 @@ function GalleryPage() {
                   </div>
                 </div>
                 <div className="p-3">
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">{item.title}</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{item.title}</h3>
                   {item.description && (
-                    <p className="text-xs text-gray-600 mb-2 line-clamp-2">{item.description}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">{item.description}</p>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 capitalize">{item.category}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">{item.category}</span>
                     <div className="flex gap-1">
                       <button
                         onClick={() => setEditingItem(item)}
-                        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded"
+                        className="p-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         title="Edit"
                       >
                         <Edit2 className="w-4 h-4" />
@@ -290,10 +291,10 @@ function GalleryPage() {
 
         {/* Edit Modal */}
         {editingItem && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">
+          <ModalFrame label={isCreating ? 'Add image' : 'Edit image'} onClose={() => { setEditingItem(null); setIsCreating(false); }}>
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white dark:bg-gray-900 border-b px-6 py-4 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                   {isCreating ? 'Add Image' : 'Edit Image'}
                 </h2>
                 <button
@@ -301,7 +302,7 @@ function GalleryPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -309,7 +310,7 @@ function GalleryPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title *</label>
                   <input
                     type="text"
                     value={editingItem.title}
@@ -320,7 +321,7 @@ function GalleryPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Description
                   </label>
                   <textarea
@@ -335,7 +336,7 @@ function GalleryPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Image URL *
                   </label>
                   <div className="space-y-2">
@@ -349,7 +350,7 @@ function GalleryPage() {
                       placeholder="https://..."
                     />
                     {editingItem.image_url && (
-                      <div className="border rounded-lg p-2 bg-gray-50">
+                      <div className="border rounded-lg p-2 bg-gray-50 dark:bg-white/5">
                         <img
                           src={editingItem.image_url}
                           alt="Preview"
@@ -365,7 +366,7 @@ function GalleryPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Alt Text (for accessibility)
                   </label>
                   <input
@@ -379,7 +380,7 @@ function GalleryPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Category *
                     </label>
                     <select
@@ -397,7 +398,7 @@ function GalleryPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Display Order
                     </label>
                     <input
@@ -412,13 +413,13 @@ function GalleryPage() {
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-gray-50 border-t px-6 py-4 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-gray-50 dark:bg-white/5 border-t px-6 py-4 flex justify-end gap-3">
                 <button
                   onClick={() => {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Cancel
                 </button>
@@ -431,7 +432,7 @@ function GalleryPage() {
                 </button>
               </div>
             </div>
-          </div>
+          </ModalFrame>
         )}
       </div>
     </AdminLayout>

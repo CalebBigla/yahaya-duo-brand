@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ModalFrame } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -31,6 +32,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { downloadCsv } from '@/lib/csv';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 import { toast } from 'sonner';
 import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
@@ -305,17 +307,7 @@ function ClientsPage() {
       format(new Date(client.created_at), 'yyyy-MM-dd')
     ]);
 
-    const csvContent = [
-      headers.join(','),
-      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `clients-${format(new Date(), 'yyyy-MM-dd')}.csv`;
-    a.click();
+    downloadCsv(`clients-${format(new Date(), 'yyyy-MM-dd')}.csv`, headers, csvData);
   };
 
   const getStatusBadge = (status: string) => {
@@ -367,7 +359,7 @@ function ClientsPage() {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Clients</h1>
+            <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Clients</h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Manage your client database and relationships
             </p>
@@ -708,7 +700,7 @@ function ClientsPage() {
 
       {/* Add/Edit Modal */}
       {(showAddModal || showEditModal) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <ModalFrame label={showEditModal ? 'Edit client' : 'Add client'} onClose={() => { setShowAddModal(false); setShowEditModal(false); resetForm(); setSelectedClient(null); }}>
           <div className="w-full max-w-2xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 z-10">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -922,7 +914,7 @@ function ClientsPage() {
               </div>
             </form>
           </div>
-        </div>
+        </ModalFrame>
       )}
     </AdminLayout>
   );

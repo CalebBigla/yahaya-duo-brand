@@ -166,7 +166,7 @@ function VisaDestinationsPage() {
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
         <header>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Visa Destination Quick Reference</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Visa Destination Quick Reference</h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Manage the destination information shown on the public Travel page.</p>
         </header>
 
@@ -198,13 +198,13 @@ function VisaDestinationsPage() {
         </form>
 
         {loading ? <div aria-label="Loading destinations" className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-24 animate-pulse rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800" />)}</div>
-          : loadError ? <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">{loadError}</div>
+          : loadError ? <div role="alert" className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 p-4 text-sm text-red-800 dark:text-rose-300">{loadError}</div>
           : <div className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
             {items.length === 0 ? <p className="p-6 text-sm text-gray-600 dark:text-gray-400">No destinations yet. Add one above.</p> : items.map((item, index) => (
               <div key={item.id} className="flex flex-wrap items-center gap-4 border-b border-gray-200 p-4 last:border-0 dark:border-gray-700">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <span className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">{item.display_order}</span>
-                  <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold text-gray-900 dark:text-white">{item.country}</h3><span className={`rounded-full px-2 py-0.5 text-xs ${item.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{item.status}</span></div><p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{item.visa_types} · {item.processing_time}</p><p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{item.notes}</p></div>
+                  <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold text-gray-900 dark:text-white">{item.country}</h3><span className={`rounded-full px-2 py-0.5 text-xs ${item.status === 'published' ? 'bg-green-100 dark:bg-emerald-500/15 text-green-800 dark:text-emerald-300' : 'bg-yellow-100 dark:bg-amber-500/15 text-yellow-800 dark:text-amber-300'}`}>{item.status}</span></div><p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{item.visa_types} · {item.processing_time}</p><p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{item.notes}</p></div>
                 </div>
                 <div className="flex items-center gap-1">
                   <Button variant="outline" size="icon" aria-label={`Move ${item.country} up`} disabled={index === 0} onClick={() => void moveItem(item, -1)}><ArrowUp className="h-4 w-4" /></Button>

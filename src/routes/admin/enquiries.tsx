@@ -1,9 +1,12 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ErrorBanner, ModalFrame, PageHeader, primaryButton, secondaryButton } from '@/components/admin/ui';
+import { useNotifications } from '@/lib/notifications';
+import { toast } from 'sonner';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import {
   Search,
@@ -24,6 +27,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { downloadCsv } from '@/lib/csv';
 import { CreateQuoteFromEnquiry } from '@/components/quotes/CreateQuoteFromEnquiry';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
 
@@ -100,6 +104,14 @@ function EnquiriesPage() {
     loadData();
   }, []);
 
+  const { revision } = useNotifications();
+  const firstRevision = useRef(revision);
+  useEffect(() => {
+    if (revision === firstRevision.current) return;
+    void loadSubmissions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revision]);
+
   useEffect(() => {
     // Apply filters and search
     let filtered = submissions;
@@ -141,6 +153,7 @@ function EnquiriesPage() {
       if (error) throw error;
 
       setSubmissions(data || []);
+      setLoadError(false);
     } catch (error) {
       console.error('Error loading submissions:', error);
       setLoadError(true);
@@ -153,7 +166,8 @@ function EnquiriesPage() {
     setIsRefreshing(false);
   };
 
-  const updateStatus = async (id: string, newStatus: 'new' | 'read' | 'responded') => {
+
+  const updateStatus = async (id: string, newStatus: 'new' | 'read' | 'responded', quiet = false) => {
     try {
       const { error } = await supabase
         .from('submissions')
@@ -170,8 +184,10 @@ function EnquiriesPage() {
       if (selectedEnquiry?.id === id) {
         setSelectedEnquiry({ ...selectedEnquiry, status: newStatus });
       }
+      if (!quiet) toast.success(newStatus === 'responded' ? 'Marked as responded' : newStatus === 'read' ? 'Marked as read' : 'Marked as new');
     } catch (error) {
       console.error('Error updating status:', error);
+      toast.error('Could not update the status. Check your connection and try again.');
     }
   };
 
@@ -180,7 +196,7 @@ function EnquiriesPage() {
     
     // Mark as read if it's new
     if (enquiry.status === 'new') {
-      await updateStatus(enquiry.id, 'read');
+      await updateStatus(enquiry.id, 'read', true);
     }
   };
 
@@ -221,6 +237,10 @@ function EnquiriesPage() {
   };
 
   const exportToCSV = () => {
+    if (filteredSubmissions.length === 0) {
+      toast.info('Nothing to export. Clear the filters to export all enquiries.');
+      return;
+    }
     const headers = ['Date', 'Name', 'Email', 'Phone', 'Type', 'Service', 'Message', 'Status'];
     const csvData = filteredSubmissions.map(sub => [
       format(new Date(sub.created_at), 'yyyy-MM-dd HH:mm'),
@@ -233,17 +253,8 @@ function EnquiriesPage() {
       sub.status
     ]);
 
-    const csvContent = [
-      headers.join(','),
-      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `enquiries-${format(new Date(), 'yyyy-MM-dd')}.csv`;
-    a.click();
+    downloadCsv(`enquiries-${format(new Date(), 'yyyy-MM-dd')}.csv`, headers, csvData);
+    toast.success(`Exported ${csvData.length} ${csvData.length === 1 ? 'enquiry' : 'enquiries'}`);
   };
 
   const stats = {
@@ -258,33 +269,23 @@ function EnquiriesPage() {
   return (
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
-        {loadError && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">Unable to load enquiries. Please try again.</div>}
-        {/* Page Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Enquiries</h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Manage customer enquiries and form submissions
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
-            <button
-              onClick={exportToCSV}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </button>
-          </div>
-        </div>
+        {loadError && <ErrorBanner message="Unable to load enquiries." onRetry={() => void handleRefresh()} />}
+        <PageHeader
+          title="Enquiries"
+          description="Website enquiries, updated live as they arrive."
+          actions={
+            <>
+              <button onClick={handleRefresh} disabled={isRefreshing} className={secondaryButton}>
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+              <button onClick={exportToCSV} className={primaryButton}>
+                <Download className="h-4 w-4" />
+                Export CSV
+              </button>
+            </>
+          }
+        />
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -543,7 +544,7 @@ function EnquiriesPage() {
 
       {/* Detail Modal */}
       {selectedEnquiry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <ModalFrame label={'Enquiry details'} onClose={() => setSelectedEnquiry(null)}>
           <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800">
             {/* Modal Header */}
             <div className="flex items-center justify-between gap-4 border-b border-gray-200 p-5 dark:border-gray-700 sm:p-6">
@@ -691,7 +692,7 @@ function EnquiriesPage() {
               </div>
             </div>
           </div>
-        </div>
+        </ModalFrame>
       )}
     </AdminLayout>
   );

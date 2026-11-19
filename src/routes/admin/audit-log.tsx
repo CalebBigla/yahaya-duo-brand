@@ -88,7 +88,7 @@ function AuditLogPage() {
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
         <header>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Audit Log</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Audit Log</h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Read-only history of administrative activity. Showing the latest 250 entries.</p>
         </header>
 
@@ -103,11 +103,11 @@ function AuditLogPage() {
             <table className="w-full min-w-[760px]">
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/50">
                 <tr>
-                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Activity</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Module</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Actor</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Details</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Time</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Activity</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Module</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Actor</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Details</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Time</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -120,7 +120,7 @@ function AuditLogPage() {
                     <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-600 dark:text-gray-400">{format(new Date(entry.created_at), 'd MMM yyyy, h:mm a')}</td>
                   </tr>
                 ))}
-                {entries.length === 0 && <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-500">No audit activity recorded yet.</td></tr>}
+                {entries.length === 0 && <tr><td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-500 dark:text-gray-400">No audit activity recorded yet.</td></tr>}
               </tbody>
             </table>
           </div>

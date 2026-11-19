@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { FormSkeleton } from '@/components/admin/SkeletonLoader';
+import { useConfirm } from '@/components/admin/ui';
 import { toast } from 'sonner';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
@@ -40,6 +41,7 @@ interface HomepageData {
 }
 
 function HomepagePage() {
+  const [confirmAction, confirmDialog] = useConfirm();
   const [adminUser, setAdminUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -127,7 +129,7 @@ function HomepagePage() {
 
   const handleDiscardDraft = async () => {
     if (!data) return;
-    if (!confirm('Discard the saved draft? The editor will go back to the live version.')) {
+    if (!(await confirmAction({ title: 'Discard draft?', body: 'The saved draft is deleted and the editor goes back to the live version.', confirmLabel: 'Discard draft', tone: 'danger' }))) {
       return;
     }
     setSaving(true);
@@ -149,7 +151,7 @@ function HomepagePage() {
 
   const handlePublish = async () => {
     if (!data) return;
-    if (!confirm('Publish homepage changes? This will make them visible on the public website.')) {
+    if (!(await confirmAction({ title: 'Publish homepage changes?', body: 'They become visible on the public website straight away.', confirmLabel: 'Publish' }))) {
       return;
     }
     setSaving(true);
@@ -201,35 +203,36 @@ function HomepagePage() {
 
   return (
     <AdminLayout adminUser={adminUser}>
+      {confirmDialog}
       <div className="space-y-6 max-w-4xl">
         {/* Header */}
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Homepage Editor</h1>
-          <p className="text-gray-600 mt-1">Manage hero section, statistics, mission, and vision</p>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Homepage Editor</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage hero section, statistics, mission, and vision</p>
         </div>
 
         {/* Status Banner */}
         {data.status === 'published' ? (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="bg-green-50 dark:bg-emerald-500/10 border border-green-200 dark:border-emerald-500/30 rounded-lg p-4 flex items-center gap-3">
             <Eye className="w-5 h-5 text-green-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-green-900">Published</p>
-              <p className="text-xs text-green-700">
+              <p className="text-xs text-green-700 dark:text-emerald-300">
                 Last updated: {new Date(data.updated_at).toLocaleString()}
               </p>
             </div>
             {hasDraft && (
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-amber-100 dark:bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300">
                 Unpublished changes
               </span>
             )}
           </div>
         ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="bg-yellow-50 dark:bg-amber-500/10 border border-yellow-200 dark:border-amber-500/30 rounded-lg p-4 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-900">Draft</p>
-              <p className="text-xs text-yellow-700">
+              <p className="text-xs text-yellow-700 dark:text-amber-300">
                 Changes are not visible on the public website
               </p>
             </div>
@@ -237,11 +240,11 @@ function HomepagePage() {
         )}
 
         {/* Hero Section */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Hero Section</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Hero Section</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hero Title</label>
             <input
               type="text"
               value={data.hero_title}
@@ -251,7 +254,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hero Subtitle</label>
             <textarea
               value={data.hero_subtitle}
               onChange={(e) => updateField('hero_subtitle', e.target.value)}
@@ -262,7 +265,7 @@ function HomepagePage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 CTA Button Text
               </label>
               <input
@@ -273,7 +276,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">CTA Link</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CTA Link</label>
               <input
                 type="text"
                 value={data.hero_cta_link}
@@ -284,7 +287,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Hero Image URL (optional)
             </label>
             <div className="flex gap-2">
@@ -296,26 +299,26 @@ function HomepagePage() {
                 className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
               <button
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2"
+                className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-2"
                 disabled
               >
                 <Upload className="w-4 h-4" />
                 Upload
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Image upload coming soon. Use direct URLs for now.
             </p>
           </div>
         </div>
 
         {/* Statistics Section */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Statistics</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Statistics</h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Years of Experience
               </label>
               <input
@@ -326,7 +329,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Clients Served</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Clients Served</label>
               <input
                 type="number"
                 value={data.stats_clients_served}
@@ -335,7 +338,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Destinations</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Destinations</label>
               <input
                 type="number"
                 value={data.stats_destinations}
@@ -344,7 +347,7 @@ function HomepagePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Success Rate (%)
               </label>
               <input
@@ -360,11 +363,11 @@ function HomepagePage() {
         </div>
 
         {/* Mission & Vision */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Mission & Vision</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Mission & Vision</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mission Title</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mission Title</label>
             <input
               type="text"
               value={data.mission_title}
@@ -374,7 +377,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mission Content</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mission Content</label>
             <textarea
               value={data.mission_content}
               onChange={(e) => updateField('mission_content', e.target.value)}
@@ -384,7 +387,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Vision Title</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vision Title</label>
             <input
               type="text"
               value={data.vision_title}
@@ -394,7 +397,7 @@ function HomepagePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Vision Content</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vision Content</label>
             <textarea
               value={data.vision_content}
               onChange={(e) => updateField('vision_content', e.target.value)}
@@ -406,8 +409,8 @@ function HomepagePage() {
 
         {/* Save Bar */}
         {(hasChanges || hasDraft) && (
-          <div className="sticky bottom-0 bg-white border-t shadow-lg p-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+          <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t shadow-lg p-4 flex items-center justify-between">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               {hasChanges ? 'You have unsaved changes' : 'You have a saved draft that is not published yet'}
             </div>
             <div className="flex gap-3">
@@ -417,7 +420,7 @@ function HomepagePage() {
                     fetchHomepage();
                     setHasChanges(false);
                   }}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                   disabled={saving}
                 >
                   Discard
@@ -425,7 +428,7 @@ function HomepagePage() {
               ) : (
                 <button
                   onClick={handleDiscardDraft}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                   disabled={saving}
                 >
                   Discard draft
@@ -433,7 +436,7 @@ function HomepagePage() {
               )}
               <button
                 onClick={handleSaveDraft}
-                className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-2 disabled:opacity-50"
                 disabled={saving || !hasChanges}
               >
                 <Save className="w-4 h-4" />

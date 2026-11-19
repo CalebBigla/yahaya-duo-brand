@@ -1,5 +1,6 @@
 ﻿import { createFileRoute, redirect } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
+import { ModalFrame } from '@/components/admin/ui';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
@@ -425,7 +426,7 @@ function FinancePage() {
         {loadError && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Unable to load financial records. Please try again.</div>}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Finance</h1>
+            <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Finance</h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Record and track business income transactions
             </p>
@@ -671,7 +672,7 @@ function FinancePage() {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <ModalFrame label={editingTransaction ? 'Edit income record' : 'Record income'} onClose={() => setShowAddModal(false)}>
           <div className="w-full max-w-2xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 z-10">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{editingTransaction ? 'Edit Income Record' : 'Record Income'}</h2>
@@ -872,11 +873,11 @@ function FinancePage() {
               </div>
             </form>
           </div>
-        </div>
+        </ModalFrame>
       )}
 
       {showViewModal && selectedTransaction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <ModalFrame label={'Income record details'} onClose={() => setShowViewModal(false)}>
           <div className="w-full max-w-2xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
               <div>
@@ -954,7 +955,7 @@ function FinancePage() {
               </div>
             </div>
           </div>
-        </div>
+        </ModalFrame>
       )}
 
       <AlertDialog open={Boolean(pendingVoid)} onOpenChange={(open) => {

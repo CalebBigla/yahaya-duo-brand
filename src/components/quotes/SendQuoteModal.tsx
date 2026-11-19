@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { ModalFrame } from '@/components/admin/ui';
 import { X, Send, Copy, CheckCircle, ExternalLink, Loader2, AlertCircle } from 'lucide-react';
 import { getOrCreateQuoteToken, generateQuoteAccessUrl, generateWhatsAppShareLink } from '@/lib/quoteTokens';
 import { supabase } from '@/lib/supabase';
@@ -148,7 +149,7 @@ export function SendQuoteModal({ quote, onClose, onSent }: SendQuoteModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <ModalFrame label={'Send quote'} onClose={onClose}>
       <div className="w-full max-w-2xl flex flex-col max-h-[90vh] rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-t-lg">
@@ -341,6 +342,6 @@ export function SendQuoteModal({ quote, onClose, onSent }: SendQuoteModalProps) 
           </div>
         )}
       </div>
-    </div>
+    </ModalFrame>
   );
 }

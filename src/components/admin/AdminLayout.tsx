@@ -254,8 +254,14 @@ function AdminShell({ children, adminUser }: AdminLayoutProps) {
           </div>
         </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1440px] p-4 sm:p-6 lg:p-8">{children}</div>
+        <main className="admin-main min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          {/* Re-keyed per page so each page eases in; skipped for reduced-motion users. */}
+          <div
+            key={location.pathname}
+            className="mx-auto w-full max-w-[1440px] p-4 animate-in fade-in-0 slide-in-from-bottom-1 duration-300 sm:p-6 lg:p-8 motion-reduce:animate-none"
+          >
+            {children}
+          </div>
         </main>
       </div>
 

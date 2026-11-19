@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { FormSkeleton } from '@/components/admin/SkeletonLoader';
+import { useConfirm } from '@/components/admin/ui';
 import { toast } from 'sonner';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
@@ -45,6 +46,7 @@ interface CompanySettings {
 }
 
 function CompanyInfoPage() {
+  const [confirmAction, confirmDialog] = useConfirm();
   const [adminUser, setAdminUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -99,7 +101,7 @@ function CompanyInfoPage() {
 
   const handleDiscardDraft = async () => {
     if (!data) return;
-    if (!confirm('Discard the saved draft? The editor will go back to the live version.')) {
+    if (!(await confirmAction({ title: 'Discard draft?', body: 'The saved draft is deleted and the editor goes back to the live version.', confirmLabel: 'Discard draft', tone: 'danger' }))) {
       return;
     }
     setSaving(true);
@@ -121,11 +123,7 @@ function CompanyInfoPage() {
 
   const handlePublish = async () => {
     if (!data) return;
-    if (
-      !confirm(
-        'Publish company information changes? This will update contact details on the website.',
-      )
-    ) {
+    if (!(await confirmAction({ title: 'Publish company information?', body: 'Contact details on the public website are updated straight away.', confirmLabel: 'Publish' }))) {
       return;
     }
     setSaving(true);
@@ -189,33 +187,34 @@ function CompanyInfoPage() {
 
   return (
     <AdminLayout adminUser={adminUser}>
+      {confirmDialog}
       <div className="space-y-6 max-w-4xl">
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Company Information</h1>
-          <p className="text-gray-600 mt-1">Contact details, address, and business hours</p>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Company Information</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Contact details, address, and business hours</p>
         </div>
 
         {data.status === 'published' ? (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="bg-green-50 dark:bg-emerald-500/10 border border-green-200 dark:border-emerald-500/30 rounded-lg p-4 flex items-center gap-3">
             <Eye className="w-5 h-5 text-green-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-green-900">Published</p>
-              <p className="text-xs text-green-700">
+              <p className="text-xs text-green-700 dark:text-emerald-300">
                 Last updated: {new Date(data.updated_at).toLocaleString()}
               </p>
             </div>
             {hasDraft && (
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-amber-100 dark:bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300">
                 Unpublished changes
               </span>
             )}
           </div>
         ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="bg-yellow-50 dark:bg-amber-500/10 border border-yellow-200 dark:border-amber-500/30 rounded-lg p-4 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-900">Draft</p>
-              <p className="text-xs text-yellow-700">
+              <p className="text-xs text-yellow-700 dark:text-amber-300">
                 Changes are not visible on the public website
               </p>
             </div>
@@ -223,12 +222,12 @@ function CompanyInfoPage() {
         )}
 
         {/* Company Details */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Company Details</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Company Details</h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Name *</label>
               <input
                 type="text"
                 value={data.company_name}
@@ -237,7 +236,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Short Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Short Name</label>
               <input
                 type="text"
                 value={data.company_short_name}
@@ -249,7 +248,7 @@ function CompanyInfoPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Sub Brand</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sub Brand</label>
               <input
                 type="text"
                 value={data.sub_brand}
@@ -258,7 +257,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">RC Number</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">RC Number</label>
               <input
                 type="text"
                 value={data.rc_number}
@@ -270,11 +269,11 @@ function CompanyInfoPage() {
         </div>
 
         {/* Contact Information */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Contact Information</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Information</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email *</label>
             <input
               type="email"
               value={data.email}
@@ -285,7 +284,7 @@ function CompanyInfoPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Primary Phone *
               </label>
               <input
@@ -296,7 +295,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Secondary Phone
               </label>
               <input
@@ -309,7 +308,7 @@ function CompanyInfoPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               WhatsApp Number *
             </label>
             <input
@@ -323,11 +322,11 @@ function CompanyInfoPage() {
         </div>
 
         {/* Address */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Address</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Address</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Street Address *</label>
             <input
               type="text"
               value={data.address_street}
@@ -338,7 +337,7 @@ function CompanyInfoPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 City/Locality *
               </label>
               <input
@@ -349,7 +348,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">State/Region *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">State/Region *</label>
               <input
                 type="text"
                 value={data.address_region}
@@ -360,7 +359,7 @@ function CompanyInfoPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country *</label>
             <input
               type="text"
               value={data.address_country}
@@ -371,13 +370,13 @@ function CompanyInfoPage() {
         </div>
 
         {/* Business Hours */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Business Hours</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Business Hours</h2>
 
           {data.business_hours.map((hour, index) => (
             <div key={index} className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Days</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Days</label>
                 <input
                   type="text"
                   value={hour.days}
@@ -386,7 +385,7 @@ function CompanyInfoPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
                 <input
                   type="text"
                   value={hour.time}
@@ -399,11 +398,11 @@ function CompanyInfoPage() {
         </div>
 
         {/* Social Media */}
-        <div className="bg-white border rounded-lg p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Social Media Links</h2>
+        <div className="bg-white dark:bg-gray-900 border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Social Media Links</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Facebook URL</label>
             <input
               type="url"
               value={data.facebook_url || ''}
@@ -414,7 +413,7 @@ function CompanyInfoPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Instagram URL</label>
             <input
               type="url"
               value={data.instagram_url || ''}
@@ -426,7 +425,7 @@ function CompanyInfoPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Twitter/X URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Twitter/X URL</label>
               <input
                 type="url"
                 value={data.twitter_url || ''}
@@ -435,7 +434,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">LinkedIn URL</label>
               <input
                 type="url"
                 value={data.linkedin_url || ''}
@@ -444,7 +443,7 @@ function CompanyInfoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">TikTok URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">TikTok URL</label>
               <input
                 type="url"
                 value={data.tiktok_url || ''}
@@ -457,8 +456,8 @@ function CompanyInfoPage() {
 
         {/* Save Bar */}
         {(hasChanges || hasDraft) && (
-          <div className="sticky bottom-0 bg-white border-t shadow-lg p-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+          <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t shadow-lg p-4 flex items-center justify-between">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               {hasChanges ? 'You have unsaved changes' : 'You have a saved draft that is not published yet'}
             </div>
             <div className="flex gap-3">
@@ -468,7 +467,7 @@ function CompanyInfoPage() {
                     fetchSettings();
                     setHasChanges(false);
                   }}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                   disabled={saving}
                 >
                   Discard
@@ -476,7 +475,7 @@ function CompanyInfoPage() {
               ) : (
                 <button
                   onClick={handleDiscardDraft}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                   disabled={saving}
                 >
                   Discard draft
@@ -484,7 +483,7 @@ function CompanyInfoPage() {
               )}
               <button
                 onClick={handleSaveDraft}
-                className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-2 disabled:opacity-50"
                 disabled={saving || !hasChanges}
               >
                 <Save className="w-4 h-4" />

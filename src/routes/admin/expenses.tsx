@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ModalFrame } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -222,11 +223,11 @@ function ExpensesPage() {
 
   const getDivisionBadge = (division: string) => {
     const colors = {
-      travel: 'bg-blue-100 text-blue-700',
-      trade: 'bg-green-100 text-green-700',
-      company: 'bg-purple-100 text-purple-700',
+      travel: 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300',
+      trade: 'bg-green-100 dark:bg-emerald-500/15 text-green-700 dark:text-emerald-300',
+      company: 'bg-purple-100 dark:bg-violet-500/15 text-purple-700 dark:text-violet-300',
     };
-    return colors[division as keyof typeof colors] || 'bg-gray-100 text-gray-700';
+    return colors[division as keyof typeof colors] || 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300';
   };
 
   const handleViewDetails = (expense: ExpenseTransaction) => {
@@ -286,7 +287,7 @@ function ExpensesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">
               <TrendingDown className="w-6 h-6 text-red-600" />
               Expenses Management
             </h1>
@@ -347,7 +348,7 @@ function ExpensesPage() {
                 placeholder="Search expenses..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
 
@@ -355,7 +356,7 @@ function ExpensesPage() {
             <select
               value={filterDivision}
               onChange={(e) => setFilterDivision(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="all">All Divisions</option>
               <option value="travel">Travel</option>
@@ -367,7 +368,7 @@ function ExpensesPage() {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="all">All Categories</option>
               {categories
@@ -383,7 +384,7 @@ function ExpensesPage() {
             <select
               value={filterMonth}
               onChange={(e) => setFilterMonth(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="all">All Months</option>
               {getUniqueMonths().map((month) => (
@@ -425,25 +426,25 @@ function ExpensesPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Reference
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Division
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Vendor
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Description
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -453,7 +454,7 @@ function ExpensesPage() {
                   <tr>
                     <td colSpan={8} className="px-6 py-12 text-center">
                       <Receipt className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-500">No expenses found</p>
+                      <p className="text-gray-500 dark:text-gray-400">No expenses found</p>
                       <p className="text-sm text-gray-400 mt-1">
                         {searchQuery || filterDivision !== 'all' || filterCategory !== 'all' || filterMonth !== 'all'
                           ? 'Try adjusting your filters'
@@ -465,7 +466,7 @@ function ExpensesPage() {
                   filteredExpenses.map((expense) => {
                     const category = categories.find((c) => c.id === expense.category_id);
                     return (
-                      <tr key={expense.id} className="hover:bg-gray-50">
+                      <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             <Receipt className="w-4 h-4 text-gray-400" />
@@ -475,7 +476,7 @@ function ExpensesPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                             <Calendar className="w-4 h-4 text-gray-400" />
                             {formatDate(expense.expense_date)}
                           </div>
@@ -492,7 +493,7 @@ function ExpensesPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                           {expense.vendor_name}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
                           {expense.description}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-red-600">
@@ -509,7 +510,7 @@ function ExpensesPage() {
                             </button>
                             <button
                               onClick={() => handleEdit(expense)}
-                              className="text-gray-600 hover:text-gray-800"
+                              className="text-gray-600 dark:text-gray-400 hover:text-gray-800"
                               title="Edit"
                             >
                               <Edit className="w-4 h-4" />
@@ -724,7 +725,7 @@ function RecordExpenseModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <ModalFrame label={expense ? 'Edit expense' : 'Record expense'} onClose={onClose}>
       <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -749,7 +750,7 @@ function RecordExpenseModal({
                     category_id: '' // Reset category when division changes
                   });
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="travel">Travel</option>
                 <option value="trade">Trade</option>
@@ -758,14 +759,14 @@ function RecordExpenseModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Category *
               </label>
               <select
                 required
                 value={formData.category_id}
                 onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="">Select category</option>
                 {filteredCategories.map((category) => (
@@ -780,7 +781,7 @@ function RecordExpenseModal({
           {/* Amount & Date */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Amount (NGN) *
               </label>
               <input
@@ -791,12 +792,12 @@ function RecordExpenseModal({
                 value={formData.amount || ''}
                 onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
                 placeholder="0.00"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Expense Date *
               </label>
               <input
@@ -804,14 +805,14 @@ function RecordExpenseModal({
                 required
                 value={formData.expense_date}
                 onChange={(e) => setFormData({ ...formData, expense_date: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Vendor Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Vendor/Supplier Name *
             </label>
             <input
@@ -820,21 +821,21 @@ function RecordExpenseModal({
               value={formData.vendor_name}
               onChange={(e) => setFormData({ ...formData, vendor_name: e.target.value })}
               placeholder="e.g., ABC Suppliers Ltd"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
           {/* Payment Method & External Ref */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Payment Method *
               </label>
               <select
                 required
                 value={formData.payment_method}
                 onChange={(e) => setFormData({ ...formData, payment_method: e.target.value as any })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="bank_transfer">Bank Transfer</option>
                 <option value="cash">Cash</option>
@@ -845,7 +846,7 @@ function RecordExpenseModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 External Reference
               </label>
               <input
@@ -853,14 +854,14 @@ function RecordExpenseModal({
                 value={formData.external_ref}
                 onChange={(e) => setFormData({ ...formData, external_ref: e.target.value })}
                 placeholder="e.g., INV-2024-001"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Description *
             </label>
             <input
@@ -870,16 +871,16 @@ function RecordExpenseModal({
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Brief description of the expense"
               maxLength={500}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {formData.description.length}/500 characters
             </p>
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Additional Notes
             </label>
             <textarea
@@ -888,12 +889,12 @@ function RecordExpenseModal({
               placeholder="Optional additional details..."
               rows={3}
               maxLength={2000}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-white/15 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
@@ -903,7 +904,7 @@ function RecordExpenseModal({
           </div>
         </form>
       </div>
-    </div>
+    </ModalFrame>
   );
 }
 
@@ -934,7 +935,7 @@ function ExpenseDetailsModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <ModalFrame label={'Expense details'} onClose={onClose}>
       <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Expense Details</h2>
@@ -944,8 +945,8 @@ function ExpenseDetailsModal({
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">{expense.expense_ref}</h3>
-              <p className="text-sm text-gray-600 mt-1">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{expense.expense_ref}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {formatDate(expense.expense_date)}
               </p>
             </div>
@@ -953,12 +954,12 @@ function ExpenseDetailsModal({
               <p className="text-2xl font-bold text-red-600">
                 {formatCurrency(Number(expense.amount))}
               </p>
-              <p className="text-sm text-gray-600 uppercase">{expense.payment_method.replace('_', ' ')}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 uppercase">{expense.payment_method.replace('_', ' ')}</p>
             </div>
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-lg">
             <DetailItem label="Division" value={expense.division} />
             <DetailItem label="Category" value={category?.name || 'Unknown'} />
             <DetailItem label="Vendor" value={expense.vendor_name} />
@@ -969,20 +970,20 @@ function ExpenseDetailsModal({
 
           {/* Description */}
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Description</h4>
-            <p className="text-gray-900">{expense.description}</p>
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</h4>
+            <p className="text-gray-900 dark:text-white">{expense.description}</p>
           </div>
 
           {/* Notes */}
           {expense.notes && (
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Additional Notes</h4>
-              <p className="text-gray-900 whitespace-pre-wrap">{expense.notes}</p>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Notes</h4>
+              <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{expense.notes}</p>
             </div>
           )}
 
           {/* Metadata */}
-          <div className="pt-4 border-t border-gray-200 text-xs text-gray-500">
+          <div className="pt-4 border-t border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
             <p>Created: {new Date(expense.created_at).toLocaleString('en-NG')}</p>
             {expense.updated_at !== expense.created_at && (
               <p>Last Updated: {new Date(expense.updated_at).toLocaleString('en-NG')}</p>
@@ -996,15 +997,15 @@ function ExpenseDetailsModal({
           </Button>
         </div>
       </div>
-    </div>
+    </ModalFrame>
   );
 }
 
 function DetailItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-medium text-gray-500 uppercase">{label}</p>
-      <p className="text-sm text-gray-900 mt-1 capitalize">{value}</p>
+      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{label}</p>
+      <p className="text-sm text-gray-900 dark:text-white mt-1 capitalize">{value}</p>
     </div>
   );
 }

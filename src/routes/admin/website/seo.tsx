@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ModalFrame } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -141,15 +142,15 @@ function SEOPage() {
     <AdminLayout adminUser={adminUser}>
       <div className="space-y-6">
         <div className="border-b pb-4">
-          <h1 className="text-2xl font-bold text-gray-900">SEO Settings</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">SEO Settings</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage meta tags, Open Graph, and Twitter Card settings for each page
           </p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-semibold text-blue-900 mb-1">💡 SEO Best Practices</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
+        <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-4">
+          <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">💡 SEO Best Practices</h3>
+          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
             <li>
               • <strong>Meta Title:</strong> 50-60 characters, include main keyword
             </li>
@@ -169,37 +170,37 @@ function SEOPage() {
           {seoPages.map((page) => (
             <div
               key={page.id}
-              className="bg-white border rounded-lg p-5 hover:border-teal-300 transition-colors"
+              className="bg-white dark:bg-gray-900 border rounded-lg p-5 hover:border-teal-300 transition-colors"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
                       {PAGE_LABELS[page.page_slug] || page.page_slug}
                     </h3>
                     {page.status === 'published' ? (
-                      <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded">
+                      <span className="px-2 py-0.5 bg-green-100 dark:bg-emerald-500/15 text-green-800 dark:text-emerald-300 text-xs font-medium rounded">
                         <Eye className="w-3 h-3 inline" /> Published
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                      <span className="px-2 py-0.5 bg-yellow-100 dark:bg-amber-500/15 text-yellow-800 dark:text-amber-300 text-xs font-medium rounded">
                         <EyeOff className="w-3 h-3 inline" /> Draft
                       </span>
                     )}
                   </div>
                   <div className="space-y-1 text-sm">
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300">
                       <strong>Title:</strong> {page.meta_title}
-                      <span className="text-gray-500 ml-2">({page.meta_title.length}/60)</span>
+                      <span className="text-gray-500 dark:text-gray-400 ml-2">({page.meta_title.length}/60)</span>
                     </p>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300">
                       <strong>Description:</strong> {page.meta_description}
-                      <span className="text-gray-500 ml-2">
+                      <span className="text-gray-500 dark:text-gray-400 ml-2">
                         ({page.meta_description.length}/160)
                       </span>
                     </p>
                     {page.meta_keywords && (
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 dark:text-gray-400">
                         <strong>Keywords:</strong> {page.meta_keywords}
                       </p>
                     )}
@@ -209,7 +210,7 @@ function SEOPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setEditingPage(page)}
-                  className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 flex items-center gap-1"
+                  className="px-3 py-1 text-sm bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-1"
                 >
                   <Edit2 className="w-3 h-3" />
                   Edit
@@ -226,15 +227,15 @@ function SEOPage() {
         </div>
 
         {editingPage && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">
+          <ModalFrame label={'Edit page SEO'} onClose={() => setEditingPage(null)}>
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white dark:bg-gray-900 border-b px-6 py-4 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                   Edit SEO - {PAGE_LABELS[editingPage.page_slug]}
                 </h2>
                 <button
                   onClick={() => setEditingPage(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -242,7 +243,7 @@ function SEOPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Meta Title * (max 60 characters)
                   </label>
                   <input
@@ -252,7 +253,7 @@ function SEOPage() {
                     maxLength={60}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {editingPage.meta_title.length}/60 characters
                     {editingPage.meta_title.length > 60 && (
                       <span className="text-red-600 ml-2">Too long!</span>
@@ -261,7 +262,7 @@ function SEOPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Meta Description * (max 160 characters)
                   </label>
                   <textarea
@@ -273,7 +274,7 @@ function SEOPage() {
                     maxLength={160}
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {editingPage.meta_description.length}/160 characters
                     {editingPage.meta_description.length > 160 && (
                       <span className="text-red-600 ml-2">Too long!</span>
@@ -282,7 +283,7 @@ function SEOPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Meta Keywords (comma-separated)
                   </label>
                   <input
@@ -297,12 +298,12 @@ function SEOPage() {
                 </div>
 
                 <div className="border-t pt-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                     Open Graph (Social Media Preview)
                   </h3>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       OG Title (max 60 characters)
                     </label>
                     <input
@@ -316,7 +317,7 @@ function SEOPage() {
                   </div>
 
                   <div className="mt-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       OG Description (max 200 characters)
                     </label>
                     <textarea
@@ -332,7 +333,7 @@ function SEOPage() {
                   </div>
 
                   <div className="mt-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       OG Image URL
                     </label>
                     <input
@@ -348,10 +349,10 @@ function SEOPage() {
                 </div>
 
                 <div className="border-t pt-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">Twitter Card</h3>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Twitter Card</h3>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Card Type
                     </label>
                     <select
@@ -368,10 +369,10 @@ function SEOPage() {
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-gray-50 border-t px-6 py-4 flex justify-end gap-3">
+              <div className="sticky bottom-0 bg-gray-50 dark:bg-white/5 border-t px-6 py-4 flex justify-end gap-3">
                 <button
                   onClick={() => setEditingPage(null)}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
                   Cancel
                 </button>
@@ -384,7 +385,7 @@ function SEOPage() {
                 </button>
               </div>
             </div>
-          </div>
+          </ModalFrame>
         )}
       </div>
     </AdminLayout>
