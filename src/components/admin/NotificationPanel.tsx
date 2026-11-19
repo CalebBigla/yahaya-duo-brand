@@ -1,310 +1,186 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { supabase } from '@/lib/supabase';
-import { queueQuery } from '@/lib/queryQueue';
-import { X, Inbox, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { Bell, BellRing, CheckCheck, CheckCircle2, Inbox, Loader2, MessageSquareDiff, XCircle } from 'lucide-react';
+import { formatDistanceToNowStrict, isToday } from 'date-fns';
+import { useNotifications, type AdminNotification, type NotificationKind } from '@/lib/notifications';
+import { LiveIndicator } from '@/components/admin/LiveIndicator';
 
-interface NotificationPanelProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onNotificationViewed?: () => void;
-}
+const KIND_STYLE: Record<NotificationKind, { icon: typeof Inbox; tone: string }> = {
+  enquiry: { icon: Inbox, tone: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300' },
+  quote_accepted: { icon: CheckCircle2, tone: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300' },
+  quote_declined: { icon: XCircle, tone: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-300' },
+  quote_revision: { icon: MessageSquareDiff, tone: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-300' },
+};
 
-interface Notification {
-  id: string;
-  type: 'enquiry' | 'quote_accepted' | 'quote_rejected';
-  title: string;
-  message: string;
-  link: string;
-  created_at: string;
-  isNew: boolean;
-}
+type Filter = 'all' | 'unread';
 
-// Local storage key for viewed notifications
-const VIEWED_NOTIFICATIONS_KEY = 'yahaya_viewed_notifications';
+/** Bell button + notification popover. Data comes from NotificationsProvider. */
+export function NotificationBell() {
+  const {
+    notifications,
+    unreadCount,
+    isLoading,
+    status,
+    isRead,
+    markRead,
+    markAllRead,
+    desktopAlerts,
+    enableDesktopAlerts,
+  } = useNotifications();
+  const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState<Filter>('all');
 
-// Get viewed notifications from localStorage
-function getViewedNotifications(): Set<string> {
-  try {
-    const stored = localStorage.getItem(VIEWED_NOTIFICATIONS_KEY);
-    return stored ? new Set(JSON.parse(stored)) : new Set();
-  } catch {
-    return new Set();
-  }
-}
-
-// Save viewed notifications to localStorage
-function saveViewedNotifications(viewed: Set<string>) {
-  try {
-    localStorage.setItem(VIEWED_NOTIFICATIONS_KEY, JSON.stringify(Array.from(viewed)));
-  } catch (error) {
-    console.error('Error saving viewed notifications:', error);
-  }
-}
-
-export function NotificationPanel({ isOpen, onClose, onNotificationViewed }: NotificationPanelProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [viewedNotifications, setViewedNotifications] = useState<Set<string>>(getViewedNotifications());
-
-  useEffect(() => {
-    if (isOpen) {
-      loadNotifications();
-    }
-  }, [isOpen]);
-
-  const loadNotifications = async () => {
-    setIsLoading(true);
-    try {
-      const notificationsList: Notification[] = [];
-
-      // Load new enquiries (created in last 7 days, status: new)
-      const enquiriesResult = await queueQuery(async () => {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        
-        const { data, error } = await supabase
-          .from('submissions')
-          .select('id, name, email, form_type, created_at, status')
-          .eq('status', 'new')
-          .gte('created_at', sevenDaysAgo.toISOString())
-          .order('created_at', { ascending: false })
-          .limit(10);
-
-        if (error) throw error;
-        return data || [];
-      });
-
-      enquiriesResult.forEach((enquiry) => {
-        const notificationId = `enquiry-${enquiry.id}`;
-        const isViewed = viewedNotifications.has(notificationId);
-        
-        notificationsList.push({
-          id: notificationId,
-          type: 'enquiry',
-          title: 'New Enquiry',
-          message: `${enquiry.name} sent a ${enquiry.form_type} enquiry`,
-          link: '/admin/enquiries',
-          created_at: enquiry.created_at,
-          isNew: !isViewed,
-        });
-      });
-
-      // Load recently accepted quotes (updated in last 7 days, status: accepted)
-      const acceptedQuotesResult = await queueQuery(async () => {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        
-        const { data, error } = await supabase
-          .from('quotes')
-          .select('id, quote_number, client_name, title, updated_at')
-          .eq('status', 'accepted')
-          .gte('updated_at', sevenDaysAgo.toISOString())
-          .order('updated_at', { ascending: false })
-          .limit(5);
-
-        if (error) throw error;
-        return data || [];
-      });
-
-      acceptedQuotesResult.forEach((quote) => {
-        const notificationId = `quote-accepted-${quote.id}`;
-        const isViewed = viewedNotifications.has(notificationId);
-        
-        notificationsList.push({
-          id: notificationId,
-          type: 'quote_accepted',
-          title: 'Quote Accepted',
-          message: `${quote.client_name} accepted ${quote.quote_number}`,
-          link: '/admin/quotes',
-          created_at: quote.updated_at,
-          isNew: !isViewed,
-        });
-      });
-
-      // Load recently rejected quotes (updated in last 7 days, status: rejected)
-      const rejectedQuotesResult = await queueQuery(async () => {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        
-        const { data, error } = await supabase
-          .from('quotes')
-          .select('id, quote_number, client_name, title, updated_at')
-          .eq('status', 'rejected')
-          .gte('updated_at', sevenDaysAgo.toISOString())
-          .order('updated_at', { ascending: false })
-          .limit(5);
-
-        if (error) throw error;
-        return data || [];
-      });
-
-      rejectedQuotesResult.forEach((quote) => {
-        const notificationId = `quote-rejected-${quote.id}`;
-        const isViewed = viewedNotifications.has(notificationId);
-        
-        notificationsList.push({
-          id: notificationId,
-          type: 'quote_rejected',
-          title: 'Quote Rejected',
-          message: `${quote.client_name} rejected ${quote.quote_number}`,
-          link: '/admin/quotes',
-          created_at: quote.updated_at,
-          isNew: !isViewed,
-        });
-      });
-
-      // Sort by date (newest first)
-      notificationsList.sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-
-      setNotifications(notificationsList);
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getNotificationIcon = (type: Notification['type']) => {
-    switch (type) {
-      case 'enquiry':
-        return <Inbox className="h-5 w-5 text-blue-600 dark:text-blue-400" />;
-      case 'quote_accepted':
-        return <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />;
-      case 'quote_rejected':
-        return <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />;
-    }
-  };
-
-  const getNotificationBg = (type: Notification['type']) => {
-    switch (type) {
-      case 'enquiry':
-        return 'bg-blue-100 dark:bg-blue-900/30';
-      case 'quote_accepted':
-        return 'bg-green-100 dark:bg-green-900/30';
-      case 'quote_rejected':
-        return 'bg-red-100 dark:bg-red-900/30';
-    }
-  };
-
-  const markAsViewed = (notificationId: string) => {
-    const updated = new Set(viewedNotifications);
-    updated.add(notificationId);
-    setViewedNotifications(updated);
-    saveViewedNotifications(updated);
-    
-    // Update the notification in the list
-    setNotifications(prev => 
-      prev.map(n => n.id === notificationId ? { ...n, isNew: false } : n)
-    );
-    
-    // Notify parent to update count
-    if (onNotificationViewed) {
-      onNotificationViewed();
-    }
-  };
-
-  if (!isOpen) return null;
+  const visible = filter === 'unread' ? notifications.filter((n) => !isRead(n.id)) : notifications;
+  const today = visible.filter((n) => isToday(new Date(n.createdAt)));
+  const earlier = visible.filter((n) => !isToday(new Date(n.createdAt)));
 
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 z-40 bg-black/20 dark:bg-black/40"
-        onClick={onClose}
-      />
-      
-      {/* Panel */}
-      <div className="fixed top-16 right-6 z-50 w-96 max-h-[calc(100vh-5rem)] overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notifications</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Last 7 days
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+      <PopoverPrimitive.Trigger asChild>
+        <button
+          type="button"
+          className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+          aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+        >
+          {unreadCount > 0 ? <BellRing className="h-[18px] w-[18px]" /> : <Bell className="h-[18px] w-[18px]" />}
+          {unreadCount > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold leading-none text-white ring-2 ring-white tabular-nums dark:ring-gray-950">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </button>
+      </PopoverPrimitive.Trigger>
 
-        {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(100vh-12rem)]">
-          {isLoading ? (
-            <div className="flex items-center justify-center p-8">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400 dark:text-gray-500" />
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Content
+          align="end"
+          sideOffset={8}
+          collisionPadding={12}
+          className="z-50 flex max-h-[min(36rem,calc(100vh-5rem))] w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl shadow-gray-900/10 outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 dark:border-white/10 dark:bg-gray-900 dark:shadow-black/40"
+        >
+          <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 dark:border-white/5">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notifications</h3>
+              <LiveIndicator status={status} compact />
             </div>
-          ) : notifications.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mx-auto mb-3">
-                <Inbox className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+            <button
+              type="button"
+              onClick={markAllRead}
+              disabled={unreadCount === 0}
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 disabled:cursor-default disabled:text-gray-400 disabled:hover:bg-transparent dark:text-blue-400 dark:hover:bg-blue-500/10 dark:disabled:text-gray-600"
+            >
+              <CheckCheck className="h-3.5 w-3.5" />
+              Mark all read
+            </button>
+          </div>
+
+          <div role="tablist" aria-label="Filter notifications" className="flex gap-1 px-4 pt-3">
+            {(['all', 'unread'] as const).map((value) => (
+              <button
+                key={value}
+                role="tab"
+                type="button"
+                aria-selected={filter === value}
+                onClick={() => setFilter(value)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  filter === value
+                    ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5'
+                }`}
+              >
+                {value === 'all' ? 'All' : `Unread${unreadCount > 0 ? ` · ${unreadCount}` : ''}`}
+              </button>
+            ))}
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto py-2" aria-live="polite">
+            {isLoading ? (
+              <div className="flex items-center justify-center p-10">
+                <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
               </div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">No new notifications</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                You're all caught up!
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {notifications.map((notification) => (
-                <Link
-                  key={notification.id}
-                  to={notification.link}
-                  onClick={() => {
-                    if (notification.isNew) {
-                      markAsViewed(notification.id);
-                    }
-                    onClose();
-                  }}
-                  className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                >
-                  <div className="flex gap-3">
-                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${getNotificationBg(notification.type)}`}>
-                      {getNotificationIcon(notification.type)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {notification.title}
-                        </p>
-                        {notification.isNew && (
-                          <span className="h-2 w-2 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400 mt-1.5" />
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {format(new Date(notification.created_at), 'MMM dd, yyyy • h:mm a')}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+            ) : visible.length === 0 ? (
+              <div className="px-6 py-10 text-center">
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-white/5">
+                  <CheckCheck className="h-5 w-5 text-gray-400" />
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">You're all caught up</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  New enquiries and quote responses appear here as they happen.
+                </p>
+              </div>
+            ) : (
+              <>
+                <NotificationGroup label="Today" items={today} isRead={isRead} onOpen={(n) => { markRead(n.id); setOpen(false); }} />
+                <NotificationGroup label="Earlier this week" items={earlier} isRead={isRead} onOpen={(n) => { markRead(n.id); setOpen(false); }} />
+              </>
+            )}
+          </div>
+
+          {desktopAlerts === 'default' && (
+            <div className="border-t border-gray-100 px-4 py-3 dark:border-white/5">
+              <button
+                type="button"
+                onClick={() => void enableDesktopAlerts()}
+                className="w-full rounded-lg bg-gray-50 px-3 py-2 text-left text-xs text-gray-600 transition-colors hover:bg-gray-100 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+              >
+                <span className="font-medium text-gray-900 dark:text-white">Turn on desktop alerts</span>
+                <span className="block">Get notified even when this tab is in the background.</span>
+              </button>
             </div>
           )}
-        </div>
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
+    </PopoverPrimitive.Root>
+  );
+}
 
-        {/* Footer */}
-        {notifications.length > 0 && (
-          <div className="border-t border-gray-200 dark:border-gray-700 p-3">
-            <Link
-              to="/admin/enquiries"
-              onClick={onClose}
-              className="block text-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
-            >
-              View all activity
-            </Link>
-          </div>
-        )}
-      </div>
-    </>
+function NotificationGroup({
+  label,
+  items,
+  isRead,
+  onOpen,
+}: {
+  label: string;
+  items: AdminNotification[];
+  isRead: (id: string) => boolean;
+  onOpen: (n: AdminNotification) => void;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <div className="px-2 pb-1">
+      <p className="px-2 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">{label}</p>
+      <ul>
+        {items.map((n) => {
+          const { icon: Icon, tone } = KIND_STYLE[n.kind];
+          const unread = !isRead(n.id);
+          return (
+            <li key={n.id}>
+              <Link
+                to={n.link}
+                onClick={() => onOpen(n)}
+                className="flex gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+              >
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${tone}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center justify-between gap-2">
+                    <span className={`truncate text-sm ${unread ? 'font-semibold text-gray-900 dark:text-white' : 'font-medium text-gray-700 dark:text-gray-300'}`}>
+                      {n.title}
+                    </span>
+                    <span className="shrink-0 text-[11px] tabular-nums text-gray-400 dark:text-gray-500">
+                      {formatDistanceToNowStrict(new Date(n.createdAt), { addSuffix: true })}
+                    </span>
+                  </span>
+                  <span className="mt-0.5 line-clamp-2 block text-xs text-gray-500 dark:text-gray-400">{n.message}</span>
+                </span>
+                {unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400" aria-label="Unread" />}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
