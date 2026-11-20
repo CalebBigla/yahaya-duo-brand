@@ -9,17 +9,17 @@ interface AnimatedSectionProps {
 }
 
 const animationClasses = {
-  "fade-up": "translate-y-8 opacity-0",
+  "fade-up": "translate-y-5 opacity-0",
   "fade-in": "opacity-0",
-  "scale": "scale-95 opacity-0",
-  "slide-left": "-translate-x-8 opacity-0",
-  "slide-right": "translate-x-8 opacity-0",
+  "scale": "translate-y-3 scale-[0.98] opacity-0",
+  "slide-left": "-translate-x-5 opacity-0",
+  "slide-right": "translate-x-5 opacity-0",
 };
 
 const activeClasses = {
   "fade-up": "translate-y-0 opacity-100",
   "fade-in": "opacity-100",
-  "scale": "scale-100 opacity-100",
+  "scale": "translate-y-0 scale-100 opacity-100",
   "slide-left": "translate-x-0 opacity-100",
   "slide-right": "translate-x-0 opacity-100",
 };
@@ -35,7 +35,7 @@ export function AnimatedSection({
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
         isVisible ? activeClasses[animation] : animationClasses[animation]
       } ${className}`}
       style={{

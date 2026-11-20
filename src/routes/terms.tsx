@@ -29,7 +29,7 @@ function TermsPage() {
         title="Terms of Service"
         subtitle="Terms governing the use of our services and website."
       />
-      <section className="py-16">
+      <section className="section-y">
         <div className="container-page max-w-3xl space-y-6 text-muted-foreground">
           <h2 className="font-display text-xl font-bold text-primary">Use of this website</h2>
           <p>

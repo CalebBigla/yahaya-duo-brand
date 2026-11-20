@@ -1,17 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  BadgeCheck,
-  Plane,
-  Hotel,
-  Map,
-  Compass,
-  Clock,
-  FileText,
-  CheckCircle2,
-  ChevronDown,
-  Download,
-  type LucideIcon,
-} from "lucide-react";
+import { BadgeCheck, Plane, Hotel, Map, Compass, Clock, FileText, CheckCircle2, ChevronDown, Download, type LucideIcon, MoonStar, GraduationCap, Landmark, Briefcase, Handshake, Globe } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PageHero } from "@/components/site/PageHero";
@@ -20,10 +8,10 @@ import { CountryCarousel } from "@/components/travel/CountryCarousel";
 import { TourPackagesCards } from "@/components/travel/TourPackagesCards";
 import { travelServices, site } from "@/lib/site";
 import { getPublishedServices, getPublishedVisaDestinations } from "@/lib/queries/website";
-import travelImg from "@/assets/travel.jpg";
+import travelImg from "@/assets/travel.webp";
 
 // Page hero image
-import heroImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
+import heroImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
 
 const title = "Visa Processing & Travel Services in Yola | Yahaya Travel & Trade";
 const description =
@@ -203,16 +191,17 @@ function TravelPage() {
           src={heroImg}
           alt="Travel documents and passport"
           loading="eager"
+          fetchPriority="high"
           className="h-96 w-full object-cover lg:h-[28rem]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/85 to-primary-deep/70" />
         <div className="absolute inset-0 flex items-center">
           <div className="container-page">
             <div className="max-w-3xl">
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">
+              <p className="eyebrow eyebrow-on-dark">
                 Travel Division
               </p>
-              <h1 className="mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
+              <h1 className="mt-4 text-4xl font-bold leading-[1.08] tracking-[-0.03em] text-primary-foreground sm:text-5xl lg:text-[3.5rem]">
                 Travel Services
               </h1>
               <p className="mt-5 text-lg leading-relaxed text-primary-foreground/85">
@@ -225,10 +214,10 @@ function TravelPage() {
       </section>
 
       {/* Visa Types We Process */}
-      <section className="border-b border-border bg-background py-12 md:py-16">
+      <section className="border-b border-border bg-background section-y">
         <div className="container-page">
-          <div className="text-center max-w-3xl mx-auto mb-10">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">
+          <div className="text-center max-w-3xl mx-auto mb-8">
+            <h2 className="heading-section text-primary">
               Visa Processing Services
             </h2>
             <p className="mt-3 text-muted-foreground">
@@ -236,25 +225,25 @@ function TravelPage() {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             {[
-              { name: "Umrah Visas", icon: "🕌" },
-              { name: "Study Visas", icon: "🎓" },
-              { name: "Tourism Visas", icon: "✈️" },
-              { name: "Hajj Visas", icon: "🕋" },
-              { name: "Work Visas", icon: "💼" },
-              { name: "Business Visas", icon: "🤝" },
-              { name: "Transit Visas", icon: "🌍" },
+              { name: "Umrah Visas", icon: MoonStar },
+              { name: "Study Visas", icon: GraduationCap },
+              { name: "Tourism Visas", icon: Plane },
+              { name: "Hajj Visas", icon: Landmark },
+              { name: "Work Visas", icon: Briefcase },
+              { name: "Business Visas", icon: Handshake },
+              { name: "Transit Visas", icon: Globe },
             ].map((visa, index) => (
               <div
                 key={index}
-                className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 text-center transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-1"
+                className="card-interactive group relative flex flex-col items-center overflow-hidden rounded-2xl border border-border bg-card px-3 py-5 text-center shadow-card"
               >
-                <div className="text-4xl mb-3">{visa.icon}</div>
-                <h3 className="font-bold text-primary group-hover:text-accent transition-colors">
-                  {visa.name}
-                </h3>
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-accent transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+                <span className="icon-tile">
+                  <visa.icon className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <h3 className="mt-3 text-sm font-semibold text-primary">{visa.name}</h3>
+                <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-accent transition-transform duration-300 group-hover:scale-x-100" />
               </div>
             ))}
           </div>
@@ -269,10 +258,10 @@ function TravelPage() {
             width={1200}
             height={912}
             loading="lazy"
-            className="w-full rounded-xl object-cover shadow-card"
+            className="w-full rounded-3xl object-cover shadow-elevated"
           />
           <div>
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">
+            <h2 className="heading-section text-primary">
               One desk for the whole journey
             </h2>
             <p className="mt-4 text-muted-foreground">
@@ -282,15 +271,15 @@ function TravelPage() {
             </p>
             <ul className="mt-6 space-y-2 text-sm font-medium text-foreground/80">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Clear, itemised costs before anything is booked
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Support by phone, WhatsApp and email while you travel
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Group and corporate arrangements welcome
               </li>
             </ul>
@@ -299,10 +288,10 @@ function TravelPage() {
       </section>
 
       {/* Interactive Visa Destination Checker */}
-      <section className="bg-primary py-12 md:py-16">
-        <div className="container-page max-w-4xl">
+      <section className="gradient-mesh bg-primary section-y">
+        <div className="container-page relative max-w-4xl">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-primary-foreground sm:text-3xl">
+            <h2 className="heading-section text-primary-foreground">
               Visa destination quick reference
             </h2>
             <p className="mt-2 text-sm text-primary-foreground/75">
@@ -317,12 +306,14 @@ function TravelPage() {
               ))}
             </div>
           ) : visaDestinations.length > 0 ? <>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {visaDestinations.map((dest) => (
               <button
                 key={dest.country}
+                type="button"
+                aria-pressed={activeDestination === dest.country}
                 onClick={() => setSelectedDestination(dest.country)}
-                className={`rounded-xl border-2 p-4 text-left transition-all ${
+                className={`rounded-2xl border p-4 text-left transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 ${
                   activeDestination === dest.country
                     ? "border-accent bg-accent-soft"
                     : "border-primary-foreground/20 bg-primary-deep hover:border-accent/50"
@@ -343,7 +334,7 @@ function TravelPage() {
           </div>
 
           {destination && (
-            <div className="mt-6 rounded-xl border border-primary-foreground/20 bg-primary-deep p-6">
+            <div key={destination.country} className="animate-fade-up mt-6 rounded-2xl border border-primary-foreground/15 bg-primary-deep p-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -375,7 +366,7 @@ function TravelPage() {
 
           <p className="mt-6 text-center text-sm text-primary-foreground/75">
             Timelines are estimates and vary by individual circumstances.{" "}
-            <a href="#inquiry-form" className="font-bold text-accent underline underline-offset-4">
+            <a href="#inquiry-form" className="font-semibold text-accent underline decoration-2 underline-offset-4 hover:text-primary-foreground">
               Contact us
             </a>{" "}
             for your specific case.
@@ -391,10 +382,10 @@ function TravelPage() {
       </section>
 
       {/* Destination Carousel */}
-      <section className="border-b border-border bg-background py-12 md:py-16">
+      <section className="border-b border-border bg-background section-y">
         <div className="container-page">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">
+            <h2 className="heading-section text-primary">
               Explore Our Popular Destinations
             </h2>
             <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
@@ -407,10 +398,10 @@ function TravelPage() {
       </section>
 
       {/* Document Checklist for Visa Applicants */}
-      <section className="border-y border-border bg-secondary/30 py-12 md:py-16">
+      <section className="border-y border-border bg-secondary/30 section-y">
         <div className="container-page max-w-3xl">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">
+            <h2 className="heading-section text-primary">
               Visa application document checklist
             </h2>
             <p className="mt-2 text-muted-foreground">
@@ -420,8 +411,11 @@ function TravelPage() {
           </div>
 
           <button
+            type="button"
+            aria-expanded={showChecklist}
+            aria-controls="visa-checklist"
             onClick={() => setShowChecklist(!showChecklist)}
-            className="mx-auto mt-6 flex items-center gap-2 rounded-md border-2 border-accent bg-accent-soft px-5 py-3 font-bold text-accent-foreground transition-opacity hover:opacity-90"
+            className="btn-interactive mx-auto mt-6 flex min-h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
           >
             <FileText className="h-5 w-5" />
             {showChecklist ? "Hide" : "View"} Checklist
@@ -431,11 +425,11 @@ function TravelPage() {
           </button>
 
           {showChecklist && (
-            <div className="mt-6 rounded-xl border border-border bg-card p-6 shadow-card">
+            <div id="visa-checklist" className="animate-fade-up mt-6 rounded-2xl border border-border bg-card p-6 shadow-card">
               <ul className="space-y-3">
                 {visaChecklist.map((item, index) => (
                   <li key={index} className="flex items-start gap-3 text-sm">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" strokeWidth={1.75} />
                     <span className="leading-relaxed text-foreground">{item}</span>
                   </li>
                 ))}
@@ -465,7 +459,7 @@ function TravelPage() {
             <section
               key={service.slug}
               id={service.slug}
-              className={`scroll-mt-24 py-14 sm:py-16 ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
+              className={`scroll-mt-24 section-y ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
             >
               <div className="container-page">
                 <TourPackagesCards />
@@ -479,25 +473,25 @@ function TravelPage() {
           <section
             key={service.slug}
             id={service.slug}
-            className={`scroll-mt-24 py-14 sm:py-16 ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
+            className={`scroll-mt-24 section-y ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
           >
             <div className="container-page">
               <div className="grid gap-6 md:grid-cols-[auto_1fr] md:gap-10">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent-soft">
-                  <Icon className="h-7 w-7 text-accent-foreground" />
+                <div className="icon-tile !h-14 !w-14 !rounded-2xl">
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
                 </div>
                 <div className="max-w-3xl">
-                  <h2 className="text-2xl font-bold text-primary sm:text-3xl">{service.title}</h2>
-                  <p className="mt-2 font-semibold text-accent-foreground/80">{service.summary}</p>
+                  <h2 className="heading-section text-primary">{service.title}</h2>
+                  <p className="mt-2 font-medium text-accent-ink">{service.summary}</p>
                   <p className="mt-4 leading-relaxed text-muted-foreground">{service.detail}</p>
                 </div>
               </div>
 
               {details && (
                 <div className="mt-8 grid gap-6 lg:grid-cols-2">
-                  <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+                  <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-accent" />
+                      <CheckCircle2 className="h-5 w-5 text-accent-ink" strokeWidth={1.75} />
                       <h3 className="font-bold text-primary">What's included</h3>
                     </div>
                     <ul className="mt-4 space-y-2">
@@ -514,9 +508,9 @@ function TravelPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+                    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
                       <div className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-accent" />
+                        <FileText className="h-5 w-5 text-accent-ink" strokeWidth={1.75} />
                         <h3 className="text-sm font-bold text-primary">What you need to provide</h3>
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -524,9 +518,9 @@ function TravelPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+                    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-accent" />
+                        <Clock className="h-5 w-5 text-accent-ink" strokeWidth={1.75} />
                         <h3 className="text-sm font-bold text-primary">Typical timeline</h3>
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -538,8 +532,8 @@ function TravelPage() {
               )}
 
               {details?.example && (
-                <div className="mt-6 rounded-xl border-2 border-accent/20 bg-accent-soft/30 p-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent-foreground/70">
+                <div className="mt-6 rounded-2xl border border-accent/30 bg-accent-soft/40 p-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-ink">
                     Example Scenario
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-foreground/80">
@@ -553,7 +547,7 @@ function TravelPage() {
       })}
 
       {/* Inquiry Form */}
-      <section id="inquiry-form" className="scroll-mt-20 bg-primary-deep py-16">
+      <section id="inquiry-form" className="scroll-mt-20 gradient-mesh bg-primary-deep section-y">
         <div className="container-page max-w-3xl">
           <InquiryForm
             title="Travel enquiry"

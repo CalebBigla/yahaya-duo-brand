@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/site/PageHero";
 import { getPublishedGallery } from "@/lib/queries/website";
+import { optimisedUrl } from "@/lib/cloudinary";
 
 const title = "Media Gallery | Yahaya Travel and Trade Co Ltd";
 const description =
@@ -36,7 +37,7 @@ function MediaPage() {
         title="Travel, trade and people"
         subtitle="A published look at the work, destinations, and partnerships behind Yahaya Travel and Trade."
       />
-      <section className="py-16">
+      <section className="section-y">
         <div className="container-page">
           {isLoading ? (
             <p className="text-center text-muted-foreground">Loading gallery...</p>
@@ -48,13 +49,14 @@ function MediaPage() {
                   className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
                 >
                   <img
-                    src={item.image_url}
+                    src={optimisedUrl(item.image_url, 960)}
                     alt={item.alt_text || item.title}
                     loading="lazy"
+                    decoding="async"
                     className="h-64 w-full object-cover"
                   />
                   <figcaption className="p-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-accent-ink">
                       {item.category}
                     </p>
                     <h2 className="mt-2 text-lg font-bold text-primary">{item.title}</h2>

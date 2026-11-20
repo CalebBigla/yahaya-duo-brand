@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
@@ -16,7 +16,9 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppFab } from "@/components/site/WhatsAppButton";
 import { LoadingState } from "@/components/site/LoadingState";
-import { AdminLayout } from "@/components/admin/AdminLayout";
+// The admin shell (sidebar, command palette, live notifications, dialogs) is only
+// downloaded when someone opens /admin, not by every public visitor.
+const AdminLayout = lazy(() => import("@/components/admin/AdminLayout").then((m) => ({ default: m.AdminLayout })));
 import { AdminRouteSkeleton } from "@/components/admin/SkeletonLoader";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/lib/theme";
@@ -173,12 +175,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap",
-      },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
     scripts: [
@@ -243,7 +239,7 @@ function RootComponent() {
   // Public routes get navbar and footer
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
+      <div className="site-public flex min-h-screen flex-col">
         <Navbar />
         <main className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
@@ -258,6 +254,7 @@ function RootComponent() {
 
 function AdminDashboardShell() {
   const navigate = useNavigate();
+  const router = useRouter();
   const [auth, setAuth] = useState<AdminAuthState>({ status: 'checking', user: null });
 
   useEffect(() => {
@@ -304,11 +301,13 @@ function AdminDashboardShell() {
   }
 
   return (
-    <AdminLayout adminUser={shellUser}>
-      <AdminAuthContext.Provider value={auth}>
-        <Outlet />
-      </AdminAuthContext.Provider>
-    </AdminLayout>
+    <Suspense fallback={<AdminShellFallback pathname={router.state.location.pathname} />}>
+      <AdminLayout adminUser={shellUser}>
+        <AdminAuthContext.Provider value={auth}>
+          <Outlet />
+        </AdminAuthContext.Provider>
+      </AdminLayout>
+    </Suspense>
   );
 }
 
@@ -321,12 +320,24 @@ function RoutePendingState() {
 
   return (
     <ThemeProvider>
-      <AdminLayout adminUser={null}>
-        <div aria-live="polite" aria-busy="true">
-          <p className="sr-only">Loading admin page.</p>
-          <AdminRouteSkeleton pathname={pathname} />
-        </div>
-      </AdminLayout>
+      <Suspense fallback={<AdminShellFallback pathname={pathname} />}>
+        <AdminLayout adminUser={null}>
+          <div aria-live="polite" aria-busy="true">
+            <p className="sr-only">Loading admin page.</p>
+            <AdminRouteSkeleton pathname={pathname} />
+          </div>
+        </AdminLayout>
+      </Suspense>
     </ThemeProvider>
+  );
+}
+
+/** Shown for the moment the admin shell's code is downloading. */
+function AdminShellFallback({ pathname }: { pathname: string }) {
+  return (
+    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-950" aria-live="polite" aria-busy="true">
+      <p className="sr-only">Loading the admin dashboard.</p>
+      <AdminRouteSkeleton pathname={pathname} />
+    </div>
   );
 }

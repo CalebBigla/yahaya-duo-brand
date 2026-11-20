@@ -4,9 +4,9 @@ import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
 
 // Company story image
-import companyStoryImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
+import companyStoryImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
 // CEO image
-import ceoImg from "@/assets/YAHAYA.jpg";
+import ceoImg from "@/assets/YAHAYA.webp";
 
 const title = "About Yahaya Travel & Trade | Travel Agency in Yola, Adamawa";
 const description =
@@ -108,7 +108,7 @@ function AboutPage() {
       />
 
       {/* Mission, Vision, Philosophy */}
-      <section className="bg-gradient-to-br from-primary via-primary-deep to-primary py-16 text-primary-foreground">
+      <section className="gradient-mesh bg-primary-deep section-y text-primary-foreground">
         <div className="container-page">
           <div className="grid gap-8 md:grid-cols-3">
             <div className="text-center">
@@ -144,10 +144,10 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="section-y">
         <div className="container-page grid gap-12 lg:grid-cols-[1.6fr_1fr]">
           <div className="max-w-3xl">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">Our story</h2>
+            <h2 className="heading-section text-primary">Our story</h2>
             {/* PLACEHOLDER COPY — replace with the real founding story. */}
             <p className="mt-4 leading-relaxed text-muted-foreground">
               Yahaya Travel and Trade Co Ltd was founded in Jimeta-Yola to solve a problem that kept showing up at the same door: people needed help navigating visa applications and international travel, and businesses needed goods sourced, verified, and delivered without the risk of dealing with unknown suppliers. Rather than refer clients elsewhere, we built both capabilities under one roof.
@@ -159,7 +159,7 @@ function AboutPage() {
               Today, the company operates from B.M Yelwa Plaza, opposite Bachure Junction, serving individual travelers, corporate clients, and procurement buyers across Adamawa State and the wider North East. We're registered (RC {site.rcNumber}), reachable on three phone lines and WhatsApp, and we show up when you need us.
             </p>
 
-            <h2 className="mt-12 text-2xl font-bold text-primary sm:text-3xl">
+            <h2 className="mt-12 heading-section text-primary">
               Why two divisions work better together
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -185,7 +185,7 @@ function AboutPage() {
             </ul>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
                 <Plane className="h-6 w-6 text-accent" />
                 <h3 className="mt-3 text-lg font-bold text-primary">Travel Services</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -196,7 +196,7 @@ function AboutPage() {
                   Explore travel
                 </Link>
               </div>
-              <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
                 <Ship className="h-6 w-6 text-accent" />
                 <h3 className="mt-3 text-lg font-bold text-primary">Trade & General Contracts</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -238,7 +238,7 @@ function AboutPage() {
               <p className="mt-2 text-sm text-foreground/75">
                 Incorporated in Nigeria with registration number
               </p>
-              <p className="mt-2 font-display text-2xl font-extrabold text-primary">
+              <p className="mt-2 font-display text-2xl font-bold text-primary">
                 RC {site.rcNumber}
               </p>
               <p className="mt-3 text-sm text-foreground/75">
@@ -261,9 +261,9 @@ function AboutPage() {
       </section>
 
       {/* Company Timeline */}
-      <section className="border-y border-border bg-secondary/60 py-16">
+      <section className="border-y border-border bg-secondary/60 section-y">
         <div className="container-page">
-          <h2 className="text-center text-2xl font-bold text-primary sm:text-3xl">Our journey</h2>
+          <h2 className="text-center heading-section text-primary">Our journey</h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Key milestones in building Yahaya Travel and Trade Co Ltd — placeholder dates, replace with real timeline before launch
           </p>
@@ -276,7 +276,7 @@ function AboutPage() {
               {milestones.map((milestone, index) => (
                 <div key={index} className={`relative grid gap-6 md:grid-cols-2 md:gap-12 ${index % 2 === 0 ? "" : "md:grid-flow-dense"}`}>
                   <div className={`${index % 2 === 0 ? "md:text-right" : "md:col-start-2"}`}>
-                    <div className="inline-block rounded-full bg-accent px-4 py-1.5 font-display text-sm font-bold text-accent-foreground">
+                    <div className="inline-block rounded-full bg-primary px-4 py-1.5 font-display text-sm font-semibold text-accent">
                       {milestone.year}
                     </div>
                     <h3 className="mt-3 text-xl font-bold text-primary">{milestone.title}</h3>
@@ -293,10 +293,10 @@ function AboutPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-16">
+      <section className="section-y">
         <div className="container-page">
           <div className="max-w-2xl">
-            <h2 className="text-2xl font-bold text-primary sm:text-3xl">Core Values</h2>
+            <h2 className="heading-section text-primary">Core Values</h2>
             <p className="mt-3 text-muted-foreground">
               The principles that guide every aspect of our operations, from visa processing to trade facilitation, ensuring consistent excellence in service delivery.
             </p>
@@ -304,7 +304,7 @@ function AboutPage() {
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {values.map((value) => (
-              <div key={value.title} className="rounded-xl border border-border bg-card p-6 shadow-card">
+              <div key={value.title} className="rounded-2xl border border-border bg-card p-6 shadow-card">
                 <value.icon className="h-7 w-7 text-accent" />
                 <h3 className="mt-4 text-lg font-bold text-primary">{value.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{value.description}</p>
@@ -315,17 +315,17 @@ function AboutPage() {
       </section>
 
       {/* Strategic Objectives */}
-      <section className="border-y border-border bg-secondary/30 py-16">
+      <section className="border-y border-border bg-secondary/30 section-y">
         <div className="container-page">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">Strategic Objectives</h2>
+            <h2 className="heading-section text-primary">Strategic Objectives</h2>
             <p className="mt-3 text-muted-foreground">
               Our operational principles define how we deliver consistent and exceptional results across travel and trade divisions
             </p>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <div className="mb-4 flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
                   <Plane className="h-5 w-5 text-accent" />
@@ -339,7 +339,7 @@ function AboutPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <div className="mb-4 flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
                   <DollarSign className="h-5 w-5 text-accent" />
@@ -353,7 +353,7 @@ function AboutPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <div className="mb-4 flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
                   <Briefcase className="h-5 w-5 text-accent" />
@@ -367,7 +367,7 @@ function AboutPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <div className="mb-4 flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
                   <Package className="h-5 w-5 text-accent" />
@@ -381,7 +381,7 @@ function AboutPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <div className="mb-4 flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
                   <Fuel className="h-5 w-5 text-accent" />
@@ -395,7 +395,7 @@ function AboutPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <div className="mb-4 flex items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20">
                   <Globe className="h-5 w-5 text-accent" />
@@ -418,9 +418,9 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-border bg-secondary/60 py-16">
+      <section className="border-t border-border bg-secondary/60 section-y">
         <div className="container-page">
-          <h2 className="text-2xl font-bold text-primary sm:text-3xl">Leadership</h2>
+          <h2 className="heading-section text-primary">Leadership</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Meet the leadership behind Yahaya Travel and Trade Co Ltd
           </p>
@@ -441,7 +441,7 @@ function AboutPage() {
                 {/* Bio card */}
                 <div className="flex-1 rounded-xl border border-border bg-card p-8 shadow-card">
                   <h3 className="text-2xl font-bold text-primary">{m.name}</h3>
-                  <p className="mt-1 text-sm font-semibold text-accent">{m.role}</p>
+                  <p className="mt-1 text-sm font-semibold text-accent-ink">{m.role}</p>
                   <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
                     <p>{m.bio}</p>
                     {m.bio2 && <p>{m.bio2}</p>}

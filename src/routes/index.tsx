@@ -25,39 +25,39 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 
 // Hero - Oil & Gas / Industrial focus
-import heroPetroleumImg from "@/assets/petroleum engineering.jpg";
-import heroOilRigImg from "@/assets/The Last Bow at Dusk.jpg";
+import heroPetroleumImg from "@/assets/petroleum engineering.webp";
+import heroOilRigImg from "@/assets/The Last Bow at Dusk.webp";
 
 // Bento grid - Travel & Trade split
-import bentoTravelCoupleImg from "@/assets/download (25).jpg";
-import bentoTravelLuggageImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
-import bentoTradeLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
-import bentoTradeSupplyImg from "@/assets/Best Logistics Companies in India – Top Supply Chain Solutions for Business Growth 2026.jpg";
+import bentoTravelCoupleImg from "@/assets/download (25).webp";
+import bentoTravelLuggageImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
+import bentoTradeLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
+import bentoTradeSupplyImg from "@/assets/Best Logistics Companies in India – Top Supply Chain Solutions for Business Growth 2026.webp";
 
 // Trade gallery (mirroring hotel gallery)
-import tradeOilGasImg from "@/assets/The Last Bow at Dusk.jpg";
-import tradeOffshoreImg from "@/assets/download (24).jpg";
-import tradeOnsiteImg from "@/assets/Off shore rig worker.jpg";
-import tradeTechnicalImg from "@/assets/petroleum engineering.jpg";
+import tradeOilGasImg from "@/assets/The Last Bow at Dusk.webp";
+import tradeOffshoreImg from "@/assets/download (24).webp";
+import tradeOnsiteImg from "@/assets/Off shore rig worker.webp";
+import tradeTechnicalImg from "@/assets/petroleum engineering.webp";
 
 // Hotel gallery
-import hotel1Img from "@/assets/24 Small Guest Room Ideas for Compact Comfort and___.jpg";
-import hotel2Img from "@/assets/Borges 2129 I by depptö.jpg";
-import hotel3Img from "@/assets/Best Hotel Room in Jaipur.jpg";
-import hotel4Img from "@/assets/Akasha Beach Hotel.jpg";
+import hotel1Img from "@/assets/24 Small Guest Room Ideas for Compact Comfort and___.webp";
+import hotel2Img from "@/assets/Borges 2129 I by depptö.webp";
+import hotel3Img from "@/assets/Best Hotel Room in Jaipur.webp";
+import hotel4Img from "@/assets/Akasha Beach Hotel.webp";
 
 // Full-width banner
-import fullWidthBannerImg from "@/assets/Import export training in karachi lahore islamabad pakistan.jpg";
+import fullWidthBannerImg from "@/assets/Import export training in karachi lahore islamabad pakistan.webp";
 
 // Stats section lifestyle photo
-import statsLifestyleImg from "@/assets/download (25).jpg";
+import statsLifestyleImg from "@/assets/download (25).webp";
 
 // Key features composite
-import featuresPetroleumImg from "@/assets/petroleum engineering.jpg";
-import featuresLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
+import featuresPetroleumImg from "@/assets/petroleum engineering.webp";
+import featuresLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
 
 // Trust section
-import trustWorkerImg from "@/assets/Off shore rig worker.jpg";
+import trustWorkerImg from "@/assets/Off shore rig worker.webp";
 
 import { site } from "@/lib/site";
 import {
@@ -294,6 +294,46 @@ const categoryCards = [
   },
 ];
 
+/* "What we deliver" cards. Same wording as before, now always visible. */
+const deliverCards = [
+  {
+    icon: Plane,
+    tag: "Complete Travel Services",
+    title: "Travel",
+    body: "Complete visa processing, flight bookings, hotel reservations, and tour packages to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt and more.",
+    listTitle: "What we offer",
+    items: ["All visa types processing", "Flight bookings & reservations", "Hotel accommodations", "Airport transfers & tours"],
+    note: null,
+    link: "/travel" as const,
+    hash: undefined,
+  },
+  {
+    icon: PackageSearch,
+    tag: "International Sourcing",
+    title: "Sourcing & Procurement",
+    body: "Direct sourcing of new products from our international partners at lowest prices. We find suppliers, verify credentials, and manage complete delivery.",
+    listTitle: "Our process",
+    items: ["Supplier identification & verification", "Price negotiation & ordering", "Complete logistics handling", "50% deposit on first order"],
+    note: null,
+    link: "/trade" as const,
+    hash: "sourcing-procurement",
+  },
+  {
+    icon: Users,
+    tag: "Expert Advisory",
+    title: "Consultation & Referrals",
+    body: "Trade and travel consultation services plus referral commission opportunities for connecting us with new clients.",
+    listTitle: "Advisory services",
+    items: ["Trade operations and logistics guidance", "Documentation and compliance support", "Personalized travel planning"],
+    note: {
+      title: "Referral program",
+      body: "Earn commission when you refer clients to us. Paid after each completed transaction.",
+    },
+    link: "/quote" as const,
+    hash: undefined,
+  },
+];
+
 function Index() {
   const [activeJourney, setActiveJourney] = useState<"travel" | "trade">("trade");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -350,53 +390,56 @@ function Index() {
   return (
     <>
       {/* Hero with Floating Collage */}
-      <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-24 sm:py-32 lg:py-40 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-16 sm:py-20 lg:py-24">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-deep via-primary to-primary-deep/90" />
 
         <div className="container-page relative z-10">
-          <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+          <div className="grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:items-center xl:gap-16">
             <div>
-              <p className="animate-fade-up stagger-1 text-xs font-bold uppercase tracking-[0.3em] text-accent">
+              <p className="eyebrow eyebrow-on-dark animate-fade-up stagger-1">
                 RC {companyRegistration} · Jimeta-Yola, Adamawa
               </p>
-              <h1 className="animate-fade-up stagger-2 mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-6xl">
+              <h1 className="animate-fade-up stagger-2 mt-5 text-[2.25rem] font-bold leading-[1.08] tracking-[-0.03em] text-primary-foreground sm:text-5xl lg:text-[3.5rem]">
                 {homepage?.hero_title ?? "Your Trusted Partner in Travel and Trade"}
               </h1>
-              <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
+              <p className="animate-fade-up stagger-3 mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/75 sm:text-[1.0625rem]">
                 {homepage?.hero_subtitle ??
                   "We operate at the intersection of travel management, international consultancy, and global trade facilitation, offering a comprehensive suite of services that include visa processing, flight bookings, tour packages, hotel reservations, travel advisory, trade consultancy, general trading, oil & gas commodity supply, wholesale import and export, as well as sourcing and procurement services."}
               </p>
               <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   to="/travel"
-                  className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
+                  className="btn-interactive group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-semibold text-accent-foreground"
                 >
-                  <Plane className="h-4 w-4" /> Travel
+                  <Plane className="h-4 w-4" /> Travel <ArrowRight className="arrow-nudge h-4 w-4" />
                 </Link>
                 <Link
                   to="/trade"
-                  className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:border-accent hover:text-accent"
+                  className="btn-interactive group inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-primary-foreground/30 bg-primary-foreground/5 px-6 text-sm font-semibold text-primary-foreground hover:border-accent hover:bg-primary-foreground/10"
                 >
-                  <Ship className="h-4 w-4" /> Trade
+                  <Ship className="h-4 w-4" /> Trade <ArrowRight className="arrow-nudge h-4 w-4" />
                 </Link>
               </div>
             </div>
 
-            {/* Floating Collage - Travel & Trade Focus */}
+            {/* Floating Collage - Travel & Trade Focus.
+                Desktop only, so lazy: phones and tablets never download these photos. */}
             <div className="relative hidden lg:block">
-              <div className="animate-float-slow relative">
+              <div className="animate-settle stagger-2 relative">
                 <img
                   src={bentoTravelLuggageImg}
                   alt="Travel services"
-                  loading="eager"
-                  className="h-72 w-full rounded-3xl object-cover shadow-elevated"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-80 w-full rounded-3xl object-cover shadow-elevated"
                 />
               </div>
-              <div className="animate-float-delayed absolute -bottom-8 -left-12 w-64">
+              <div className="animate-settle stagger-4 absolute -bottom-8 -left-12 w-64 rounded-2xl ring-4 ring-primary-deep">
                 <img
                   src={bentoTradeLogisticsImg}
                   alt="Trade and logistics"
-                  loading="eager"
+                  loading="lazy"
+                  decoding="async"
                   className="h-56 w-full rounded-2xl object-cover shadow-elevated"
                 />
               </div>
@@ -408,78 +451,80 @@ function Index() {
       </section>
 
       {/* Core Objectives - Two Large Featured Cards */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="section-y">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
+              <h2 className="heading-section text-primary">
                 Core business divisions
               </h2>
-              <p className="mt-3 text-muted-foreground">
+              <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
                 Travel and Tour, sourcing and Procurement — Two pillars of our business
               </p>
             </div>
           </AnimatedSection>
 
-          <div className="mt-12 grid gap-6 sm:gap-8 md:grid-cols-2 max-w-5xl mx-auto">
-            {/* Travel and Tour - Large Featured */}
-            <AnimatedSection animation="scale" delay={0}>
+          <div className="mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-2 lg:gap-6">
+            <AnimatedSection animation="scale" delay={0} className="h-full">
               <Link
                 to="/travel"
-                className="card-interactive group relative overflow-hidden rounded-2xl sm:rounded-3xl"
+                className="card-interactive group relative block h-full overflow-hidden rounded-2xl ring-1 ring-black/5 sm:rounded-3xl"
               >
-                <div className="aspect-[3/4]">
+                {/* Text sits in the normal flow: the card keeps its 3:4 shape but grows
+                    if the text needs more room, so nothing can spill out on tablets. */}
+                <div className="relative flex h-full aspect-[4/5] flex-col justify-end sm:aspect-[16/11] md:aspect-[4/5] lg:aspect-[5/6]">
                   <img
                     src={bentoTravelLuggageImg}
                     alt="Travel and tour services"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="img-zoom absolute inset-0 h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
-                    <Plane className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
-                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+                  <div className="relative p-5 text-primary-foreground sm:p-7 md:p-6 lg:p-8 xl:p-10">
+                    <Plane className="h-8 w-8 text-accent lg:h-9 lg:w-9" strokeWidth={1.5} />
+                    <h3 className="mt-3 text-2xl font-bold leading-tight text-balance sm:text-3xl md:text-2xl lg:mt-4 lg:text-3xl">
                       Travel and Tour
                     </h3>
-                    <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/85 sm:text-base md:text-sm lg:text-base">
                       Complete visa processing, flight bookings, hotel reservations, and tour
                       packages to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt
                       and more.
                     </p>
-                    <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent lg:mt-6 lg:text-base">
+                      Learn more <ArrowRight className="arrow-nudge h-4 w-4 lg:h-5 lg:w-5" />
                     </div>
                   </div>
                 </div>
               </Link>
             </AnimatedSection>
 
-            {/* Sourcing & Procurement - Large Featured */}
-            <AnimatedSection animation="scale" delay={100}>
+            <AnimatedSection animation="scale" delay={100} className="h-full">
               <Link
                 to="/trade"
                 hash="sourcing-procurement"
-                className="card-interactive group relative overflow-hidden rounded-2xl sm:rounded-3xl"
+                className="card-interactive group relative block h-full overflow-hidden rounded-2xl ring-1 ring-black/5 sm:rounded-3xl"
               >
-                <div className="aspect-[3/4]">
+                {/* Text sits in the normal flow: the card keeps its 3:4 shape but grows
+                    if the text needs more room, so nothing can spill out on tablets. */}
+                <div className="relative flex h-full aspect-[4/5] flex-col justify-end sm:aspect-[16/11] md:aspect-[4/5] lg:aspect-[5/6]">
                   <img
                     src={bentoTradeSupplyImg}
                     alt="Sourcing and procurement services"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="img-zoom absolute inset-0 h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
-                    <PackageSearch className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
-                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+                  <div className="relative p-5 text-primary-foreground sm:p-7 md:p-6 lg:p-8 xl:p-10">
+                    <PackageSearch className="h-8 w-8 text-accent lg:h-9 lg:w-9" strokeWidth={1.5} />
+                    <h3 className="mt-3 text-2xl font-bold leading-tight text-balance sm:text-3xl md:text-2xl lg:mt-4 lg:text-3xl">
                       Sourcing and Procurement
                     </h3>
-                    <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/85 sm:text-base md:text-sm lg:text-base">
                       Direct international sourcing from trusted global suppliers — competitive
                       pricing, verified credentials, complete delivery management.
                     </p>
-                    <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-accent lg:mt-6 lg:text-base">
+                      Learn more <ArrowRight className="arrow-nudge h-4 w-4 lg:h-5 lg:w-5" />
                     </div>
                   </div>
                 </div>
@@ -490,15 +535,15 @@ function Index() {
       </section>
 
       {/* Travels & Tours - Compact Section */}
-      <section className="border-y border-border bg-secondary/40 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="border-y border-border bg-secondary/40 section-y">
         <div className="container-page">
           <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
             <AnimatedSection animation="fade-up">
               <div>
-                <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
+                <span className="eyebrow">
                   Supporting Service
                 </span>
-                <h2 className="mt-4 text-2xl font-bold text-primary sm:text-3xl">
+                <h2 className="mt-4 heading-section text-primary">
                   Travels & Tours
                 </h2>
                 <p className="mt-4 text-muted-foreground">
@@ -507,25 +552,25 @@ function Index() {
                   Egypt and more. Flight bookings, hotel reservations, airport transfers,
                   and guided tours.
                 </p>
-                <div className="mt-6 flex flex-wrap gap-4">
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-accent-ink" />
                     <span>Multiple Visa Types</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-accent-ink" />
                     <span>Complete Travel Packages</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-accent-ink" />
                     <span>Referral Commission Program</span>
                   </div>
                 </div>
                 <Link
                   to="/travel"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent-foreground underline underline-offset-4"
+                  className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary"
                 >
-                  View travel services <ArrowRight className="h-4 w-4" />
+                  <span className="link-underline">View travel services</span> <ArrowRight className="arrow-nudge h-4 w-4" />
                 </Link>
               </div>
             </AnimatedSection>
@@ -536,7 +581,7 @@ function Index() {
                   src={bentoTravelCoupleImg}
                   alt="Travel services"
                   loading="lazy"
-                  className="h-64 w-full object-cover md:h-72 lg:h-80"
+                  className="h-60 w-full object-cover md:h-72"
                 />
               </div>
             </AnimatedSection>
@@ -545,15 +590,15 @@ function Index() {
       </section>
 
       {/* Sourcing & Procurement Highlight */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="section-y">
         <div className="container-page">
           <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="fade-up">
               <div>
-                <span className="inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent">
+                <span className="eyebrow">
                   Procurement Excellence
                 </span>
-                <h2 className="mt-4 text-3xl font-bold text-primary sm:text-4xl">
+                <h2 className="mt-4 heading-section text-primary">
                   Direct sourcing and international procurement
                 </h2>
                 <p className="mt-5 text-muted-foreground leading-relaxed">
@@ -562,13 +607,13 @@ function Index() {
                   delivery at your location.
                 </p>
 
-                <div className="mt-8 space-y-5">
+                <div className="relative mt-8 space-y-6 before:absolute before:bottom-5 before:left-5 before:top-5 before:w-px before:bg-border">
                   <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
+                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent bg-background font-display text-sm font-semibold text-primary">
                       1
                     </div>
                     <div>
-                      <h3 className="font-bold text-primary">Product Identification & Sourcing</h3>
+                      <h3 className="font-semibold text-primary">Product Identification & Sourcing</h3>
                       <p className="mt-1 text-sm text-muted-foreground">
                         Tell us what you need. We identify manufacturers in China, Egypt, and Saudi
                         Arabia offering the best prices based on your order specifications
@@ -576,11 +621,11 @@ function Index() {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
+                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent bg-background font-display text-sm font-semibold text-primary">
                       2
                     </div>
                     <div>
-                      <h3 className="font-bold text-primary">
+                      <h3 className="font-semibold text-primary">
                         Price Negotiation & Order Placement
                       </h3>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -590,11 +635,11 @@ function Index() {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
+                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent bg-background font-display text-sm font-semibold text-primary">
                       3
                     </div>
                     <div>
-                      <h3 className="font-bold text-primary">Shipping & Delivery Coordination</h3>
+                      <h3 className="font-semibold text-primary">Shipping & Delivery Coordination</h3>
                       <p className="mt-1 text-sm text-muted-foreground">
                         Complete logistics handling — freight coordination, customs clearing, and
                         delivery to your specified location with full documentation
@@ -606,9 +651,9 @@ function Index() {
                 <Link
                   to="/trade"
                   hash="sourcing-procurement"
-                  className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
+                  className="btn-interactive group mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
                 >
-                  View Full Procurement Services <ArrowRight className="h-4 w-4" />
+                  View Full Procurement Services <ArrowRight className="arrow-nudge h-4 w-4" />
                 </Link>
               </div>
             </AnimatedSection>
@@ -619,7 +664,7 @@ function Index() {
                   src={bentoTradeLogisticsImg}
                   alt="Supply chain operations"
                   loading="lazy"
-                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px] lg:min-h-[500px]"
+                  className="h-full min-h-[280px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[380px] lg:min-h-[440px]"
                 />
               </div>
             </AnimatedSection>
@@ -627,192 +672,61 @@ function Index() {
         </div>
       </section>
 
-      {/* Premium Services Showcase - Flip Cards */}
-      <section className="py-20 sm:py-24 lg:py-28 px-6 sm:px-10 md:px-16 lg:px-20">
+      {/* Premium Services: details always visible (hover-only content fails on touch and keyboard). */}
+      <section className="section-y !pt-0">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
             <div className="text-center">
-              <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
-                Premium Services
-              </span>
-              <h2 className="mt-4 text-3xl font-bold text-primary sm:text-4xl">What we deliver</h2>
-              <p className="mt-3 text-muted-foreground">
-                Hover over each card to explore our comprehensive service offerings
+              <span className="eyebrow">Premium Services</span>
+              <h2 className="mt-4 heading-section text-primary">What we deliver</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+                Three ways we work with you, from first enquiry to final delivery
               </p>
             </div>
           </AnimatedSection>
 
-          <div className="mt-16 grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
-            {/* Travel */}
-            <AnimatedSection animation="scale" delay={0}>
-              <div className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 shadow-card transition-all duration-500 hover:shadow-elevated hover:border-accent/30">
-                {/* Icon with glow effect */}
-                <div className="relative p-8 pb-6">
-                  <div className="absolute inset-0 animate-pulse rounded-2xl bg-accent/10 blur-2xl transition-all duration-500 group-hover:bg-accent/20" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary-deep to-primary shadow-card transition-all duration-500 group-hover:scale-110">
-                    <Plane className="h-8 w-8 text-white" strokeWidth={2.5} />
+          <div className="mx-auto mt-10 grid max-w-6xl gap-4 md:grid-cols-3 lg:gap-5">
+            {deliverCards.map((card, i) => (
+              <AnimatedSection key={card.title} animation="fade-up" delay={i * 90} className="h-full">
+                <div className="card-interactive group flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-card lg:p-7">
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="icon-tile">
+                      <card.icon className="h-5 w-5" strokeWidth={1.75} />
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                      {card.tag}
+                    </span>
                   </div>
+                  <h3 className="mt-5 text-xl font-semibold text-primary">{card.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+                  <div className="mt-5 border-t border-border pt-4">
+                    <h4 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{card.listTitle}</h4>
+                    <ul className="mt-3 space-y-2">
+                      {card.items.map((item) => (
+                        <li key={item} className="flex items-start gap-2 text-sm text-foreground/85">
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {card.note && (
+                      <p className="mt-4 rounded-xl bg-secondary px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+                        <span className="font-semibold text-primary">{card.note.title}. </span>
+                        {card.note.body}
+                      </p>
+                    )}
+                  </div>
+                  <Link
+                    to={card.link}
+                    {...(card.hash ? { hash: card.hash } : {})}
+                    className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-primary"
+                  >
+                    <span className="link-underline">Learn more</span>
+                    <ArrowRight className="arrow-nudge h-4 w-4" />
+                  </Link>
                 </div>
-
-                {/* Content */}
-                <div className="px-8 pb-8">
-                  <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-                    Complete Travel Services
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">Travel</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Complete visa processing, flight bookings, hotel reservations, and tour packages
-                    to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt and more.
-                  </p>
-
-                  {/* Expandable details - visible on mobile, hover on desktop */}
-                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
-                    <div className="border-t border-border pt-4">
-                      <h4 className="text-sm font-bold text-primary mb-3">What We Offer</h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>All visa types processing</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Flight bookings & reservations</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Hotel accommodations</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Airport transfers & tours</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator - desktop only */}
-                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
-                    <span>Hover to explore</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-
-            {/* Sourcing & Procurement */}
-            <AnimatedSection animation="scale" delay={100}>
-              <div className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 shadow-card transition-all duration-500 hover:shadow-elevated hover:border-accent/30">
-                {/* Icon with glow effect */}
-                <div className="relative p-8 pb-6">
-                  <div className="absolute inset-0 animate-pulse rounded-2xl bg-accent/10 blur-2xl transition-all duration-500 group-hover:bg-accent/20" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent via-accent/90 to-accent shadow-card transition-all duration-500 group-hover:scale-110">
-                    <PackageSearch className="h-8 w-8 text-white" strokeWidth={2.5} />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="px-8 pb-8">
-                  <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-                    International Sourcing
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">Sourcing & Procurement</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Direct sourcing of new products from our international partners at lowest
-                    prices. We find suppliers, verify credentials, and manage complete delivery.
-                  </p>
-
-                  {/* Expandable details - visible on mobile, hover on desktop */}
-                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
-                    <div className="border-t border-border pt-4">
-                      <h4 className="text-sm font-bold text-primary mb-3">Our Process</h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Supplier identification & verification</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Price negotiation & ordering</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Complete logistics handling</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>50% deposit on first order</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator - desktop only */}
-                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
-                    <span>Hover to explore</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-
-            {/* Consultation & Referrals */}
-            <AnimatedSection animation="scale" delay={200}>
-              <div className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 shadow-card transition-all duration-500 hover:shadow-elevated hover:border-accent/30">
-                {/* Icon with glow effect */}
-                <div className="relative p-8 pb-6">
-                  <div className="absolute inset-0 animate-pulse rounded-2xl bg-accent/10 blur-2xl transition-all duration-500 group-hover:bg-accent/20" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary-deep to-primary shadow-card transition-all duration-500 group-hover:scale-110">
-                    <Users className="h-8 w-8 text-white" strokeWidth={2.5} />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="px-8 pb-8">
-                  <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-                    Expert Advisory
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">Consultation & Referrals</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Trade and travel consultation services plus referral commission opportunities
-                    for connecting us with new clients.
-                  </p>
-
-                  {/* Expandable details - visible on mobile, hover on desktop */}
-                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
-                    <div className="border-t border-border pt-4">
-                      <h4 className="text-sm font-bold text-primary mb-3">Advisory Services</h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Trade operations and logistics guidance</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Documentation and compliance support</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Personalized travel planning</span>
-                        </li>
-                      </ul>
-                      <div className="mt-4 pt-3 border-t border-border/50">
-                        <h4 className="text-sm font-bold text-primary mb-2">Referral Program</h4>
-                        <p className="text-xs text-muted-foreground">
-                          Earn commission when you refer clients to us. Paid after each completed
-                          transaction.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator - desktop only */}
-                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
-                    <span>Hover to explore</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
@@ -826,11 +740,11 @@ function Index() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/80 to-transparent" />
-        <div className="relative z-10 py-16 sm:py-20 md:py-24 lg:py-32">
+        <div className="relative z-10 py-16 sm:py-20 lg:py-24">
           <div className="container-page">
             <AnimatedSection animation="fade-up">
               <div className="max-w-2xl">
-                <h2 className="text-2xl font-extrabold text-primary-foreground sm:text-3xl md:text-4xl lg:text-5xl">
+                <h2 className="heading-section text-primary-foreground">
                   One partner for trade and travel
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-primary-foreground/80 sm:mt-4 sm:text-base md:mt-5 md:text-lg">
@@ -842,13 +756,13 @@ function Index() {
                 <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4">
                   <Link
                     to="/quote"
-                    className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-sm font-bold text-accent-foreground sm:w-auto sm:px-6 sm:py-3.5"
+                    className="btn-interactive group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-semibold text-accent-foreground sm:w-auto"
                   >
-                    Request a Quote <ArrowRight className="h-4 w-4" />
+                    Request a Quote <ArrowRight className="arrow-nudge h-4 w-4" />
                   </Link>
                   <Link
                     to="/about"
-                    className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-4 py-3 text-sm font-bold text-primary-foreground hover:border-accent sm:w-auto sm:px-6 sm:py-3.5"
+                    className="btn-interactive inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-primary-foreground/30 bg-primary-foreground/5 px-6 text-sm font-semibold text-primary-foreground hover:border-accent hover:bg-primary-foreground/10 sm:w-auto"
                   >
                     Learn Our Story
                   </Link>
@@ -860,12 +774,12 @@ function Index() {
       </section>
 
       {/* Stats Section - Business Scale */}
-      <section className="gradient-mesh py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="gradient-mesh section-y">
         <div className="container-page">
           <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="fade-up">
               <div>
-                <h2 className="text-3xl font-bold text-primary sm:text-4xl">
+                <h2 className="heading-section text-primary">
                   Five years of trusted service
                 </h2>
                 <p className="mt-4 text-muted-foreground">
@@ -873,16 +787,16 @@ function Index() {
                   China, Egypt, and Saudi Arabia, and facilitating oil & gas trade. Our clients
                   trust us with their travel plans and their business deals.
                 </p>
-                <div className="mt-8 grid grid-cols-2 gap-6">
+                <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4">
                   {displayStats.map((stat, i) => (
                     <div
                       key={stat.label}
-                      className="rounded-2xl border border-border bg-card p-6 shadow-card"
+                      className="card-interactive relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-card before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-accent sm:p-6"
                     >
-                      <p className="font-display text-4xl font-extrabold text-accent">
+                      <p className="font-display text-3xl font-bold tracking-tight text-primary sm:text-4xl">
                         {stat.value}
                       </p>
-                      <p className="mt-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      <p className="mt-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                         {stat.label}
                       </p>
                     </div>
@@ -897,9 +811,8 @@ function Index() {
                   src={bentoTravelCoupleImg}
                   alt="Travel and business services"
                   loading="lazy"
-                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px]"
+                  className="aspect-[4/3] w-full rounded-3xl object-cover object-top shadow-elevated lg:aspect-[5/4]"
                 />
-                <div className="absolute -bottom-6 -left-6 -right-6 h-32 bg-gradient-to-t from-background to-transparent" />
               </div>
             </AnimatedSection>
           </div>
@@ -907,33 +820,37 @@ function Index() {
       </section>
 
       {/* How It Works - Interactive Journey */}
-      <section className="border-y border-border bg-secondary/30 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="border-y border-border bg-secondary/30 section-y">
         <div className="container-page">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">How it works</h2>
-            <p className="mt-3 text-muted-foreground">
+            <h2 className="heading-section text-primary">How it works</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
               From first contact to completion — here's what to expect
             </p>
           </div>
 
           <div className="mt-8 flex justify-center">
-            <div className="inline-flex gap-2 rounded-full border border-border bg-card p-1.5 shadow-card">
+            <div className="inline-flex gap-1 rounded-full border border-border bg-card p-1 shadow-card" role="group" aria-label="Choose a journey">
               <button
+                type="button"
+                aria-pressed={activeJourney === "trade"}
                 onClick={() => setActiveJourney("trade")}
-                className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all ${
+                className={`flex min-h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-[background-color,color,box-shadow] duration-300 ${
                   activeJourney === "trade"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground/70 hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-foreground/70 hover:bg-secondary hover:text-foreground"
                 }`}
               >
                 <Ship className="h-4 w-4" /> Trade Journey
               </button>
               <button
+                type="button"
+                aria-pressed={activeJourney === "travel"}
                 onClick={() => setActiveJourney("travel")}
-                className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all ${
+                className={`flex min-h-10 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-[background-color,color,box-shadow] duration-300 ${
                   activeJourney === "travel"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground/70 hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-foreground/70 hover:bg-secondary hover:text-foreground"
                 }`}
               >
                 <Plane className="h-4 w-4" /> Travel Journey
@@ -941,23 +858,27 @@ function Index() {
             </div>
           </div>
 
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-3 lg:gap-5">
             {steps.map((step) => (
-              <div key={step.number} className="relative">
-                <div className="flex flex-col items-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent font-display text-2xl font-extrabold text-accent-foreground">
-                    {step.number}
+              <div
+                key={`${activeJourney}-${step.number}`}
+                className="animate-fade-up"
+                style={{ animationDelay: `${(step.number - 1) * 80}ms` }}
+              >
+                <div className="card-interactive flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
+                  <div className="flex items-center justify-between">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-sm font-semibold text-accent">
+                      {String(step.number).padStart(2, "0")}
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Step {step.number} of 3
+                    </span>
                   </div>
-                  <h3 className="mt-5 text-xl font-bold text-primary">{step.title}</h3>
+                  <h3 className="mt-5 text-lg font-semibold text-primary">{step.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                     {step.description}
                   </p>
                 </div>
-                {step.number < 3 && (
-                  <div className="absolute left-1/2 top-7 hidden w-full md:block">
-                    <ArrowRight className="ml-8 h-5 w-5 text-accent" />
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -965,28 +886,32 @@ function Index() {
       </section>
 
       {/* Key Features with Composite Images */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="section-y">
         <div className="container-page">
           <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
+              <h2 className="heading-section text-primary">
                 Why businesses trust our supply chain
               </h2>
               <div className="mt-8 space-y-6">
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
+                <div className="group flex gap-4">
+                  <span className="icon-tile !h-9 !w-9 shrink-0 !rounded-lg">
+                    <CheckCircle2 className="h-5 w-5" strokeWidth={1.75} />
+                  </span>
                   <div>
-                    <h3 className="font-bold text-primary">Documentation discipline</h3>
+                    <h3 className="font-semibold text-primary">Documentation discipline</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       Purchase orders, delivery notes, quality certificates, customs clearance —
                       every transaction tracked and documented from quote to delivery.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
+                <div className="group flex gap-4">
+                  <span className="icon-tile !h-9 !w-9 shrink-0 !rounded-lg">
+                    <CheckCircle2 className="h-5 w-5" strokeWidth={1.75} />
+                  </span>
                   <div>
-                    <h3 className="font-bold text-primary">Logistics coordination</h3>
+                    <h3 className="font-semibold text-primary">Logistics coordination</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       Multi-vendor procurement with freight, clearing, and delivery requires project
                       management. We coordinate timelines, manage dependencies, and keep you
@@ -994,20 +919,24 @@ function Index() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
+                <div className="group flex gap-4">
+                  <span className="icon-tile !h-9 !w-9 shrink-0 !rounded-lg">
+                    <CheckCircle2 className="h-5 w-5" strokeWidth={1.75} />
+                  </span>
                   <div>
-                    <h3 className="font-bold text-primary">Supplier verification</h3>
+                    <h3 className="font-semibold text-primary">Supplier verification</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       We vet suppliers and freight forwarders — checking references, confirming
                       terms in writing, and ensuring they can deliver to spec before you commit.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
+                <div className="group flex gap-4">
+                  <span className="icon-tile !h-9 !w-9 shrink-0 !rounded-lg">
+                    <CheckCircle2 className="h-5 w-5" strokeWidth={1.75} />
+                  </span>
                   <div>
-                    <h3 className="font-bold text-primary">One accountable relationship</h3>
+                    <h3 className="font-semibold text-primary">One accountable relationship</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       Corporate clients often need both procurement and travel services for the same
                       project. Managing both through one vendor simplifies coordination and
@@ -1039,7 +968,7 @@ function Index() {
       </section>
 
       {/* Trust Section with Worker Photo */}
-      <section className="border-y border-border bg-primary py-16 text-primary-foreground sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="border-y border-border bg-primary section-y text-primary-foreground">
         <div className="container-page">
           <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <AnimatedSection animation="scale" delay={0}>
@@ -1048,21 +977,23 @@ function Index() {
                   src={trustWorkerImg}
                   alt="Field operations"
                   loading="lazy"
-                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px]"
+                  className="h-full min-h-[260px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[360px]"
                 />
               </div>
             </AnimatedSection>
 
             <div>
-              <h2 className="text-3xl font-bold sm:text-4xl">Why clients keep coming back</h2>
-              <div className="mt-8 grid gap-6 sm:grid-cols-2">
+              <h2 className="heading-section">Why clients keep coming back</h2>
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {trustPoints.map((point) => (
                   <div
                     key={point.title}
-                    className="rounded-2xl border border-primary-foreground/10 bg-primary-deep p-6"
+                    className="group rounded-2xl border border-primary-foreground/10 bg-primary-deep/70 p-6 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-primary-deep"
                   >
-                    <point.icon className="h-7 w-7 text-accent" />
-                    <h3 className="mt-4 font-bold">{point.title}</h3>
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent/15 text-accent transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground">
+                      <point.icon className="h-5 w-5" strokeWidth={1.75} />
+                    </span>
+                    <h3 className="mt-4 font-semibold">{point.title}</h3>
                     <p className="mt-2 text-sm text-primary-foreground/75">{point.body}</p>
                   </div>
                 ))}
@@ -1073,15 +1004,15 @@ function Index() {
       </section>
 
       {/* Explore by Category Strip */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="section-y">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
-            <h2 className="text-center text-3xl font-bold text-primary sm:text-4xl">
+            <h2 className="text-center heading-section text-primary">
               Explore our services
             </h2>
           </AnimatedSection>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
             {/* Oil & Gas */}
             <AnimatedSection animation="scale" delay={0}>
               <Link
@@ -1094,14 +1025,14 @@ function Index() {
                     src={tradeOilGasImg}
                     alt="Oil & Gas"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="img-zoom h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/60 to-primary-deep/5" />
                   <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
                     <p className="text-xs font-bold uppercase tracking-wider text-accent">
                       Energy Trading
                     </p>
-                    <h3 className="mt-1 text-lg font-bold">Oil & Gas</h3>
+                    <h3 className="mt-1 text-lg font-semibold">Oil & Gas</h3>
                   </div>
                 </div>
               </Link>
@@ -1119,14 +1050,14 @@ function Index() {
                     src={bentoTradeSupplyImg}
                     alt="Sourcing & Procurement"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="img-zoom h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/60 to-primary-deep/5" />
                   <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
                     <p className="text-xs font-bold uppercase tracking-wider text-accent">
                       Supply Chain
                     </p>
-                    <h3 className="mt-1 text-lg font-bold">Sourcing & Procurement</h3>
+                    <h3 className="mt-1 text-lg font-semibold">Sourcing & Procurement</h3>
                   </div>
                 </div>
               </Link>
@@ -1144,14 +1075,14 @@ function Index() {
                     src={bentoTradeLogisticsImg}
                     alt="Import/Export"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="img-zoom h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/60 to-primary-deep/5" />
                   <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
                     <p className="text-xs font-bold uppercase tracking-wider text-accent">
                       Logistics & Trade
                     </p>
-                    <h3 className="mt-1 text-lg font-bold">Import/Export</h3>
+                    <h3 className="mt-1 text-lg font-semibold">Import/Export</h3>
                   </div>
                 </div>
               </Link>
@@ -1168,14 +1099,14 @@ function Index() {
                     src={bentoTravelCoupleImg}
                     alt="Travel Services"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="img-zoom h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/60 to-primary-deep/5" />
                   <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
                     <p className="text-xs font-bold uppercase tracking-wider text-accent">
                       Visas & Flights
                     </p>
-                    <h3 className="mt-1 text-lg font-bold">Travel Services</h3>
+                    <h3 className="mt-1 text-lg font-semibold">Travel Services</h3>
                   </div>
                 </div>
               </Link>
@@ -1185,13 +1116,13 @@ function Index() {
       </section>
 
       {/* Testimonials */}
-      <section className="border-y border-border bg-secondary/50 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="border-y border-border bg-secondary/50 section-y">
         <div className="container-page">
           <AnimatedSection animation="fade-up">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">What clients say</h2>
+            <h2 className="heading-section text-primary">What clients say</h2>
           </AnimatedSection>
 
-          <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
+          <div className="mt-10 grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
             {displayTestimonials.map((t, i) => (
               <AnimatedSection
                 key={i}
@@ -1199,19 +1130,31 @@ function Index() {
                 delay={i * 100}
                 className="h-full"
               >
-                <figure className="card-interactive flex h-full min-h-64 flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
+                <figure className="card-interactive flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
                   <div className="flex items-center justify-between">
-                    <Quote className="h-6 w-6 text-accent" />
-                    <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
+                    <Quote className="h-6 w-6 text-accent" strokeWidth={1.5} aria-hidden="true" />
+                    <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
                       {t.division}
                     </span>
                   </div>
-                  <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-foreground/80">
+                  <blockquote className="mt-4 flex-1 text-[0.9375rem] leading-relaxed text-foreground/85">
                     "{t.quote}"
                   </blockquote>
-                  <figcaption className="mt-5 border-t border-border pt-4 text-sm">
-                    <span className="font-bold text-primary">{t.name}</span>
-                    <span className="block text-xs text-muted-foreground">{t.role}</span>
+                  <figcaption className="mt-5 flex items-center gap-3 border-t border-border pt-4 text-sm">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary font-display text-xs font-semibold text-accent"
+                    >
+                      {t.name
+                        .split(" ")
+                        .map((part) => part[0])
+                        .slice(0, 2)
+                        .join("")}
+                    </span>
+                    <span>
+                      <span className="block font-semibold text-primary">{t.name}</span>
+                      <span className="block text-xs text-muted-foreground">{t.role}</span>
+                    </span>
                   </figcaption>
                 </figure>
               </AnimatedSection>
@@ -1221,39 +1164,45 @@ function Index() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
+      <section className="section-y">
         <div className="container-page max-w-3xl">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">Common questions</h2>
-            <p className="mt-3 text-muted-foreground">
+            <h2 className="heading-section text-primary">Common questions</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
               Quick answers to questions we hear most often
             </p>
           </div>
 
-          <div className="mt-10 space-y-3">
+          <div className="mt-8 space-y-3">
             {displayFaqs.map((faq, index) => (
               <div
                 key={index}
-                className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
+                className={`overflow-hidden rounded-2xl border bg-card transition-[border-color,box-shadow] duration-300 ${openFaq === index ? "border-accent/60 shadow-card" : "border-border hover:border-primary/25"}`}
               >
                 <button
                   type="button"
                   aria-expanded={openFaq === index}
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="group flex min-h-16 w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-secondary/50"
+                  className="group flex min-h-16 w-full items-center justify-between gap-4 p-5 text-left"
                 >
-                  <span className="font-bold leading-relaxed text-primary">{faq.question}</span>
+                  <span className="font-semibold leading-snug text-primary">{faq.question}</span>
                   <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-accent transition-transform ${
-                      openFaq === index ? "rotate-180" : ""
+                    className={`h-8 w-8 shrink-0 rounded-full p-1.5 transition-[transform,background-color,color] duration-300 ${
+                      openFaq === index ? "rotate-180 bg-primary text-accent" : "bg-secondary text-primary group-hover:bg-accent-soft"
                     }`}
                   />
                 </button>
-                {openFaq === index && (
-                  <div className="border-t border-border bg-secondary/30 px-5 py-4">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
+                {/* Grid-row trick: animates to the answer's natural height. */}
+                <div
+                  className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                    openFaq === index ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  }`}
+                  inert={openFaq !== index}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
@@ -1262,7 +1211,7 @@ function Index() {
             Don't see your question?{" "}
             <Link
               to="/contact"
-              className="font-bold text-accent-foreground underline underline-offset-4"
+              className="font-semibold text-primary underline decoration-accent decoration-2 underline-offset-4 transition-colors hover:decoration-primary"
             >
               Contact us
             </Link>{" "}
@@ -1272,10 +1221,10 @@ function Index() {
       </section>
 
       {/* Closing CTA */}
-      <section className="bg-primary-deep py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+      <section className="gradient-mesh bg-primary-deep section-y">
+        <div className="container-page relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div>
-            <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">
+            <h2 className="heading-section text-primary-foreground">
               Ready to get started?
             </h2>
             <p className="mt-3 max-w-xl text-primary-foreground/75">
@@ -1287,13 +1236,13 @@ function Index() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               to="/quote"
-              className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
+              className="btn-interactive group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-semibold text-accent-foreground"
             >
-              Get a Quote <ArrowRight className="h-4 w-4" />
+              Get a Quote <ArrowRight className="arrow-nudge h-4 w-4" />
             </Link>
             <Link
               to="/contact"
-              className="btn-interactive inline-flex items-center justify-center rounded-full border-2 border-primary-foreground/30 px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:border-accent hover:text-accent"
+              className="btn-interactive inline-flex min-h-12 items-center justify-center rounded-full border border-primary-foreground/30 bg-primary-foreground/5 px-6 text-sm font-semibold text-primary-foreground hover:border-accent hover:bg-primary-foreground/10"
             >
               Contact us
             </Link>

@@ -1,6 +1,10 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+/* Fonts are self-hosted (served from our own domain and CDN) instead of Google Fonts:
+   no extra connections before text can render. Variable files cover every weight. */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/sora";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -11,8 +15,8 @@
  */
 
 @theme inline {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora Variable", "Sora", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -130,9 +134,52 @@
   --sidebar-ring: oklch(0.78 0.145 72);
 }
 
+/*
+ * Public site palette. Scoped to the public shell so the admin dashboard keeps its own
+ * look. Same navy and gold as the signage, balanced with warm neutrals: the gold is a
+ * touch calmer, page sections alternate between white and a soft warm stone instead of
+ * cool blue-grey, and secondary text is darker for comfortable reading.
+ */
+.site-public {
+  --background: oklch(0.992 0.003 85);
+  --foreground: oklch(0.24 0.035 258);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.035 258);
+
+  --secondary: oklch(0.968 0.008 85);
+  --secondary-foreground: oklch(0.31 0.075 259);
+  --muted: oklch(0.968 0.008 85);
+  --muted-foreground: oklch(0.47 0.022 258);
+
+  --accent: oklch(0.77 0.13 74);
+  --accent-foreground: oklch(0.22 0.06 260);
+  --accent-soft: oklch(0.955 0.035 82);
+  /* Gold that is dark enough to read as text on white and stone. */
+  --accent-ink: oklch(0.52 0.11 68);
+
+  --border: oklch(0.91 0.01 80);
+  --input: oklch(0.89 0.012 80);
+  --ring: oklch(0.31 0.075 259);
+
+  --shadow-card: 0 1px 2px oklch(0.22 0.06 260 / 0.05), 0 4px 16px oklch(0.22 0.06 260 / 0.05);
+  --shadow-elevated: 0 2px 6px oklch(0.22 0.06 260 / 0.06), 0 18px 40px oklch(0.22 0.06 260 / 0.12);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv11", "ss01";
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
+  }
+
+  html,
+  body {
+    /* Decorative elements must never cause sideways scrolling. */
+    overflow-x: clip;
   }
 
   body {
@@ -140,6 +187,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -147,7 +195,28 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
+  }
+
+  .site-public h1,
+  .site-public h2,
+  .site-public h3 {
+    text-wrap: balance;
+  }
+
+  .site-public p {
+    text-wrap: pretty;
+  }
+
+  /* One clear, consistent keyboard focus style across the public site. */
+  .site-public :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .site-public ::selection {
+    background: oklch(0.77 0.13 74 / 0.35);
   }
 
   /* Respect reduced motion preferences */
@@ -158,6 +227,7 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }
@@ -165,49 +235,172 @@
 @utility container-page {
   width: 100%;
   margin-inline: auto;
-  max-width: 80rem;
+  max-width: 76rem;
   padding-inline: 1.25rem;
+  @media (min-width: 768px) {
+    padding-inline: 2rem;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 2.5rem;
+  }
 }
 
-/* Modern UI Enhancements */
+/* Vertical rhythm for page sections: compact on phones, generous but not empty on desktop. */
+@utility section-y {
+  padding-block: 3.5rem;
+  @media (min-width: 768px) {
+    padding-block: 4.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding-block: 5.5rem;
+  }
+}
+
+/* Small uppercase label above a heading. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  &::before {
+    content: "";
+    width: 1.25rem;
+    height: 1px;
+    background: currentColor;
+  }
+}
+
+@utility eyebrow-on-dark {
+  color: var(--color-accent);
+}
+
+@utility text-accent-ink {
+  color: var(--accent-ink);
+}
+
+/* Section heading and its intro line. */
+@utility heading-section {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+@utility lead {
+  font-size: 1rem;
+  line-height: 1.7;
+  @media (min-width: 768px) {
+    font-size: 1.0625rem;
+  }
+}
+
 @layer components {
-  /* Interactive button styles */
+  /* Buttons: a gentle lift and shadow on hover, a firm press. Only transform, shadow
+     and colour animate, so nothing reflows. */
   .btn-interactive {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 200ms var(--ease-out, ease-out),
+      box-shadow 200ms var(--ease-out, ease-out),
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
   }
 
   .btn-interactive:hover {
-    transform: scale(1.03) translateY(-1px);
-    box-shadow: 0 8px 24px oklch(0.22 0.06 260 / 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -8px oklch(0.22 0.06 260 / 0.35);
   }
 
   .btn-interactive:active {
-    transform: scale(0.98) translateY(0);
-    transition-duration: 0.1s;
+    transform: translateY(0) scale(0.98);
+    transition-duration: 80ms;
   }
 
-  /* Card hover effects */
+  /* Arrow that nudges forward when its link or card is hovered. */
+  .arrow-nudge {
+    transition: transform 250ms var(--ease-out, ease-out);
+  }
+
+  .group:hover .arrow-nudge,
+  .btn-interactive:hover .arrow-nudge,
+  a:hover > .arrow-nudge {
+    transform: translateX(4px);
+  }
+
+  /* Cards: lift, deepen the shadow and warm the border. */
   .card-interactive {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 350ms var(--ease-out, ease-out),
+      box-shadow 350ms var(--ease-out, ease-out),
+      border-color 350ms ease;
   }
 
   .card-interactive:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 40px oklch(0.22 0.06 260 / 0.12);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+    border-color: oklch(0.77 0.13 74 / 0.45);
+  }
+
+  /* Photo inside a card: slow, subtle zoom on hover. */
+  .img-zoom {
+    transition: transform 900ms var(--ease-out, ease-out);
+  }
+
+  .group:hover .img-zoom {
+    transform: scale(1.05);
+  }
+
+  /* Underline that draws in from the left. */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 300ms var(--ease-out, ease-out), color 200ms ease;
+  }
+
+  .link-underline:hover,
+  .link-underline[aria-current="page"] {
+    background-size: 100% 1px;
+  }
+
+  /* Icon tile used on feature and trust cards. */
+  .icon-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    transition: transform 350ms var(--ease-out, ease-out), background-color 300ms ease, color 300ms ease;
+  }
+
+  .group:hover .icon-tile {
+    transform: translateY(-2px);
+    background: var(--color-primary);
+    color: var(--color-accent);
   }
 
   /* Glassmorphism effect */
   .glass {
-    background: oklch(0.98 0.005 250 / 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: oklch(0.99 0.003 85 / 0.82);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
   }
 
   .dark .glass {
     background: oklch(0.24 0.05 260 / 0.8);
   }
 
-  /* Gradient mesh backgrounds */
+  /* Soft gold and navy glow behind dark sections. */
   .gradient-mesh {
     position: relative;
     overflow: hidden;
@@ -217,16 +410,9 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(
-        circle at 20% 30%,
-        oklch(0.75 0.145 72 / 0.08) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 80% 70%,
-        oklch(0.31 0.075 259 / 0.08) 0%,
-        transparent 50%
-      );
+    background:
+      radial-gradient(circle at 15% 20%, oklch(0.77 0.13 74 / 0.12) 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, oklch(0.45 0.09 259 / 0.25) 0%, transparent 50%);
     pointer-events: none;
   }
 
@@ -244,42 +430,25 @@
     mix-blend-mode: overlay;
   }
 
-  /* Pulse animation for WhatsApp button */
-  @keyframes pulse-scale {
-    0%,
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-  }
-
-  .animate-pulse-scale {
-    animation: pulse-scale 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
   /* Stagger animations */
   .stagger-1 {
     animation-delay: 0ms;
   }
   .stagger-2 {
-    animation-delay: 100ms;
+    animation-delay: 90ms;
   }
   .stagger-3 {
-    animation-delay: 200ms;
+    animation-delay: 180ms;
   }
   .stagger-4 {
-    animation-delay: 300ms;
+    animation-delay: 270ms;
   }
 
-  /* Hero entrance animation */
+  /* Entrance animations: short distance, quick settle. They play once; nothing loops. */
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(2rem);
+      transform: translateY(1rem);
     }
     to {
       opacity: 1;
@@ -296,74 +465,48 @@
     }
   }
 
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem) scale(0.98);
     }
-    50% {
-      transform: translateY(-12px);
-    }
-  }
-
-  @keyframes float-delayed {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-8px);
+    to {
+      opacity: 1;
+      transform: none;
     }
   }
 
   .animate-fade-up {
-    animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: fade-up 0.7s var(--ease-out, ease-out) both;
   }
 
   .animate-fade-in {
     animation: fade-in 0.5s ease-out both;
   }
 
-  .animate-float-slow {
-    animation: float 6s ease-in-out infinite;
+  .animate-settle {
+    animation: settle 0.9s var(--ease-out, ease-out) both;
   }
 
-  .animate-float-delayed {
-    animation: float-delayed 5s ease-in-out infinite 1s;
-  }
-
-  /* Form input focus animation */
+  /* Form input focus */
   .input-focus {
-    transition: all 0.2s ease-out;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
   }
 
   .input-focus:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px oklch(0.75 0.145 72 / 0.15);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px oklch(0.77 0.13 74 / 0.25);
   }
 
   /* Floating label */
   .floating-label {
-    transition: all 0.2s ease-out;
+    transition: transform 200ms ease-out, color 200ms ease-out;
   }
 
   .input-focus:focus ~ .floating-label,
   .input-focus:not(:placeholder-shown) ~ .floating-label {
     transform: translateY(-1.5rem) scale(0.875);
-    color: var(--color-accent);
-  }
-
-  /* Offset & Enlarge Card Animations */
-  @keyframes pulse-slow {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
-  }
-
-  .animate-pulse-slow {
-    animation: pulse-slow 2s ease-in-out infinite;
+    color: var(--accent-ink);
   }
 
   /* Custom scrollbar for card back */

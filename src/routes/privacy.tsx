@@ -31,7 +31,7 @@ function PrivacyPage() {
         title="Privacy Policy"
         subtitle="How we collect, use, and protect your personal information"
       />
-      <section className="py-16">
+      <section className="section-y">
         <div className="container-page max-w-3xl">
           <div className="rounded-lg border border-border bg-secondary/50 p-6 mb-8">
             <p className="text-sm text-muted-foreground">

@@ -38,7 +38,7 @@ function QuotePage() {
         subtitle="One form for both divisions. Fill it in and submit — we will come back with requirements, timelines and pricing within 24 hours."
       />
 
-      <section className="bg-secondary/50 py-16">
+      <section className="bg-secondary/50 section-y">
         <div className="container-page max-w-3xl">
           <InquiryForm
             title="Request a quote"

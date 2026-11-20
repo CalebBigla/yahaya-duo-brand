@@ -40,8 +40,8 @@ export function TourPackagesCards() {
         <div className="inline-flex items-center justify-center rounded-full bg-accent-soft p-3 mb-4">
           <Map className="h-8 w-8 text-accent-foreground" />
         </div>
-        <h2 className="text-2xl font-bold text-primary sm:text-3xl">Tour Packages</h2>
-        <p className="mt-3 text-lg font-semibold text-accent-foreground/80">
+        <h2 className="heading-section text-primary">Tour Packages</h2>
+        <p className="mt-3 text-lg font-medium text-accent-ink">
           Complete travel experiences from start to finish
         </p>
         <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -56,7 +56,7 @@ export function TourPackagesCards() {
         {tourPackages.map((feature, index) => (
           <div
             key={index}
-            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-accent/50 hover:-translate-y-1"
+            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-card card-interactive"
           >
             {/* Accent line on top */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 via-accent to-accent/50 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
@@ -67,7 +67,7 @@ export function TourPackagesCards() {
                   <CheckCircle2 className="h-6 w-6 text-accent transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-primary group-hover:text-accent transition-colors duration-300">
+                  <h3 className="font-bold text-primary group-hover:text-accent-ink transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -142,7 +142,7 @@ export function TourPackagesCards() {
             <Calendar className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-accent-foreground/70 mb-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-ink mb-2">
               Example Scenario
             </p>
             <p className="text-sm leading-relaxed text-foreground/90">

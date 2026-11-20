@@ -3,12 +3,12 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Import country images
-import turkeyImg from '@/assets/Turkey.jpg';
-import dubaiImg from '@/assets/Dubai.jpg';
-import egyptImg from '@/assets/Egypt.jpg';
-import qatarImg from '@/assets/qatar beuty.jpg';
-import chinaImg from '@/assets/Chinese beauty.jpg';
-import saudiImg from '@/assets/Saudi Arabia beauty.jpg';
+import turkeyImg from '@/assets/Turkey.webp';
+import dubaiImg from '@/assets/Dubai.webp';
+import egyptImg from '@/assets/Egypt.webp';
+import qatarImg from '@/assets/qatar beuty.webp';
+import chinaImg from '@/assets/Chinese beauty.webp';
+import saudiImg from '@/assets/Saudi Arabia beauty.webp';
 
 interface CountryDestination {
   name: string;
@@ -100,14 +100,14 @@ export function CountryCarousel() {
               key={destination.name}
               className="relative min-w-0 flex-[0_0_85%] sm:flex-[0_0_48%] lg:flex-[0_0_24%]"
             >
-              <div className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:shadow-2xl">
+              <div className="group relative overflow-hidden rounded-2xl card-interactive shadow-card">
                 {/* Image Container */}
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
                     src={destination.image}
                     alt={destination.alt}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="h-full w-full object-cover img-zoom"
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-500 group-hover:from-black/90" />
@@ -115,7 +115,7 @@ export function CountryCarousel() {
 
                 {/* Country Name Overlay */}
                 <div className="absolute inset-0 flex items-end p-6">
-                  <h3 className="text-3xl font-bold text-white transition-all duration-500 group-hover:scale-110 group-hover:text-accent">
+                  <h3 className="text-3xl font-bold text-white transition-colors duration-500 group-hover:text-accent">
                     {destination.name}
                   </h3>
                 </div>
@@ -149,18 +149,23 @@ export function CountryCarousel() {
       </div>
 
       {/* Pagination Dots */}
-      <div className="mt-6 flex justify-center gap-2">
+      <div className="mt-6 flex justify-center gap-1">
         {destinations.map((_, index) => (
+          // A 24px tap target around a small visual dot.
           <button
             key={index}
+            type="button"
             onClick={() => emblaApi?.scrollTo(index)}
-            className={`h-2 rounded-full transition-all ${
-              index === selectedIndex
-                ? 'w-8 bg-accent'
-                : 'w-2 bg-gray-300 hover:bg-accent/50'
-            }`}
+            className="group flex h-6 min-w-6 items-center justify-center px-1"
             aria-label={`Go to slide ${index + 1}`}
-          />
+            aria-current={index === selectedIndex ? "true" : undefined}
+          >
+            <span
+              className={`block h-2 rounded-full transition-[width,background-color] duration-300 ${
+                index === selectedIndex ? "w-8 bg-primary" : "w-2 bg-border group-hover:bg-accent"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>

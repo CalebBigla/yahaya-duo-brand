@@ -56,10 +56,10 @@ function ContactPage() {
         subtitle="Call, message on WhatsApp, email, or walk into the office in Jimeta-Yola. Travel or trade — we will point you to the right desk."
       />
 
-      <section className="py-16">
+      <section className="section-y">
         <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.2fr]">
           <div className="space-y-6">
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <h2 className="font-display text-lg font-bold text-primary">Office</h2>
               <p className="mt-3 flex gap-2 text-sm text-muted-foreground">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
@@ -99,15 +99,15 @@ function ContactPage() {
                 href={whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 text-sm font-bold text-accent-foreground transition-opacity hover:opacity-90"
+                className="btn-interactive mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground"
               >
                 <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
               </a>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <h2 className="flex items-center gap-2 font-display text-lg font-bold text-primary">
-                <Clock className="h-5 w-5 text-accent" /> Business hours
+                <Clock className="h-5 w-5 text-accent-ink" strokeWidth={1.75} /> Business hours
               </h2>
               <ul className="mt-4 space-y-2 text-sm">
                 {hours.map((h) => (
@@ -169,7 +169,7 @@ function ContactPage() {
         </div>
       </section>
 
-      <section className="pb-16">
+      <section className="pb-14 md:pb-20">
         <div className="container-page">
           <div className="overflow-hidden rounded-xl border border-border shadow-card">
             <iframe

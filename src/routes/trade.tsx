@@ -16,15 +16,15 @@ import { PageHero } from "@/components/site/PageHero";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { tradeServices } from "@/lib/site";
 import { getPublishedServices } from "@/lib/queries/website";
-import tradeImg from "@/assets/trade.jpg";
+import tradeImg from "@/assets/trade.webp";
 
 // Page hero image
-import heroImg from "@/assets/Import export training in karachi lahore islamabad pakistan.jpg";
+import heroImg from "@/assets/Import export training in karachi lahore islamabad pakistan.webp";
 
 // Service section images
-import oilGasImg from "@/assets/The Last Bow at Dusk.jpg";
-import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
-import procurementImg from "@/assets/petroleum engineering.jpg";
+import oilGasImg from "@/assets/The Last Bow at Dusk.webp";
+import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
+import procurementImg from "@/assets/petroleum engineering.webp";
 
 const title = "Procurement & Trading Services in Yola | Yahaya Travel & Trade";
 const description =
@@ -261,16 +261,17 @@ function TradePage() {
           src={heroImg}
           alt="Global logistics and trade operations"
           loading="eager"
+          fetchPriority="high"
           className="h-96 w-full object-cover lg:h-[28rem]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/85 to-primary-deep/70" />
         <div className="absolute inset-0 flex items-center">
           <div className="container-page">
             <div className="max-w-3xl">
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">
+              <p className="eyebrow eyebrow-on-dark">
                 Trade Division · General Contracts
               </p>
-              <h1 className="mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
+              <h1 className="mt-4 text-4xl font-bold leading-[1.08] tracking-[-0.03em] text-primary-foreground sm:text-5xl lg:text-[3.5rem]">
                 Trade activities
               </h1>
               <p className="mt-5 text-lg leading-relaxed text-primary-foreground/85">
@@ -286,7 +287,7 @@ function TradePage() {
       <section className="border-b border-border bg-primary text-primary-foreground">
         <div className="container-page grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
           <div>
-            <h2 className="text-2xl font-bold sm:text-3xl">
+            <h2 className="heading-section">
               Comprehensive trade solutions without the guesswork
             </h2>
             <p className="mt-4 text-primary-foreground/75">
@@ -298,19 +299,19 @@ function TradePage() {
             </p>
             <ul className="mt-6 space-y-2 text-sm font-medium text-primary-foreground/85">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Verified suppliers with due diligence and transparent pricing
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Logistics, clearing, regulatory compliance and documentation coordinated
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Trade consultancy: feasibility studies, market entry strategies, compliance advisory
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.75} />
                 Registered company, RC 9295358 — contract-ready for corporate, NGO, and government
                 clients
               </li>
@@ -335,7 +336,7 @@ function TradePage() {
           <section
             key={service.slug}
             id={service.slug}
-            className={`scroll-mt-24 py-14 sm:py-16 ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
+            className={`scroll-mt-24 section-y ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
           >
             <div className="container-page">
               <div className="grid gap-6 md:grid-cols-[auto_1fr] md:gap-10">
@@ -343,17 +344,17 @@ function TradePage() {
                   <Icon className="h-7 w-7 text-accent" />
                 </div>
                 <div className="max-w-3xl">
-                  <h2 className="text-2xl font-bold text-primary sm:text-3xl">{service.title}</h2>
-                  <p className="mt-2 font-semibold text-accent-foreground/80">{service.summary}</p>
+                  <h2 className="heading-section text-primary">{service.title}</h2>
+                  <p className="mt-2 font-medium text-accent-ink">{service.summary}</p>
                   <p className="mt-4 leading-relaxed text-muted-foreground">{service.detail}</p>
                 </div>
               </div>
 
               {details && (
                 <div className="mt-8 grid gap-6 lg:grid-cols-2">
-                  <div className="rounded-xl border border-border bg-card p-6 shadow-card">
+                  <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-accent" />
+                      <CheckCircle2 className="h-5 w-5 text-accent-ink" strokeWidth={1.75} />
                       <h3 className="font-bold text-primary">Categories we handle</h3>
                     </div>
                     <ul className="mt-4 space-y-2">
@@ -370,9 +371,9 @@ function TradePage() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+                    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
                       <div className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-accent" />
+                        <FileText className="h-5 w-5 text-accent-ink" strokeWidth={1.75} />
                         <h3 className="text-sm font-bold text-primary">How the process works</h3>
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -380,9 +381,9 @@ function TradePage() {
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+                    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-accent" />
+                        <Clock className="h-5 w-5 text-accent-ink" strokeWidth={1.75} />
                         <h3 className="text-sm font-bold text-primary">Typical lead time</h3>
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -492,10 +493,10 @@ function TradePage() {
       })}
 
       {/* Interactive Trade Enquiry Form */}
-      <section id="inquiry-form" className="scroll-mt-20 bg-primary-deep py-16">
+      <section id="inquiry-form" className="scroll-mt-20 gradient-mesh bg-primary-deep section-y">
         <div className="container-page max-w-3xl">
           <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold text-primary-foreground sm:text-3xl">
+            <h2 className="heading-section text-primary-foreground">
               Request a quote
             </h2>
             <p className="mt-2 text-sm text-primary-foreground/75">

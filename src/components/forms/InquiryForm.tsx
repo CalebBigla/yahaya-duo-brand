@@ -231,7 +231,7 @@ export function InquiryForm({
             <button
               type="submit"
               disabled={status === 'submitting'}
-              className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+              className="btn-interactive inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-semibold text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
             >
               {status === 'submitting' ? (
                 <>
