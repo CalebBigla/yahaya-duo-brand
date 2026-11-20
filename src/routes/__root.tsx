@@ -18,7 +18,7 @@ import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
-import { WhatsAppFab } from "@/components/site/WhatsAppButton";
+import { AdvisorButton } from "@/components/site/AdvisorButton";
 import { LoadingState } from "@/components/site/LoadingState";
 // The admin shell (sidebar, command palette, live notifications, dialogs) is only
 // downloaded when someone opens /admin, not by every public visitor.
@@ -28,7 +28,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/lib/theme";
 import { AdminAuthContext, type AdminAuthState } from "@/components/admin/AdminAuthContext";
 import { checkAdminAccess, InactivityManager } from "@/lib/auth";
-import { site } from "@/lib/site";
+import { site, toE164 } from "@/lib/site";
 import { brand } from "@/lib/brand";
 import { Compass, Home, MessageCircle } from "lucide-react";
 
@@ -129,23 +129,16 @@ const localBusinessJsonLd = {
     addressRegion: site.address.region,
     addressCountry: "NG",
   },
-  telephone: site.phones.map((p) => `+234${p.slice(1)}`),
+  telephone: site.phones.map(toE164),
   email: site.email,
   areaServed: "Nigeria",
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "08:00",
-      closes: "18:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Saturday"],
-      opens: "09:00",
-      closes: "16:00",
-    },
-  ],
+  // Same list the footer and contact page show (site.hours), so they never disagree.
+  openingHoursSpecification: site.hours.map((h) => ({
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: h.dayOfWeek,
+    opens: h.opens,
+    closes: h.closes,
+  })),
 };
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -234,12 +227,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <div className="site-public flex min-h-screen flex-col">
         <Navbar />
-        <main className="flex-1">
+        <main id="main" tabIndex={-1} className="flex-1 outline-none">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
         <Footer />
-        <WhatsAppFab />
+        <AdvisorButton />
       </div>
     </QueryClientProvider>
   );

@@ -18,7 +18,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { CountryCarousel } from "@/components/travel/CountryCarousel";
 import { TourPackagesCards } from "@/components/travel/TourPackagesCards";
-import { travelServices, site } from "@/lib/site";
+import { travelServices, site, toE164 } from "@/lib/site";
 import { getPublishedServices, getPublishedVisaDestinations } from "@/lib/queries/website";
 import travelImg from "@/assets/travel.webp";
 
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/travel")({
           "@type": "TravelAgency",
           name: `${site.name} — Travel Division`,
           description,
-          telephone: `+234${site.phones[0].slice(1)}`,
+          telephone: toE164(site.phones[0]),
           email: site.email,
           address: {
             "@type": "PostalAddress",

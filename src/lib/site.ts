@@ -13,13 +13,27 @@ export const site = {
   phones: ["+234 806 343 6192"],
   whatsappNumber: "2349127650968",
   email: "yahayageneralcontracts@gmail.com",
+  /**
+   * Opening hours: the single source for the footer, the contact page and the
+   * LocalBusiness structured data (unless Settings provides business_hours).
+   * TODO(owner): confirm Sunday. The site has shown Sunday 9:00 AM – 4:00 PM while
+   * the structured data said closed; both now follow this list.
+   */
   hours: [
-    { days: "Monday – Friday", time: "8:00 AM – 6:00 PM" },
-    { days: "Saturday", time: "9:00 AM – 4:00 PM" },
-    { days: "Sunday", time: "9:00 AM – 4:00 PM" },
+    { days: "Monday – Friday", time: "8:00 AM – 6:00 PM", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:00", closes: "18:00" },
+    { days: "Saturday", time: "9:00 AM – 4:00 PM", dayOfWeek: ["Saturday"], opens: "09:00", closes: "16:00" },
+    { days: "Sunday", time: "9:00 AM – 4:00 PM", dayOfWeek: ["Sunday"], opens: "09:00", closes: "16:00" },
   ],
   mapQuery: "B.M+Yelwa+Plaza,+Bachure+Junction,+Jimeta-Yola,+Adamawa+State,+Nigeria",
 } as const;
+
+/** "+234 806 343 6192" or "0806 343 6192" -> "+2348063436192" for tel: links and structured data. */
+export function toE164(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("234")) return `+${digits}`;
+  if (digits.startsWith("0")) return `+234${digits.slice(1)}`;
+  return `+${digits}`;
+}
 
 export function whatsappLink(message: string) {
   return `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(message)}`;
