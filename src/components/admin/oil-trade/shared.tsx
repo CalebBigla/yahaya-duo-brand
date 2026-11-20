@@ -34,7 +34,7 @@ export {
   LoadingRows,
   ErrorBanner,
 } from '@/components/admin/ui';
-import { Modal, Field, FormError, inputClass, secondaryButton } from '@/components/admin/ui';
+import { Modal, Field, FormError, inputClass, secondaryButton, btn, segmentClass } from '@/components/admin/ui';
 
 // ---------------------------------------------------------------------------
 // Date range
@@ -101,7 +101,7 @@ export function DateRangeFilter({ value, onChange }: { value: DateRange; onChang
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div role="radiogroup" aria-label="Date range" className="inline-flex flex-wrap rounded-lg border border-gray-200 bg-white p-0.5 dark:border-white/10 dark:bg-gray-900">
+      <div role="radiogroup" aria-label="Date range" className="inline-flex flex-wrap items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5">
         {PRESETS.map((p) => (
           <button
             key={p.value}
@@ -109,11 +109,7 @@ export function DateRangeFilter({ value, onChange }: { value: DateRange; onChang
             role="radio"
             aria-checked={value.preset === p.value}
             onClick={() => onChange(rangeFor(p.value, value))}
-            className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-              value.preset === p.value
-                ? 'bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900'
-                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
-            }`}
+            className={segmentClass(value.preset === p.value)}
           >
             {p.label}
           </button>
@@ -233,7 +229,7 @@ export function VoidDialog({
             type="submit"
             form="void-form"
             disabled={busy || reason.trim().length < 3}
-            className="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-rose-700 disabled:opacity-60"
+            className={btn('danger')}
           >
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             Void record

@@ -1,12 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, chipClass, iconButton, iconDangerButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { CardGridPageSkeleton } from '@/components/admin/SkeletonLoader';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
 import { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Upload, X, Save } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Upload, X, Save, Loader2 } from 'lucide-react';
+import { ACCEPTED_IMAGE_TYPES, isCloudinaryConfigured, titleFromFilename, uploadImage } from '@/lib/cloudinary';
 import { supabase } from '@/lib/supabase';
 import { DeleteConfirmation } from '@/components/admin/DeleteConfirmation';
 import { toast } from 'sonner';
@@ -49,6 +50,8 @@ function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -99,7 +102,7 @@ function GalleryPage() {
     const wasCreating = isCreating;
 
     if (!editingItem.title || !editingItem.image_url) {
-      toast.error('Please fill in the title and image URL.');
+      toast.error('Please add a title and an image.');
       return;
     }
 
@@ -184,11 +187,7 @@ function GalleryPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeCategory === 'all'
-                ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/15'
-            }`}
+            className={chipClass(activeCategory === 'all')}
           >
             All ({items.length})
           </button>
@@ -196,11 +195,7 @@ function GalleryPage() {
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeCategory === cat.value
-                  ? 'bg-teal-600 text-white'
-                  : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/15'
-              }`}
+              className={chipClass(activeCategory === cat.value)}
             >
               {cat.label} ({items.filter((i) => i.category === cat.value).length})
             </button>
@@ -211,7 +206,7 @@ function GalleryPage() {
         <div>
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+            className={btn('primary')}
           >
             <Plus className="w-4 h-4" />
             Add Image
@@ -228,7 +223,7 @@ function GalleryPage() {
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white dark:bg-gray-900 border rounded-lg overflow-hidden hover:border-teal-300 transition-colors"
+                className="bg-white dark:bg-gray-900 border rounded-lg overflow-hidden hover:border-blue-300 transition-colors"
               >
                 <div className="aspect-video bg-gray-100 dark:bg-white/10 relative">
                   <img
@@ -264,14 +259,14 @@ function GalleryPage() {
                     <div className="flex gap-1">
                       <button
                         onClick={() => setEditingItem(item)}
-                        className="p-1.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 rounded"
+                        className={iconButton}
                         title="Edit"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleToggleStatus(item)}
-                        className="p-1.5 text-teal-600 hover:bg-teal-50 rounded"
+                        className={iconButton}
                         title={item.status === 'published' ? 'Unpublish' : 'Publish'}
                       >
                         {item.status === 'published' ? (
@@ -280,7 +275,7 @@ function GalleryPage() {
                           <Eye className="w-4 h-4" />
                         )}
                       </button>
-                      <DeleteConfirmation trigger={<button className="p-1.5 text-red-600 hover:bg-red-50 rounded" title="Delete" aria-label={`Delete ${item.title}`}><Trash2 className="w-4 h-4" /></button>} title="Delete gallery item?" description="Are you sure you want to delete this gallery item? This action cannot be undone." detail={item.title} successMessage="Gallery item deleted successfully." errorMessage="Unable to delete this gallery item. Please try again." onConfirm={() => handleDelete(item)} />
+                      <DeleteConfirmation trigger={<button className={iconDangerButton} title="Delete" aria-label={`Delete ${item.title}`}><Trash2 className="w-4 h-4" /></button>} title="Delete gallery item?" description="Are you sure you want to delete this gallery item? This action cannot be undone." detail={item.title} successMessage="Gallery item deleted successfully." errorMessage="Unable to delete this gallery item. Please try again." onConfirm={() => handleDelete(item)} />
                     </div>
                   </div>
                 </div>
@@ -302,7 +297,7 @@ function GalleryPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className={iconButton}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -315,7 +310,7 @@ function GalleryPage() {
                     type="text"
                     value={editingItem.title}
                     onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="e.g., Dubai Tour 2024"
                   />
                 </div>
@@ -330,7 +325,7 @@ function GalleryPage() {
                       setEditingItem({ ...editingItem, description: e.target.value })
                     }
                     rows={2}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Optional description"
                   />
                 </div>
@@ -340,15 +335,54 @@ function GalleryPage() {
                     Image URL *
                   </label>
                   <div className="space-y-2">
-                    <input
-                      type="text"
-                      value={editingItem.image_url}
-                      onChange={(e) =>
-                        setEditingItem({ ...editingItem, image_url: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      placeholder="https://..."
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={editingItem.image_url}
+                        onChange={(e) =>
+                          setEditingItem({ ...editingItem, image_url: e.target.value })
+                        }
+                        className="min-w-0 flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Upload an image or paste a link"
+                      />
+                      <label
+                        className={`${btn('secondary')} ${uploading || !isCloudinaryConfigured() ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
+                        aria-busy={uploading || undefined}
+                      >
+                        {uploading ? <Loader2 className="animate-spin" /> : <Upload />}
+                        {uploading ? `${Math.round(uploadProgress * 100)}%` : 'Upload'}
+                        <input
+                          type="file"
+                          accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                          className="sr-only"
+                          disabled={uploading || !isCloudinaryConfigured()}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = '';
+                            if (!file) return;
+                            setUploading(true);
+                            setUploadProgress(0);
+                            try {
+                              const uploaded = await uploadImage(file, { onProgress: setUploadProgress });
+                              setEditingItem((current) =>
+                                current
+                                  ? {
+                                      ...current,
+                                      image_url: uploaded.url,
+                                      title: current.title || titleFromFilename(file.name),
+                                    }
+                                  : current,
+                              );
+                              toast.success('Image uploaded. Save to keep it.');
+                            } catch (err) {
+                              toast.error(err instanceof Error ? err.message : 'Upload failed.');
+                            } finally {
+                              setUploading(false);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
                     {editingItem.image_url && (
                       <div className="border rounded-lg p-2 bg-gray-50 dark:bg-white/5">
                         <img
@@ -373,7 +407,7 @@ function GalleryPage() {
                     type="text"
                     value={editingItem.alt_text || ''}
                     onChange={(e) => setEditingItem({ ...editingItem, alt_text: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Describe the image for screen readers"
                   />
                 </div>
@@ -388,7 +422,7 @@ function GalleryPage() {
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, category: e.target.value as any })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>
@@ -407,7 +441,7 @@ function GalleryPage() {
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, display_order: parseInt(e.target.value) })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -419,13 +453,13 @@ function GalleryPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                  className={btn('primary')}
                 >
                   <Save className="w-4 h-4" />
                   {isCreating ? 'Add Image' : 'Save Changes'}

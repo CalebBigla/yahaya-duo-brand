@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Ban, SlidersHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { segmentClass } from '@/components/admin/ui';
 import {
   fmtMoney,
   fmtQty,
@@ -394,7 +395,7 @@ function AdjustmentForm({
             </select>
           </Field>
           <Field label="Direction" required>
-            <div role="radiogroup" className="inline-flex w-full rounded-lg border border-gray-300 p-0.5 dark:border-white/10">
+            <div role="radiogroup" className="flex w-full items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5">
               {(['decrease', 'increase'] as const).map((d) => (
                 <button
                   key={d}
@@ -402,9 +403,7 @@ function AdjustmentForm({
                   role="radio"
                   aria-checked={direction === d}
                   onClick={() => setDirection(d)}
-                  className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium ${
-                    direction === d ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'text-gray-600 dark:text-gray-400'
-                  }`}
+                  className={`${segmentClass(direction === d)} flex-1`}
                 >
                   {d === 'decrease' ? 'Decrease (loss)' : 'Increase (gain)'}
                 </button>

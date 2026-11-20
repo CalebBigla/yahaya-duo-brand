@@ -31,6 +31,7 @@ import {
   ChevronsUpDown,
   Fuel,
   type LucideIcon,
+  Images,
 } from 'lucide-react';
 import { signOut, type AdminUser } from '@/lib/auth';
 import { useTheme } from '@/lib/theme';
@@ -41,6 +42,7 @@ import { LiveIndicator } from '@/components/admin/LiveIndicator';
 import { CommandPalette, type PaletteLink } from '@/components/admin/CommandPalette';
 import { NotificationsProvider, useNotifications } from '@/lib/notifications';
 
+import { iconButtonLg } from '@/components/admin/ui';
 interface AdminLayoutProps {
   children: ReactNode;
   adminUser: AdminUser | null;
@@ -136,6 +138,7 @@ function AdminShell({ children, adminUser }: AdminLayoutProps) {
       title: 'Workspace',
       items: [
         { name: 'Website', path: '/admin/website', icon: Globe },
+        { name: 'Media', path: '/admin/media', icon: Images },
         ...(isOwner ? [{ name: 'Audit Log', path: '/admin/audit-log', icon: ClipboardList }] : []),
         { name: 'Settings', path: '/admin/settings', icon: Settings },
       ],
@@ -194,7 +197,7 @@ function AdminShell({ children, adminUser }: AdminLayoutProps) {
             <DialogPrimitive.Title className="sr-only">Navigation</DialogPrimitive.Title>
             <div className="flex items-center justify-between pr-3">
               <Brand collapsed={false} />
-              <DialogPrimitive.Close className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5">
+              <DialogPrimitive.Close className={iconButtonLg}>
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close navigation</span>
               </DialogPrimitive.Close>
@@ -213,7 +216,7 @@ function AdminShell({ children, adminUser }: AdminLayoutProps) {
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 lg:hidden dark:text-gray-400 dark:hover:bg-white/5"
+            className={`${iconButtonLg} lg:hidden`}
             aria-label="Open navigation"
           >
             <Menu className="h-5 w-5" />
@@ -221,7 +224,7 @@ function AdminShell({ children, adminUser }: AdminLayoutProps) {
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="hidden h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 lg:flex dark:text-gray-400 dark:hover:bg-white/5"
+            className={`${iconButtonLg} !hidden lg:!inline-flex`}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
@@ -445,7 +448,7 @@ function ThemeMenu() {
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+          className={iconButtonLg}
           aria-label="Change theme"
         >
           <Current className="h-[18px] w-[18px]" />

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, chipClass, iconButton, iconButtonLg, iconDangerButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -368,21 +368,21 @@ function ClientsPage() {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+              className={btn('secondary')}
             >
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className={btn('secondary')}
             >
               <Download className="h-4 w-4" />
               Export
             </button>
             <button
               onClick={handleAdd}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className={btn('primary')}
             >
               <Plus className="h-4 w-4" />
               Add Client
@@ -457,7 +457,7 @@ function ClientsPage() {
 
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className={btn('secondary')}
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -474,11 +474,7 @@ function ClientsPage() {
                     <button
                       key={status}
                       onClick={() => setFilterStatus(status as FilterStatus)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                        filterStatus === status
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
+                      className={chipClass(filterStatus === status)}
                     >
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </button>
@@ -486,11 +482,7 @@ function ClientsPage() {
                   <button
                     onClick={() => setShowArchived(!showArchived)}
                     aria-pressed={showArchived}
-                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                      showArchived
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    className={chipClass(showArchived)}
                   >
                     <Archive className="h-3.5 w-3.5" />
                     Show archived
@@ -505,11 +497,7 @@ function ClientsPage() {
                     <button
                       key={type}
                       onClick={() => setFilterType(type as FilterType)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                        filterType === type
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
+                      className={chipClass(filterType === type)}
                     >
                       {type.charAt(0).toUpperCase() + type.slice(1)}
                     </button>
@@ -530,7 +518,7 @@ function ClientsPage() {
                     setShowArchived(false);
                     setSearchQuery('');
                   }}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className={btn('link')}
                 >
                   Clear filters
                 </button>
@@ -553,7 +541,7 @@ function ClientsPage() {
               {clients.length === 0 && (
                 <button
                   onClick={handleAdd}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  className={`${btn('primary')} mt-4`}
                 >
                   <Plus className="h-4 w-4" />
                   Add Client
@@ -660,7 +648,7 @@ function ClientsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleEdit(client)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className={iconButton}
                             title="Edit client"
                           >
                             <Edit className="h-4 w-4" />
@@ -668,7 +656,7 @@ function ClientsPage() {
                           {client.status === 'inactive' ? (
                             <button
                               onClick={() => handleRestore(client)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
+                              className={iconButton}
                               title="Restore client"
                               aria-label={`Restore ${client.name}`}
                             >
@@ -676,7 +664,7 @@ function ClientsPage() {
                             </button>
                           ) : (
                             <DeleteConfirmation
-                              trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20" title="Archive client" aria-label={`Archive ${client.name}`}><Archive className="h-4 w-4" /></button>}
+                              trigger={<button className={iconDangerButton} title="Archive client" aria-label={`Archive ${client.name}`}><Archive className="h-4 w-4" /></button>}
                               title="Archive client?"
                               description="The client will be hidden from lists and pickers. Their quotes and payments are kept, and you can restore them any time from Filters → Show archived."
                               detail={client.name}
@@ -713,7 +701,7 @@ function ClientsPage() {
                   resetForm();
                   setSelectedClient(null);
                 }}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={iconButtonLg}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -900,14 +888,14 @@ function ClientsPage() {
                     resetForm();
                     setSelectedClient(null);
                   }}
-                  className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                  className={btn('primary')}
                 >
                   {isSubmitting ? 'Saving...' : showEditModal ? 'Update Client' : 'Add Client'}
                 </button>

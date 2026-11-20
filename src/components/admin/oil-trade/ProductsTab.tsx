@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pencil, Plus, Power, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { OIL_UNITS, UNIT_LABEL, oilApi, unitShort, type OilProduct, type OilUnit } from '@/lib/oilTrade';
+import { btn } from '@/components/admin/ui';
 import {
   EmptyState,
   Field,
@@ -253,7 +254,7 @@ function ProductForm({
             {unused.length > 0 && (
               <button
                 type="button"
-                className="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                className={btn('link', 'sm')}
                 onClick={() => setConversions((c) => [...c, { unit: unused[0] as OilUnit, factor: '' }])}
               >
                 + Add unit

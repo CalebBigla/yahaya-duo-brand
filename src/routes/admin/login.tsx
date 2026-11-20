@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { signIn, checkAdminAccess } from '@/lib/auth';
 import { Mail, Lock, AlertCircle, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 
+import { btn } from '@/components/admin/ui';
 export const Route = createFileRoute('/admin/login')({
   component: AdminLogin,
 });
@@ -189,7 +190,7 @@ function AdminLogin() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                  className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-gray-400 transition-colors hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:text-gray-300"
                   disabled={isLoading || isRateLimited}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
@@ -206,7 +207,7 @@ function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading || isRateLimited}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-50"
+              className={`${btn('primary', 'lg')} w-full`}
             >
               {isLoading ? (
                 <>

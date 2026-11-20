@@ -44,6 +44,7 @@ import {
 } from 'date-fns';
 import { DashboardPageSkeleton } from '@/components/admin/SkeletonLoader';
 
+import { btn, segmentClass } from '@/components/admin/ui';
 export const Route = createFileRoute('/admin/')({
   // The admin session lives in localStorage, so auth can only be checked in the browser.
   // Without this, beforeLoad ran during SSR, found no session and 307-redirected to login.
@@ -440,7 +441,7 @@ function AdminDashboard() {
               type="button"
               onClick={() => void loadAll(period)}
               disabled={isRefreshing}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:text-gray-900 disabled:opacity-60 dark:border-white/10 dark:bg-gray-900 dark:text-gray-400 dark:hover:text-white"
+              className={`${btn('secondary')} !w-9 !px-0`}
               aria-label="Refresh dashboard"
             >
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -448,7 +449,7 @@ function AdminDashboard() {
             <div
               role="radiogroup"
               aria-label="Time period"
-              className="inline-flex rounded-lg border border-gray-200 bg-white p-0.5 dark:border-white/10 dark:bg-gray-900"
+              className="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5"
             >
               {PERIODS.map((p) => (
                 <button
@@ -458,11 +459,7 @@ function AdminDashboard() {
                   aria-checked={period === p.value}
                   aria-label={p.long}
                   onClick={() => setPeriod(p.value)}
-                  className={`min-w-[3rem] rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                    period === p.value
-                      ? 'bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900'
-                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
-                  }`}
+                  className={`${segmentClass(period === p.value)} min-w-[3rem]`}
                 >
                   {p.short}
                 </button>
@@ -677,7 +674,7 @@ function CashFlowCard({ data, periodLabel }: { data: CashFlowPoint[]; periodLabe
             </ul>
           )}
           {hasData && (
-            <div className="inline-flex rounded-md border border-gray-200 p-0.5 dark:border-white/10" role="radiogroup" aria-label="Cash flow view">
+            <div className="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5" role="radiogroup" aria-label="Cash flow view">
               {([
                 ['chart', LineChartIcon, 'Chart view'],
                 ['table', Table2, 'Table view'],
@@ -689,11 +686,7 @@ function CashFlowCard({ data, periodLabel }: { data: CashFlowPoint[]; periodLabe
                   aria-checked={view === value}
                   aria-label={label}
                   onClick={() => setView(value)}
-                  className={`flex h-7 w-7 items-center justify-center rounded ${
-                    view === value
-                      ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white'
-                      : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
+                  className={`${segmentClass(view === value)} !w-7 !px-0`}
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </button>

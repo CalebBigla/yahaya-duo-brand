@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, iconButton, tabClass } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -183,21 +183,13 @@ function ServicesPage() {
         <div className="flex gap-2 border-b">
           <button
             onClick={() => setActiveDivision('travel')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              activeDivision === 'travel'
-                ? 'border-teal-600 text-teal-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            className={tabClass(activeDivision === 'travel')}
           >
             Travel Services ({services.filter((s) => s.division === 'travel').length})
           </button>
           <button
             onClick={() => setActiveDivision('trade')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              activeDivision === 'trade'
-                ? 'border-teal-600 text-teal-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            className={tabClass(activeDivision === 'trade')}
           >
             Trade Services ({services.filter((s) => s.division === 'trade').length})
           </button>
@@ -207,7 +199,7 @@ function ServicesPage() {
         <div>
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+            className={btn('primary')}
           >
             <Plus className="w-4 h-4" />
             Add {activeDivision === 'travel' ? 'Travel' : 'Trade'} Service
@@ -224,7 +216,7 @@ function ServicesPage() {
             filteredServices.map((service) => (
               <div
                 key={service.id}
-                className="bg-white dark:bg-gray-900 border rounded-lg p-4 hover:border-teal-300 transition-colors"
+                className="bg-white dark:bg-gray-900 border rounded-lg p-4 hover:border-blue-300 transition-colors"
               >
                 <div className="flex items-start gap-4">
                   <button className="mt-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-move">
@@ -256,14 +248,14 @@ function ServicesPage() {
                     <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => setEditingService(service)}
-                        className="px-3 py-1 text-sm bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-1"
+                        className={btn('secondary', 'sm')}
                       >
                         <Edit2 className="w-3 h-3" />
                         Edit
                       </button>
                       <button
                         onClick={() => handleToggleStatus(service)}
-                        className="px-3 py-1 text-sm bg-teal-100 text-teal-700 rounded hover:bg-teal-200 flex items-center gap-1"
+                        className={btn('secondary', 'sm')}
                       >
                         {service.status === 'published' ? (
                           <>
@@ -277,7 +269,7 @@ function ServicesPage() {
                           </>
                         )}
                       </button>
-                      <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 dark:bg-rose-500/15 text-red-700 dark:text-rose-300 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete service?" description="Are you sure you want to delete this service? This action cannot be undone." detail={service.title} successMessage="Service deleted successfully." errorMessage="Unable to delete this service. Please try again." onConfirm={() => handleDelete(service)} />
+                      <DeleteConfirmation trigger={<button className={btn('dangerSoft', 'sm')}><Trash2 className="w-3 h-3" />Delete</button>} title="Delete service?" description="Are you sure you want to delete this service? This action cannot be undone." detail={service.title} successMessage="Service deleted successfully." errorMessage="Unable to delete this service. Please try again." onConfirm={() => handleDelete(service)} />
                     </div>
                   </div>
                 </div>
@@ -299,7 +291,7 @@ function ServicesPage() {
                     setEditingService(null);
                     setIsCreating(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className={iconButton}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -317,7 +309,7 @@ function ServicesPage() {
                       })
                     }
                     disabled={!isCreating}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                   >
                     <option value="travel">Travel</option>
                     <option value="trade">Trade</option>
@@ -332,7 +324,7 @@ function ServicesPage() {
                     onChange={(e) =>
                       setEditingService({ ...editingService, title: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="e.g., Visa Processing Services"
                   />
                 </div>
@@ -350,7 +342,7 @@ function ServicesPage() {
                         slug: e.target.value.toLowerCase().replace(/\s+/g, '-'),
                       })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="e.g., visa-processing"
                   />
                 </div>
@@ -365,7 +357,7 @@ function ServicesPage() {
                       setEditingService({ ...editingService, summary: e.target.value })
                     }
                     rows={2}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="One-line summary shown in cards"
                   />
                 </div>
@@ -380,7 +372,7 @@ function ServicesPage() {
                       setEditingService({ ...editingService, detail: e.target.value })
                     }
                     rows={4}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Full description shown on service detail pages"
                   />
                 </div>
@@ -396,7 +388,7 @@ function ServicesPage() {
                       onChange={(e) =>
                         setEditingService({ ...editingService, icon_name: e.target.value })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="e.g., Plane, Ship, Briefcase"
                     />
                   </div>
@@ -413,7 +405,7 @@ function ServicesPage() {
                           display_order: parseInt(e.target.value),
                         })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -428,7 +420,7 @@ function ServicesPage() {
                     onChange={(e) =>
                       setEditingService({ ...editingService, image_url: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="https://..."
                   />
                 </div>
@@ -440,13 +432,13 @@ function ServicesPage() {
                     setEditingService(null);
                     setIsCreating(false);
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                  className={btn('primary')}
                 >
                   <Save className="w-4 h-4" />
                   {isCreating ? 'Create Service' : 'Save Changes'}

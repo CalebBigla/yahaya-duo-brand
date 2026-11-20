@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { FormSkeleton } from '@/components/admin/SkeletonLoader';
-import { useConfirm } from '@/components/admin/ui';
+import { useConfirm, btn } from '@/components/admin/ui';
 import { toast } from 'sonner';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
@@ -232,7 +232,7 @@ function CompanyInfoPage() {
                 type="text"
                 value={data.company_name}
                 onChange={(e) => updateField('company_name', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -241,7 +241,7 @@ function CompanyInfoPage() {
                 type="text"
                 value={data.company_short_name}
                 onChange={(e) => updateField('company_short_name', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -253,7 +253,7 @@ function CompanyInfoPage() {
                 type="text"
                 value={data.sub_brand}
                 onChange={(e) => updateField('sub_brand', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -262,7 +262,7 @@ function CompanyInfoPage() {
                 type="text"
                 value={data.rc_number}
                 onChange={(e) => updateField('rc_number', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -278,7 +278,7 @@ function CompanyInfoPage() {
               type="email"
               value={data.email}
               onChange={(e) => updateField('email', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -291,7 +291,7 @@ function CompanyInfoPage() {
                 type="tel"
                 value={data.phone_primary}
                 onChange={(e) => updateField('phone_primary', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -302,7 +302,7 @@ function CompanyInfoPage() {
                 type="tel"
                 value={data.phone_secondary || ''}
                 onChange={(e) => updateField('phone_secondary', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -315,7 +315,7 @@ function CompanyInfoPage() {
               type="tel"
               value={data.whatsapp_number}
               onChange={(e) => updateField('whatsapp_number', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., 2349127650968"
             />
           </div>
@@ -331,7 +331,7 @@ function CompanyInfoPage() {
               type="text"
               value={data.address_street}
               onChange={(e) => updateField('address_street', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -344,7 +344,7 @@ function CompanyInfoPage() {
                 type="text"
                 value={data.address_locality}
                 onChange={(e) => updateField('address_locality', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -353,7 +353,7 @@ function CompanyInfoPage() {
                 type="text"
                 value={data.address_region}
                 onChange={(e) => updateField('address_region', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -364,7 +364,7 @@ function CompanyInfoPage() {
               type="text"
               value={data.address_country}
               onChange={(e) => updateField('address_country', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -381,7 +381,7 @@ function CompanyInfoPage() {
                   type="text"
                   value={hour.days}
                   onChange={(e) => updateBusinessHour(index, 'days', e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -390,7 +390,7 @@ function CompanyInfoPage() {
                   type="text"
                   value={hour.time}
                   onChange={(e) => updateBusinessHour(index, 'time', e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -407,7 +407,7 @@ function CompanyInfoPage() {
               type="url"
               value={data.facebook_url || ''}
               onChange={(e) => updateField('facebook_url', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="https://facebook.com/..."
             />
           </div>
@@ -418,7 +418,7 @@ function CompanyInfoPage() {
               type="url"
               value={data.instagram_url || ''}
               onChange={(e) => updateField('instagram_url', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="https://instagram.com/..."
             />
           </div>
@@ -430,7 +430,7 @@ function CompanyInfoPage() {
                 type="url"
                 value={data.twitter_url || ''}
                 onChange={(e) => updateField('twitter_url', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -439,7 +439,7 @@ function CompanyInfoPage() {
                 type="url"
                 value={data.linkedin_url || ''}
                 onChange={(e) => updateField('linkedin_url', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -448,7 +448,7 @@ function CompanyInfoPage() {
                 type="url"
                 value={data.tiktok_url || ''}
                 onChange={(e) => updateField('tiktok_url', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -467,7 +467,7 @@ function CompanyInfoPage() {
                     fetchSettings();
                     setHasChanges(false);
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                   disabled={saving}
                 >
                   Discard
@@ -475,7 +475,7 @@ function CompanyInfoPage() {
               ) : (
                 <button
                   onClick={handleDiscardDraft}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                   disabled={saving}
                 >
                   Discard draft
@@ -483,7 +483,7 @@ function CompanyInfoPage() {
               )}
               <button
                 onClick={handleSaveDraft}
-                className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-2 disabled:opacity-50"
+                className={btn('secondary')}
                 disabled={saving || !hasChanges}
               >
                 <Save className="w-4 h-4" />
@@ -491,7 +491,7 @@ function CompanyInfoPage() {
               </button>
               <button
                 onClick={handlePublish}
-                className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                className={btn('primary')}
                 disabled={saving}
               >
                 <Eye className="w-4 h-4" />

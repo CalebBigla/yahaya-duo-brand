@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Mail, ArrowLeft, CheckCircle2, Loader2, AlertCircle, Shield } from 'lucide-react';
 
+import { btn } from '@/components/admin/ui';
 export const Route = createFileRoute('/admin/forgot-password')({
   component: ForgotPassword,
 });
@@ -144,7 +145,7 @@ function ForgotPassword() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-lg bg-blue-600 py-3.5 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-400 flex items-center justify-center gap-2"
+              className={`${btn('primary', 'lg')} w-full`}
             >
               {isLoading ? (
                 <>

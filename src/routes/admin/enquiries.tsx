@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { ErrorBanner, ModalFrame, PageHeader, primaryButton, secondaryButton } from '@/components/admin/ui';
+import { ErrorBanner, ModalFrame, PageHeader, primaryButton, secondaryButton, btn, chipClass, iconButton, iconButtonLg } from '@/components/admin/ui';
 import { useNotifications } from '@/lib/notifications';
 import { toast } from 'sonner';
 import { AdminGuard } from '@/components/admin/AdminGuard';
@@ -356,7 +356,7 @@ function EnquiriesPage() {
             {/* Filter Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className={btn('secondary')}
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -377,11 +377,7 @@ function EnquiriesPage() {
                     <button
                       key={status}
                       onClick={() => setFilterStatus(status as FilterStatus)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                        filterStatus === status
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
+                      className={chipClass(filterStatus === status)}
                     >
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </button>
@@ -399,11 +395,7 @@ function EnquiriesPage() {
                     <button
                       key={type}
                       onClick={() => setFilterType(type as FilterType)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                        filterType === type
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
+                      className={chipClass(filterType === type)}
                     >
                       {type.charAt(0).toUpperCase() + type.slice(1)}
                     </button>
@@ -424,7 +416,7 @@ function EnquiriesPage() {
                     setFilterType('all');
                     setSearchQuery('');
                   }}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className={btn('link')}
                 >
                   Clear filters
                 </button>
@@ -526,7 +518,7 @@ function EnquiriesPage() {
                         <div className="flex items-center justify-end">
                           <button
                             onClick={() => handleViewDetails(enquiry)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className={iconButton}
                             title="View details"
                           >
                             <Eye className="h-4 w-4" />
@@ -556,7 +548,7 @@ function EnquiriesPage() {
               </div>
               <button
                 onClick={() => setSelectedEnquiry(null)}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={iconButtonLg}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -675,7 +667,7 @@ function EnquiriesPage() {
                     <button
                       onClick={() => updateStatus(selectedEnquiry.id, 'responded')}
                       disabled={selectedEnquiry.status === 'responded'}
-                      className="flex-1 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`${btn('primary')} flex-1`}
                     >
                       {selectedEnquiry.status === 'responded' ? 'Marked as Responded' : 'Mark as Responded'}
                     </button>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Banknote, Ban, Paperclip, Pencil, Plus, Search, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { btn } from '@/components/admin/ui';
 import {
   fmtMoney,
   fmtQty,
@@ -579,7 +580,7 @@ function TransactionForm({
           <Field label="Amount paid (₦)">
             <div className="flex gap-2">
               <input type="number" inputMode="decimal" min="0" step="any" max={lineTotal || undefined} value={amountPaid} onChange={(e) => setAmountPaid(e.target.value)} className={inputClass} />
-              <button type="button" className={`${secondaryButton} px-3 text-xs`} onClick={() => setAmountPaid(String(lineTotal))}>
+              <button type="button" className={btn('secondary', 'sm')} onClick={() => setAmountPaid(String(lineTotal))}>
                 Full
               </button>
             </div>
@@ -609,7 +610,7 @@ function TransactionForm({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Attachments</span>
-              <button type="button" className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50 dark:text-blue-400" onClick={() => fileInput.current?.click()} disabled={uploading || attachments.length >= 10}>
+              <button type="button" className={`${btn('link', 'sm')} gap-1`} onClick={() => fileInput.current?.click()} disabled={uploading || attachments.length >= 10}>
                 <Upload className="h-3.5 w-3.5" /> {uploading ? 'Uploading…' : 'Add files'}
               </button>
               <input ref={fileInput} type="file" multiple accept="application/pdf,image/jpeg,image/png,image/webp,image/heic" className="hidden" onChange={(e) => void onFiles(e.target.files)} />
@@ -696,7 +697,7 @@ function PaymentDialog({ record, onOpenChange, onSaved }: { record: Row | null; 
         <Field label={record && isSale(record) ? 'Amount received (₦)' : 'Amount paid (₦)'} required>
           <div className="flex gap-2">
             <input type="number" inputMode="decimal" min="0.01" step="any" max={due} value={amount} onChange={(e) => setAmount(e.target.value)} required className={inputClass} autoFocus />
-            <button type="button" className={`${secondaryButton} px-3 text-xs`} onClick={() => setAmount(String(due))}>
+            <button type="button" className={btn('secondary', 'sm')} onClick={() => setAmount(String(due))}>
               Full balance
             </button>
           </div>

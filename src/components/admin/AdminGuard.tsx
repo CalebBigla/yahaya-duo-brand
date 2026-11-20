@@ -10,6 +10,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { AdminRouteSkeleton } from '@/components/admin/SkeletonLoader';
 import { AdminAuthContext } from '@/components/admin/AdminAuthContext';
 
+import { btn } from '@/components/admin/ui';
 interface AdminGuardProps {
   children: React.ReactNode;
   requireOwner?: boolean;
@@ -105,7 +106,7 @@ export function AdminGuard({ children, requireOwner = false }: AdminGuardProps) 
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-6 w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition-opacity hover:opacity-90"
+            className={`${btn('primary', 'lg')} mt-6 w-full`}
           >
             Reload Page
           </button>

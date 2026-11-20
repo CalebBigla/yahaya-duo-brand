@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, iconButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -170,7 +170,7 @@ function SEOPage() {
           {seoPages.map((page) => (
             <div
               key={page.id}
-              className="bg-white dark:bg-gray-900 border rounded-lg p-5 hover:border-teal-300 transition-colors"
+              className="bg-white dark:bg-gray-900 border rounded-lg p-5 hover:border-blue-300 transition-colors"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
@@ -210,14 +210,14 @@ function SEOPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setEditingPage(page)}
-                  className="px-3 py-1 text-sm bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-1"
+                  className={btn('secondary', 'sm')}
                 >
                   <Edit2 className="w-3 h-3" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleToggleStatus(page)}
-                  className="px-3 py-1 text-sm bg-teal-100 text-teal-700 rounded hover:bg-teal-200"
+                  className={btn('secondary', 'sm')}
                 >
                   {page.status === 'published' ? 'Unpublish' : 'Publish'}
                 </button>
@@ -235,7 +235,7 @@ function SEOPage() {
                 </h2>
                 <button
                   onClick={() => setEditingPage(null)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className={iconButton}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -251,7 +251,7 @@ function SEOPage() {
                     value={editingPage.meta_title}
                     onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
                     maxLength={60}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {editingPage.meta_title.length}/60 characters
@@ -272,7 +272,7 @@ function SEOPage() {
                     }
                     rows={3}
                     maxLength={160}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {editingPage.meta_description.length}/160 characters
@@ -292,7 +292,7 @@ function SEOPage() {
                     onChange={(e) =>
                       setEditingPage({ ...editingPage, meta_keywords: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="travel, visa, nigeria, export"
                   />
                 </div>
@@ -311,7 +311,7 @@ function SEOPage() {
                       value={editingPage.og_title || ''}
                       onChange={(e) => setEditingPage({ ...editingPage, og_title: e.target.value })}
                       maxLength={60}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       placeholder="Leave empty to use Meta Title"
                     />
                   </div>
@@ -327,7 +327,7 @@ function SEOPage() {
                       }
                       rows={2}
                       maxLength={200}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       placeholder="Leave empty to use Meta Description"
                     />
                   </div>
@@ -342,7 +342,7 @@ function SEOPage() {
                       onChange={(e) =>
                         setEditingPage({ ...editingPage, og_image_url: e.target.value })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       placeholder="https://... (recommended: 1200x630px)"
                     />
                   </div>
@@ -360,7 +360,7 @@ function SEOPage() {
                       onChange={(e) =>
                         setEditingPage({ ...editingPage, twitter_card_type: e.target.value as any })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="summary">Summary</option>
                       <option value="summary_large_image">Summary with Large Image</option>
@@ -372,13 +372,13 @@ function SEOPage() {
               <div className="sticky bottom-0 bg-gray-50 dark:bg-white/5 border-t px-6 py-4 flex justify-end gap-3">
                 <button
                   onClick={() => setEditingPage(null)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                  className={btn('primary')}
                 >
                   <Save className="w-4 h-4" />
                   Save Changes

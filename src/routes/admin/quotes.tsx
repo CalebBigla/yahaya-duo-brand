@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, chipClass, iconButton, iconButtonLg, iconDangerButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -589,21 +589,21 @@ function QuotesPage() {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+              className={btn('secondary')}
             >
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className={btn('secondary')}
             >
               <Download className="h-4 w-4" />
               Export
             </button>
             <button
               onClick={handleAdd}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className={btn('primary')}
             >
               <Plus className="h-4 w-4" />
               New Quote
@@ -690,7 +690,7 @@ function QuotesPage() {
 
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className={btn('secondary')}
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -706,11 +706,7 @@ function QuotesPage() {
                   <button
                     key={status}
                     onClick={() => setFilterStatus(status)}
-                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                      filterStatus === status
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    className={chipClass(filterStatus === status)}
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>
@@ -728,7 +724,7 @@ function QuotesPage() {
                     setFilterStatus('all');
                     setSearchQuery('');
                   }}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                  className={btn('link')}
                 >
                   Clear filters
                 </button>
@@ -751,7 +747,7 @@ function QuotesPage() {
               {quotes.length === 0 && (
                 <button
                   onClick={handleAdd}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  className={`${btn('primary')} mt-4`}
                 >
                   <Plus className="h-4 w-4" />
                   New Quote
@@ -833,7 +829,7 @@ function QuotesPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleView(quote)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className={iconButton}
                             title="View quote"
                           >
                             <Eye className="h-4 w-4" />
@@ -842,14 +838,14 @@ function QuotesPage() {
                             <button
                               onClick={() => handleEdit(quote)}
                               disabled={!isQuoteEditable(quote)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                              className={iconButton}
                               aria-label={isQuoteEditable(quote) ? `Edit quote ${quote.quote_number}` : LOCKED_QUOTE_MESSAGE}
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                           </span>
                           <DeleteConfirmation
-                            trigger={<button className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete quote" aria-label={`Delete quote ${quote.quote_number}`}><Trash2 className="h-4 w-4" /></button>}
+                            trigger={<button className={iconDangerButton} title="Delete quote" aria-label={`Delete quote ${quote.quote_number}`}><Trash2 className="h-4 w-4" /></button>}
                             title="Delete quote?"
                             description="Are you sure you want to delete this quote? This action cannot be undone."
                             detail={`${quote.quote_number} · ${quote.client_name} · ${quote.title}`}
@@ -883,7 +879,7 @@ function QuotesPage() {
                   resetForm();
                   setSelectedQuote(null);
                 }}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={iconButtonLg}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1042,7 +1038,7 @@ function QuotesPage() {
                   <button
                     type="button"
                     onClick={addLineItem}
-                    className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                    className={btn('link')}
                   >
                     + Add Item
                   </button>
@@ -1091,7 +1087,7 @@ function QuotesPage() {
                           <button
                             type="button"
                             onClick={() => removeLineItem(index)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            className={iconDangerButton}
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -1166,14 +1162,14 @@ function QuotesPage() {
                     resetForm();
                     setSelectedQuote(null);
                   }}
-                  className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={btn('primary')}
                 >
                   {isSubmitting ? 'Saving...' : showEditModal ? 'Update Quote' : 'Create Quote'}
                 </button>
@@ -1205,7 +1201,7 @@ function QuotesPage() {
                   setShowViewModal(false);
                   setSelectedQuote(null);
                 }}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={iconButtonLg}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1227,23 +1223,23 @@ function QuotesPage() {
                   <button
                     onClick={() => updateQuoteStatus(selectedQuote.id, 'pending')}
                     disabled={selectedQuote.status === 'pending'}
-                    className="rounded-lg bg-yellow-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={btn('secondary', 'sm')}
                   >
                     Mark Pending
                   </button>
                   <button
-                    onClick={() => updateQuoteStatus(selectedQuote.id, 'accepted')}
-                    disabled={selectedQuote.status === 'accepted'}
-                    className="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Accept
-                  </button>
-                  <button
                     onClick={() => updateQuoteStatus(selectedQuote.id, 'rejected')}
                     disabled={selectedQuote.status === 'rejected'}
-                    className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={btn('dangerSoft', 'sm')}
                   >
                     Reject
+                  </button>
+                  <button
+                    onClick={() => updateQuoteStatus(selectedQuote.id, 'accepted')}
+                    disabled={selectedQuote.status === 'accepted'}
+                    className={btn('primary', 'sm')}
+                  >
+                    Accept
                   </button>
                 </div>
               </div>
@@ -1358,39 +1354,44 @@ function QuotesPage() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+              {/* Least important on the left, the main action last on the right. */}
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-gray-200 dark:border-gray-700 pt-4">
                 <button
-                  onClick={() => handleSendQuote(selectedQuote)}
-                  disabled={selectedQuote.status === 'sent'}
-                  className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  onClick={() => setShowViewModal(false)}
+                  className={`${btn('ghost')} mr-auto`}
                 >
-                  <Send className="h-4 w-4" />
-                  {selectedQuote.status === 'sent' ? 'Already Sent' : 'Send Quote'}
+                  Close
                 </button>
                 <button
+                  type="button"
                   onClick={() => generateQuotePDF(selectedQuote)}
-                  className="flex items-center gap-2 rounded-lg border border-blue-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  className={btn('secondary')}
                 >
                   <Download className="h-4 w-4" />
                   Download PDF
                 </button>
                 <span title={isQuoteEditable(selectedQuote) ? undefined : LOCKED_QUOTE_MESSAGE}>
                   <button
+                    type="button"
                     onClick={() => {
                       setShowViewModal(false);
                       handleEdit(selectedQuote);
                     }}
                     disabled={!isQuoteEditable(selectedQuote)}
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:disabled:hover:bg-gray-800"
+                    className={btn('secondary')}
                   >
                     Edit Quote
                   </button>
                 </span>
                 <button
-                  onClick={() => setShowViewModal(false)}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  type="button"
+                  onClick={() => handleSendQuote(selectedQuote)}
+                  disabled={selectedQuote.status === 'sent'}
+                  className={btn('primary')}
                 >
-                  Close
+                  <Send className="h-4 w-4" />
+                  {selectedQuote.status === 'sent' ? 'Already Sent' : 'Send Quote'}
                 </button>
               </div>
             </div>

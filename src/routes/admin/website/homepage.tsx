@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { FormSkeleton } from '@/components/admin/SkeletonLoader';
-import { useConfirm } from '@/components/admin/ui';
+import { useConfirm, btn } from '@/components/admin/ui';
 import { toast } from 'sonner';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
@@ -249,7 +249,7 @@ function HomepagePage() {
               type="text"
               value={data.hero_title}
               onChange={(e) => updateField('hero_title', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -259,7 +259,7 @@ function HomepagePage() {
               value={data.hero_subtitle}
               onChange={(e) => updateField('hero_subtitle', e.target.value)}
               rows={2}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -272,7 +272,7 @@ function HomepagePage() {
                 type="text"
                 value={data.hero_cta_text}
                 onChange={(e) => updateField('hero_cta_text', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -281,7 +281,7 @@ function HomepagePage() {
                 type="text"
                 value={data.hero_cta_link}
                 onChange={(e) => updateField('hero_cta_link', e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -296,10 +296,10 @@ function HomepagePage() {
                 value={data.hero_image_url || ''}
                 onChange={(e) => updateField('hero_image_url', e.target.value)}
                 placeholder="https://..."
-                className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <button
-                className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-2"
+                className={btn('secondary')}
                 disabled
               >
                 <Upload className="w-4 h-4" />
@@ -325,7 +325,7 @@ function HomepagePage() {
                 type="number"
                 value={data.stats_years_experience}
                 onChange={(e) => updateField('stats_years_experience', parseInt(e.target.value))}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -334,7 +334,7 @@ function HomepagePage() {
                 type="number"
                 value={data.stats_clients_served}
                 onChange={(e) => updateField('stats_clients_served', parseInt(e.target.value))}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -343,7 +343,7 @@ function HomepagePage() {
                 type="number"
                 value={data.stats_destinations}
                 onChange={(e) => updateField('stats_destinations', parseInt(e.target.value))}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -356,7 +356,7 @@ function HomepagePage() {
                 onChange={(e) => updateField('stats_success_rate', parseInt(e.target.value))}
                 min={0}
                 max={100}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -372,7 +372,7 @@ function HomepagePage() {
               type="text"
               value={data.mission_title}
               onChange={(e) => updateField('mission_title', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -382,7 +382,7 @@ function HomepagePage() {
               value={data.mission_content}
               onChange={(e) => updateField('mission_content', e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -392,7 +392,7 @@ function HomepagePage() {
               type="text"
               value={data.vision_title}
               onChange={(e) => updateField('vision_title', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -402,7 +402,7 @@ function HomepagePage() {
               value={data.vision_content}
               onChange={(e) => updateField('vision_content', e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -420,7 +420,7 @@ function HomepagePage() {
                     fetchHomepage();
                     setHasChanges(false);
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                   disabled={saving}
                 >
                   Discard
@@ -428,7 +428,7 @@ function HomepagePage() {
               ) : (
                 <button
                   onClick={handleDiscardDraft}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                   disabled={saving}
                 >
                   Discard draft
@@ -436,7 +436,7 @@ function HomepagePage() {
               )}
               <button
                 onClick={handleSaveDraft}
-                className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-2 disabled:opacity-50"
+                className={btn('secondary')}
                 disabled={saving || !hasChanges}
               >
                 <Save className="w-4 h-4" />
@@ -444,7 +444,7 @@ function HomepagePage() {
               </button>
               <button
                 onClick={handlePublish}
-                className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                className={btn('primary')}
                 disabled={saving}
               >
                 <Eye className="w-4 h-4" />

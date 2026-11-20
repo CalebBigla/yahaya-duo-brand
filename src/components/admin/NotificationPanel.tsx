@@ -6,6 +6,7 @@ import { formatDistanceToNowStrict, isToday } from 'date-fns';
 import { useNotifications, type AdminNotification, type NotificationKind } from '@/lib/notifications';
 import { LiveIndicator } from '@/components/admin/LiveIndicator';
 
+import { btn, iconButtonLg, segmentClass } from '@/components/admin/ui';
 const KIND_STYLE: Record<NotificationKind, { icon: typeof Inbox; tone: string }> = {
   enquiry: { icon: Inbox, tone: 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300' },
   quote_accepted: { icon: CheckCircle2, tone: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300' },
@@ -40,7 +41,7 @@ export function NotificationBell() {
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+          className={`${iconButtonLg} relative`}
           aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
         >
           {unreadCount > 0 ? <BellRing className="h-[18px] w-[18px]" /> : <Bell className="h-[18px] w-[18px]" />}
@@ -68,14 +69,14 @@ export function NotificationBell() {
               type="button"
               onClick={markAllRead}
               disabled={unreadCount === 0}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 disabled:cursor-default disabled:text-gray-400 disabled:hover:bg-transparent dark:text-blue-400 dark:hover:bg-blue-500/10 dark:disabled:text-gray-600"
+              className={`${btn('ghost', 'sm')} h-7 px-2 text-blue-600 hover:text-blue-700 dark:text-blue-400`}
             >
               <CheckCheck className="h-3.5 w-3.5" />
               Mark all read
             </button>
           </div>
 
-          <div role="tablist" aria-label="Filter notifications" className="flex gap-1 px-4 pt-3">
+          <div role="tablist" aria-label="Filter notifications" className="mx-4 mt-3 flex gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5">
             {(['all', 'unread'] as const).map((value) => (
               <button
                 key={value}
@@ -83,11 +84,7 @@ export function NotificationBell() {
                 type="button"
                 aria-selected={filter === value}
                 onClick={() => setFilter(value)}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                  filter === value
-                    ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5'
-                }`}
+                className={segmentClass(filter === value)}
               >
                 {value === 'all' ? 'All' : `Unread${unreadCount > 0 ? ` · ${unreadCount}` : ''}`}
               </button>

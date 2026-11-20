@@ -15,6 +15,7 @@ import { InventoryTab } from '@/components/admin/oil-trade/InventoryTab';
 import { ProductsTab } from '@/components/admin/oil-trade/ProductsTab';
 import { ReportsTab } from '@/components/admin/oil-trade/ReportsTab';
 
+import { tabClass } from '@/components/admin/ui';
 const TABS = [
   { value: 'overview', label: 'Overview' },
   { value: 'sales', label: 'Sales' },
@@ -133,11 +134,7 @@ function OilTradePage() {
               type="button"
               aria-current={tab === t.value ? 'page' : undefined}
               onClick={() => void navigate({ search: t.value === 'overview' ? {} : { tab: t.value } })}
-              className={`whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${
-                tab === t.value
-                  ? 'border-gray-900 text-gray-900 dark:border-white dark:text-white'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
+              className={tabClass(tab === t.value)}
             >
               {t.label}
             </button>

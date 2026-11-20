@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, iconButton, iconDangerButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
@@ -503,14 +503,14 @@ function ExpensesPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleViewDetails(expense)}
-                              className="text-blue-600 hover:text-blue-800"
+                              className={iconButton}
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleEdit(expense)}
-                              className="text-gray-600 dark:text-gray-400 hover:text-gray-800"
+                              className={iconButton}
                               title="Edit"
                             >
                               <Edit className="w-4 h-4" />
@@ -518,7 +518,7 @@ function ExpensesPage() {
                             {adminUser?.role === 'owner' && (
                               <button
                                 onClick={() => setPendingDelete(expense)}
-                                className="text-red-600 hover:text-red-800"
+                                className={iconDangerButton}
                                 title="Delete"
                                 aria-label={`Delete expense ${expense.expense_ref}`}
                               >

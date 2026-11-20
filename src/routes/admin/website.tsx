@@ -271,11 +271,11 @@ function WebsitePage() {
               <Link
                 key={module.href}
                 to={module.href}
-                className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-teal-500 dark:hover:border-teal-500 hover:shadow-md transition-all group"
+                className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all group"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-2 bg-teal-50 dark:bg-teal-900/30 rounded-lg group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 transition-colors">
-                    <Icon className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+                  <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                    <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   {getStatusBadge(module.status)}
                 </div>
@@ -290,9 +290,9 @@ function WebsitePage() {
         </div>
 
         {/* Quick Guide */}
-        <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-lg p-5">
-          <h3 className="font-semibold text-teal-900 dark:text-teal-100 mb-2">📖 Quick Guide</h3>
-          <ul className="text-sm text-teal-800 dark:text-teal-200 space-y-1">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-5">
+          <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">📖 Quick Guide</h3>
+          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
             <li>
               • <strong>Draft:</strong> Save changes without making them live
             </li>

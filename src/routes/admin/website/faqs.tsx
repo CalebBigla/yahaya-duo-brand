@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, chipClass, iconButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -178,11 +178,7 @@ function FAQsPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeCategory === 'all'
-                ? 'bg-teal-600 text-white'
-                : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/15'
-            }`}
+            className={chipClass(activeCategory === 'all')}
           >
             All ({faqs.length})
           </button>
@@ -190,11 +186,7 @@ function FAQsPage() {
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeCategory === cat.value
-                  ? 'bg-teal-600 text-white'
-                  : 'bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/15'
-              }`}
+              className={chipClass(activeCategory === cat.value)}
             >
               {cat.label} ({faqs.filter((f) => f.category === cat.value).length})
             </button>
@@ -204,7 +196,7 @@ function FAQsPage() {
         <div>
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+            className={btn('primary')}
           >
             <Plus className="w-4 h-4" />
             Add FAQ
@@ -220,7 +212,7 @@ function FAQsPage() {
             {filteredFaqs.map((item) => (
               <div
                 key={item.id}
-                className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-900 p-4 transition-colors hover:border-teal-300"
+                className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-900 p-4 transition-colors hover:border-blue-300"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
@@ -249,18 +241,18 @@ function FAQsPage() {
                 <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     onClick={() => setEditingItem(item)}
-                    className="px-3 py-1 text-sm bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-1"
+                    className={btn('secondary', 'sm')}
                   >
                     <Edit2 className="w-3 h-3" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleToggleStatus(item)}
-                    className="px-3 py-1 text-sm bg-teal-100 text-teal-700 rounded hover:bg-teal-200"
+                    className={btn('secondary', 'sm')}
                   >
                     {item.status === 'published' ? 'Unpublish' : 'Publish'}
                   </button>
-                  <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 dark:bg-rose-500/15 text-red-700 dark:text-rose-300 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete FAQ?" description="Are you sure you want to delete this FAQ? This action cannot be undone." detail={item.question} successMessage="FAQ deleted successfully." errorMessage="Unable to delete this FAQ. Please try again." onConfirm={() => handleDelete(item)} />
+                  <DeleteConfirmation trigger={<button className={btn('dangerSoft', 'sm')}><Trash2 className="w-3 h-3" />Delete</button>} title="Delete FAQ?" description="Are you sure you want to delete this FAQ? This action cannot be undone." detail={item.question} successMessage="FAQ deleted successfully." errorMessage="Unable to delete this FAQ. Please try again." onConfirm={() => handleDelete(item)} />
                 </div>
               </div>
             ))}
@@ -279,7 +271,7 @@ function FAQsPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className={iconButton}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -293,7 +285,7 @@ function FAQsPage() {
                     onChange={(e) =>
                       setEditingItem({ ...editingItem, category: e.target.value as any })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.value} value={cat.value}>
@@ -312,7 +304,7 @@ function FAQsPage() {
                     onChange={(e) => setEditingItem({ ...editingItem, question: e.target.value })}
                     rows={2}
                     maxLength={500}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., How long does visa processing take?"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -329,7 +321,7 @@ function FAQsPage() {
                     onChange={(e) => setEditingItem({ ...editingItem, answer: e.target.value })}
                     rows={5}
                     maxLength={2000}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="Provide a detailed answer..."
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -347,7 +339,7 @@ function FAQsPage() {
                     onChange={(e) =>
                       setEditingItem({ ...editingItem, display_order: parseInt(e.target.value) })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -358,13 +350,13 @@ function FAQsPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                  className={btn('primary')}
                 >
                   <Save className="w-4 h-4" />
                   {isCreating ? 'Add FAQ' : 'Save Changes'}

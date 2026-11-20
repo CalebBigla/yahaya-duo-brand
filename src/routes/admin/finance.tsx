@@ -1,6 +1,6 @@
 ﻿import { createFileRoute, redirect } from '@tanstack/react-router';
 import { AdminGuard } from '@/components/admin/AdminGuard';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, iconButton, iconButtonLg } from '@/components/admin/ui';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ThemeProvider } from '@/lib/theme';
 import { checkAdminAccess } from '@/lib/auth';
@@ -435,14 +435,14 @@ function FinancePage() {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+              className={btn('secondary')}
             >
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               Refresh
             </button>
             <button
               onClick={handleAdd}
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+              className={btn('primary')}
             >
               <Plus className="h-4 w-4" />
               Record Income
@@ -515,7 +515,7 @@ function FinancePage() {
 
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className={btn('secondary')}
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -584,7 +584,7 @@ function FinancePage() {
               {transactions.length === 0 && (
                 <button
                   onClick={handleAdd}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                  className={`${btn('primary')} mt-4`}
                 >
                   <Plus className="h-4 w-4" />
                   Record Income
@@ -640,7 +640,7 @@ function FinancePage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleView(transaction)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            className={iconButton}
                           >
                             <Eye className="h-4 w-4" />
                           </button>
@@ -648,14 +648,14 @@ function FinancePage() {
                             <button
                               onClick={() => handleEdit(transaction)}
                               aria-label={`Edit ${transaction.transaction_ref}`}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                              className={iconButton}
                             >
                               <Pencil className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => { setPendingVoid(transaction); setVoidReason(''); }}
                               aria-label={`Void ${transaction.transaction_ref}`}
-                              className="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                              className={btn('dangerSoft', 'sm')}
                             >
                               <Ban className="h-4 w-4" />Void
                             </button>
@@ -678,7 +678,7 @@ function FinancePage() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{editingTransaction ? 'Edit Income Record' : 'Record Income'}</h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={iconButtonLg}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -859,14 +859,14 @@ function FinancePage() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                  className={btn('primary')}
                 >
                   {isSubmitting ? (editingTransaction ? 'Saving...' : 'Recording...') : (editingTransaction ? 'Save Changes' : 'Record Income')}
                 </button>
@@ -888,7 +888,7 @@ function FinancePage() {
               </div>
               <button
                 onClick={() => setShowViewModal(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={iconButtonLg}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -948,7 +948,7 @@ function FinancePage() {
               <div className="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
                 <button
                   onClick={() => setShowViewModal(false)}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  className={btn('primary')}
                 >
                   Close
                 </button>

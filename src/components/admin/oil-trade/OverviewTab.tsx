@@ -48,6 +48,7 @@ import {
 } from '@/lib/oilTrade';
 import { ErrorBanner, PaymentBadge, VoidedBadge, card, describeRange, summaryArgs, type DateRange } from './shared';
 
+import { segmentClass } from '@/components/admin/ui';
 // Validated categorical pair (dataviz reference palette, slots 1-2), stepped per theme.
 const CHART_CONFIG = {
   revenue: { label: 'Sales revenue', theme: { light: '#2a78d6', dark: '#3987e5' } },
@@ -530,7 +531,7 @@ function TrendCard({ trend }: { trend: { points: TrendPoint[]; grain: Grain } | 
                 </li>
               </ul>
             )}
-            <div className="inline-flex rounded-md border border-gray-200 p-0.5 dark:border-white/10" role="radiogroup" aria-label="Trend view">
+            <div className="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5" role="radiogroup" aria-label="Trend view">
               {([
                 ['chart', LineChartIcon, 'Chart view'],
                 ['table', Table2, 'Table view'],
@@ -542,9 +543,7 @@ function TrendCard({ trend }: { trend: { points: TrendPoint[]; grain: Grain } | 
                   aria-checked={view === value}
                   aria-label={label}
                   onClick={() => setView(value)}
-                  className={`flex h-7 w-7 items-center justify-center rounded ${
-                    view === value ? 'bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white' : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
+                  className={`${segmentClass(view === value)} !w-7 !px-0`}
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </button>

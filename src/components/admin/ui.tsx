@@ -19,13 +19,97 @@ export const card =
 export const inputClass =
   'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-50 disabled:text-gray-500 dark:border-white/10 dark:bg-gray-950 dark:text-white dark:disabled:bg-white/5';
 
+// ---------------------------------------------------------------------------
+// Buttons
+//
+// One system for every admin button. The type decides the colour, never the page:
+//   primary    solid blue    the one main action in a view (Save, Create, Send, Approve)
+//   secondary  outlined      alternatives next to it (Cancel, Export, Download, Edit, Publish)
+//   ghost      text only     low-emphasis actions inside cards and lists
+//   danger     solid rose    the final destructive confirmation ("Yes, delete")
+//   dangerSoft rose outline  a destructive choice among others, or one that opens a confirm
+//                            (Reject next to Accept, Delete in a list row, Void)
+//   link       blue text     inline navigation-style actions ("View all", "Retry")
+// Sizes: sm (32px, tables and toolbars), md (36px, default), lg (44px, auth forms).
+// Every button shares the same states: hover, pressed, keyboard focus ring,
+// disabled (dimmed, not clickable) and busy (aria-busy shows a wait cursor).
+// ---------------------------------------------------------------------------
+
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'dangerSoft' | 'link';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
 const buttonBase =
-  'inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 motion-reduce:transition-none motion-reduce:active:scale-100 dark:focus-visible:ring-offset-gray-950';
-export const primaryButton = `${buttonBase} bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400`;
-export const secondaryButton = `${buttonBase} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-white/5`;
-export const dangerButton = `${buttonBase} bg-rose-600 text-white hover:bg-rose-700`;
-export const iconButton =
-  'inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white';
+  'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-wait motion-reduce:transition-none motion-reduce:active:translate-y-0 dark:focus-visible:ring-offset-gray-950 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0';
+
+const buttonSizes: Record<ButtonSize, string> = {
+  sm: 'h-8 px-3 text-xs',
+  md: 'h-9 px-4 text-sm',
+  lg: 'h-11 px-5 text-sm font-semibold',
+};
+
+const buttonVariants: Record<ButtonVariant, string> = {
+  primary:
+    'bg-blue-600 text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-400',
+  secondary:
+    'border border-gray-300 bg-white text-gray-700 shadow-sm hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 active:bg-gray-100 dark:border-white/15 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-white/25 dark:hover:bg-white/5 dark:hover:text-white',
+  ghost:
+    'text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white',
+  danger:
+    'bg-rose-600 text-white shadow-sm hover:bg-rose-700 active:bg-rose-800 dark:bg-rose-500 dark:hover:bg-rose-400',
+  dangerSoft:
+    'border border-rose-200 bg-white text-rose-600 shadow-sm hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700 active:bg-rose-100 dark:border-rose-500/30 dark:bg-gray-900 dark:text-rose-400 dark:hover:bg-rose-500/10',
+  link: '!h-auto !px-0 text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline active:translate-y-0 dark:text-blue-400 dark:hover:text-blue-300',
+};
+
+/** Class string for a button (or a link styled as one). */
+export function btn(variant: ButtonVariant = 'primary', size: ButtonSize = 'md') {
+  return `${buttonBase} ${buttonSizes[size]} ${buttonVariants[variant]}`;
+}
+
+export const primaryButton = btn('primary');
+export const secondaryButton = btn('secondary');
+export const ghostButton = btn('ghost');
+export const dangerButton = btn('danger');
+export const linkButton = btn('link');
+
+const iconBase =
+  'inline-flex shrink-0 items-center justify-center rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:pointer-events-none disabled:opacity-40 [&_svg]:h-4 [&_svg]:w-4';
+/** Icon-only action (edit, view, close, more). Always give it an aria-label. */
+export const iconButton = `${iconBase} h-8 w-8 text-gray-500 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white`;
+/** Larger icon button for the top bar and sidebar. */
+export const iconButtonLg = `${iconBase} h-9 w-9 text-gray-500 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white`;
+/** Icon-only destructive action (delete, archive, void): neutral until hovered. */
+export const iconDangerButton = `${iconBase} h-8 w-8 text-gray-500 hover:bg-rose-50 hover:text-rose-600 active:bg-rose-100 dark:text-gray-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-400`;
+
+/**
+ * Selection controls share one look: the chosen option is dark, the rest are quiet.
+ * chip    = filter pills (status, type, category)
+ * segment = options inside a segmented control (period, view)
+ * tab     = underlined tabs
+ */
+export function chipClass(active: boolean) {
+  return `inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+    active
+      ? 'border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900'
+      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:border-white/10 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-white/20 dark:hover:text-white'
+  }`;
+}
+export function segmentClass(active: boolean) {
+  return `inline-flex h-7 items-center justify-center rounded-md px-2.5 text-xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+    active
+      ? 'bg-white text-gray-900 shadow-sm dark:bg-white/15 dark:text-white'
+      : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
+  }`;
+}
+/** Wrapper for segmentClass options. */
+export const segmentGroup = 'inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-white/5';
+export function tabClass(active: boolean) {
+  return `whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 ${
+    active
+      ? 'border-blue-600 text-gray-900 dark:border-blue-400 dark:text-white'
+      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+  }`;
+}
 
 export const th = 'px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400';
 export const thRight = 'px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400';
@@ -242,8 +326,8 @@ export function FormError({ message }: { message: string | null }) {
 
 export function SubmitButton({ busy, children, form }: { busy: boolean; children: ReactNode; form?: string }) {
   return (
-    <button type="submit" form={form} disabled={busy} className={primaryButton}>
-      {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+    <button type="submit" form={form} disabled={busy} aria-busy={busy || undefined} className={primaryButton}>
+      {busy && <Loader2 className="animate-spin" />}
       {children}
     </button>
   );
@@ -281,7 +365,7 @@ export function ErrorBanner({ message, onRetry }: { message: string; onRetry?: (
     <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-200">
       <span>{message}</span>
       {onRetry && (
-        <button type="button" onClick={onRetry} className="font-medium underline underline-offset-2">
+        <button type="button" onClick={onRetry} className="font-medium underline underline-offset-2 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded">
           Try again
         </button>
       )}

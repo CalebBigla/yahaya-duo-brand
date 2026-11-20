@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ModalFrame } from '@/components/admin/ui';
+import { ModalFrame, btn, iconButton } from '@/components/admin/ui';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { TablePageSkeleton } from '@/components/admin/SkeletonLoader';
@@ -173,7 +173,7 @@ function TestimonialsPage() {
         <div>
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+            className={btn('primary')}
           >
             <Plus className="w-4 h-4" />
             Add Testimonial
@@ -191,7 +191,7 @@ function TestimonialsPage() {
             {testimonials.map((item) => (
               <div
                 key={item.id}
-                className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-900 p-5 transition-colors hover:border-teal-300"
+                className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-900 p-5 transition-colors hover:border-blue-300"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
@@ -236,18 +236,18 @@ function TestimonialsPage() {
                 <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     onClick={() => setEditingItem(item)}
-                    className="px-3 py-1 text-sm bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/15 flex items-center gap-1"
+                    className={btn('secondary', 'sm')}
                   >
                     <Edit2 className="w-3 h-3" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleToggleStatus(item)}
-                    className="px-3 py-1 text-sm bg-teal-100 text-teal-700 rounded hover:bg-teal-200"
+                    className={btn('secondary', 'sm')}
                   >
                     {item.status === 'published' ? 'Unpublish' : 'Publish'}
                   </button>
-                  <DeleteConfirmation trigger={<button className="px-3 py-1 text-sm bg-red-100 dark:bg-rose-500/15 text-red-700 dark:text-rose-300 rounded hover:bg-red-200 flex items-center gap-1"><Trash2 className="w-3 h-3" />Delete</button>} title="Delete testimonial?" description="Are you sure you want to delete this testimonial? This action cannot be undone." detail={`Testimonial from ${item.client_name}`} successMessage="Testimonial deleted successfully." errorMessage="Unable to delete this testimonial. Please try again." onConfirm={() => handleDelete(item)} />
+                  <DeleteConfirmation trigger={<button className={btn('dangerSoft', 'sm')}><Trash2 className="w-3 h-3" />Delete</button>} title="Delete testimonial?" description="Are you sure you want to delete this testimonial? This action cannot be undone." detail={`Testimonial from ${item.client_name}`} successMessage="Testimonial deleted successfully." errorMessage="Unable to delete this testimonial. Please try again." onConfirm={() => handleDelete(item)} />
                 </div>
               </div>
             ))}
@@ -266,7 +266,7 @@ function TestimonialsPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className={iconButton}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -283,7 +283,7 @@ function TestimonialsPage() {
                     onChange={(e) =>
                       setEditingItem({ ...editingItem, client_name: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., John Doe"
                   />
                 </div>
@@ -298,7 +298,7 @@ function TestimonialsPage() {
                     onChange={(e) =>
                       setEditingItem({ ...editingItem, client_title: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., CEO, ABC Company"
                   />
                 </div>
@@ -314,7 +314,7 @@ function TestimonialsPage() {
                     }
                     rows={4}
                     maxLength={1000}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="Write the testimonial here..."
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -330,7 +330,7 @@ function TestimonialsPage() {
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, rating: parseInt(e.target.value) })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value={5}>⭐⭐⭐⭐⭐ (5 stars)</option>
                       <option value={4}>⭐⭐⭐⭐ (4 stars)</option>
@@ -348,7 +348,7 @@ function TestimonialsPage() {
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, service_division: e.target.value as any })
                       }
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="both">Both</option>
                       <option value="travel">Travel</option>
@@ -367,7 +367,7 @@ function TestimonialsPage() {
                     onChange={(e) =>
                       setEditingItem({ ...editingItem, client_photo_url: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="https://..."
                   />
                 </div>
@@ -378,7 +378,7 @@ function TestimonialsPage() {
                     id="featured"
                     checked={editingItem.featured}
                     onChange={(e) => setEditingItem({ ...editingItem, featured: e.target.checked })}
-                    className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="featured" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Featured (show on homepage)
@@ -392,13 +392,13 @@ function TestimonialsPage() {
                     setEditingItem(null);
                     setIsCreating(false);
                   }}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className={btn('secondary')}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 flex items-center gap-2"
+                  className={btn('primary')}
                 >
                   <Save className="w-4 h-4" />
                   {isCreating ? 'Add Testimonial' : 'Save Changes'}
