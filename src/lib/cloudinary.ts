@@ -82,6 +82,9 @@ export function uploadImage(
     body.append('file', file);
     body.append('upload_preset', UPLOAD_PRESET!);
     body.append('folder', folder);
+    // A unique name per upload: the preset keeps original file names and never overwrites,
+    // so two different photos both called IMG_0001.jpg would otherwise collide.
+    body.append('public_id', uniquePublicId(file.name));
 
     // XMLHttpRequest rather than fetch, because fetch cannot report upload progress.
     const xhr = new XMLHttpRequest();
@@ -128,6 +131,18 @@ export function uploadImage(
     }
     xhr.send(body);
   });
+}
+
+/** "Dubai Tour 2024.JPG" -> "dubai-tour-2024-k3f9x2": readable, URL-safe and unique. */
+function uniquePublicId(name: string) {
+  const slug = name
+    .replace(/\.[^.]+$/, '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+  return `${slug || 'image'}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
 /** "dubai-tour_2024.jpg" -> "Dubai tour 2024": a starting title the admin can edit. */
