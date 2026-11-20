@@ -11,6 +11,10 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+// The two font files every public page needs above the fold (Latin subsets). Preloading
+// them lets the browser fetch them alongside the CSS instead of after it.
+import frauncesLatin from "@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url";
+import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -28,7 +32,7 @@ import { site } from "@/lib/site";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="site-public flex min-h-screen flex-col">
       <Navbar />
       <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-secondary/30 via-background to-secondary/20 px-4 py-16">
         <div className="max-w-2xl text-center">
@@ -174,6 +178,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "preload", href: frauncesLatin, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+      { rel: "preload", href: manropeLatin, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
@@ -239,7 +245,7 @@ function RootComponent() {
   // Public routes get navbar and footer
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
+      <div className="site-public flex min-h-screen flex-col">
         <Navbar />
         <main className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
