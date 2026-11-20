@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/site/PageHero";
 import { getPublishedGallery } from "@/lib/queries/website";
@@ -36,41 +36,41 @@ function MediaPage() {
         title="Travel, trade and people"
         subtitle="A published look at the work, destinations, and partnerships behind Yahaya Travel and Trade."
       />
-      <section className="py-16">
+      <section className="py-[72px] md:py-28">
         <div className="container-page">
           {isLoading ? (
-            <p className="text-center text-muted-foreground">Loading gallery...</p>
+            <p className="t-body text-muted-foreground" role="status">Loading the gallery</p>
           ) : gallery?.length ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {gallery.map((item) => (
-                <figure
-                  key={item.id}
-                  className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-                >
-                  <img
-                    src={item.image_url}
-                    alt={item.alt_text || item.title}
-                    loading="lazy"
-                    className="h-64 w-full object-cover"
-                  />
-                  <figcaption className="p-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                      {item.category}
-                    </p>
-                    <h2 className="mt-2 text-lg font-bold text-primary">{item.title}</h2>
-                    {item.description && (
-                      <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
-                    )}
-                  </figcaption>
-                </figure>
+                <li key={item.id}>
+                  <figure>
+                    <div className="aspect-[4/5] overflow-hidden rounded-lg bg-secondary">
+                      <img
+                        src={item.image_url}
+                        alt={item.alt_text || item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <figcaption className="mt-5">
+                      <p className="t-eyebrow text-accent-ink">{item.category}</p>
+                      <h2 className="t-h3 mt-2 text-primary">{item.title}</h2>
+                      {item.description && <p className="t-body mt-2 text-muted-foreground">{item.description}</p>}
+                    </figcaption>
+                  </figure>
+                </li>
               ))}
-            </div>
+            </ul>
           ) : (
-            <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-12 text-center">
-              <h2 className="text-xl font-bold text-primary">Gallery coming soon</h2>
-              <p className="mt-2 text-muted-foreground">
-                Published photos and highlights will appear here.
-              </p>
+            // The header hides Media while the gallery is empty; this covers old links.
+            <div className="max-w-xl">
+              <h2 className="t-h3 text-primary">Nothing published yet</h2>
+              <p className="t-body mt-3 text-muted-foreground">Photographs from our work will appear here.</p>
+              <Link to="/" className="link-draw mt-6 inline-flex min-h-11 items-center font-semibold text-primary">
+                Back to the homepage
+              </Link>
             </div>
           )}
         </div>

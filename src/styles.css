@@ -292,6 +292,8 @@
 
 /* At most one small eyebrow per page hero. */
 @utility t-eyebrow {
+  font-family: var(--font-sans);
+  font-variation-settings: normal;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.16em;

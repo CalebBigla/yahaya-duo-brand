@@ -10,7 +10,7 @@ import { getPublishedGallery } from "@/lib/queries/website";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
 /** Pages whose first section is a full-bleed photo: the header sits transparently over it. */
-const OVERLAY_ROUTES = new Set(["/", "/travel", "/trade", "/about"]);
+const OVERLAY_ROUTES = new Set(["/", "/travel", "/trade"]);
 
 export const HEADER_HEIGHT = "4.5rem"; // 72px
 

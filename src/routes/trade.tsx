@@ -1,34 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Fuel,
-  Ship,
-  PackageSearch,
-  Store,
-  Briefcase,
-  Clock,
-  FileText,
-  CheckCircle2,
-  type LucideIcon,
-} from "lucide-react";
 import { useState } from "react";
+import { ArrowDown, Briefcase, Check, ChevronDown, FileCheck2, Fuel, PackageSearch, Ship, Store, type LucideIcon } from "lucide-react";
+
+import { ButtonLink } from "@/components/site/Button";
+import { InfoCard } from "@/components/site/InfoCard";
 import { PageHero } from "@/components/site/PageHero";
+import { Reveal } from "@/components/site/Reveal";
+import { Section } from "@/components/site/Section";
 import { InquiryForm } from "@/components/forms/InquiryForm";
-import { tradeServices } from "@/lib/site";
+import { brand } from "@/lib/brand";
+import { images } from "@/lib/images";
+import { site, tradeServices } from "@/lib/site";
 import { getPublishedServices } from "@/lib/queries/website";
-import tradeImg from "@/assets/trade.webp";
 
-// Page hero image
-import heroImg from "@/assets/Import export training in karachi lahore islamabad pakistan.webp";
-
-// Service section images
-import oilGasImg from "@/assets/The Last Bow at Dusk.webp";
-import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
-import procurementImg from "@/assets/petroleum engineering.webp";
-
-const title = "Procurement & Trading Services in Yola | Yahaya Travel & Trade";
+const title = `${brand.desks.trade.name} | Procurement, import and export, petroleum products | Yahaya`;
 const description =
-  "Procurement company in Yola, Adamawa: sourcing and procurement, import-export, oil and gas trade, and trade consultancy. Serving corporate, NGO, and government clients across Nigeria from our Jimeta-Yola office.";
+  "Trade and energy desk in Jimeta-Yola, Adamawa: sourcing and procurement, import and export, petroleum product supply, general trading and trade consultancy, with documentation handled end to end. RC 9295358.";
 
 export const Route = createFileRoute("/trade")({
   head: () => ({
@@ -53,6 +41,30 @@ const icons: Record<string, LucideIcon> = {
   "general-traders": Store,
   "trade-consultancy": Briefcase,
 };
+
+/** How a deal runs, drawn from the process described for each service. */
+const dealSteps = [
+  { title: "Enquiry", body: "You tell us the product, specification, volume, delivery point and timeline." },
+  { title: "Verification", body: "We identify and check suppliers or buyers, and confirm availability and quality requirements." },
+  { title: "Proposal", body: "Itemised pricing and terms in writing, with comparative quotes where there is a choice." },
+  { title: "Documentation", body: "Orders, permits, certificates and shipping papers prepared and checked before goods move." },
+  { title: "Delivery", body: "Logistics tracked to your site or depot, with delivery confirmation and records for your files." },
+];
+
+/**
+ * Documents the desk handles, as named in the existing service descriptions.
+ * TODO(owner): confirm each item is something the company provides today; remove any
+ * that are not, and add licences or registrations actually held.
+ */
+const documents = [
+  "Purchase orders and invoices",
+  "Waybills and delivery notes",
+  "Quality and inspection certificates",
+  "Form M and Bill of Lading",
+  "SONCAP and SON certification",
+  "Customs clearing documentation",
+  "Petroleum product licences, where applicable",
+];
 
 // Expanded service details with categories, process, lead times, and examples
 const serviceDetails = {
@@ -255,275 +267,110 @@ function TradePage() {
 
   return (
     <>
-      {/* Full-width Hero Banner */}
-      <section className="relative isolate overflow-hidden">
-        <img
-          src={heroImg}
-          alt="Global logistics and trade operations"
-          loading="eager"
-          fetchPriority="high"
-          className="h-96 w-full object-cover lg:h-[28rem]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/85 to-primary-deep/70" />
-        <div className="absolute inset-0 flex items-center">
-          <div className="container-page">
-            <div className="max-w-3xl">
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">
-                Trade Division · General Contracts
-              </p>
-              <h1 className="mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-                Trade activities
-              </h1>
-              <p className="mt-5 text-lg leading-relaxed text-primary-foreground/85">
-                Multisector trading hub specializing in oil and gas, import-export facilitation,
-                sourcing and procurement, and trade consultancy — delivered with verified suppliers,
-                regulatory compliance, and comprehensive documentation.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        image={images.tradeHero}
+        eyebrow={brand.desks.trade.name}
+        title="Sourcing, trade and energy supply for companies"
+        subtitle={brand.desks.trade.summary}
+        actions={
+          <>
+            <ButtonLink to="/quote" search={{ desk: "trade" } as never} variant="onDark">
+              {brand.advisorAction}
+            </ButtonLink>
+            <ButtonLink to="/trade" hash="process" variant="textOnDark">
+              How a deal runs <ArrowDown className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+            </ButtonLink>
+          </>
+        }
+      />
 
-      <section className="border-b border-border bg-primary text-primary-foreground">
-        <div className="container-page grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
-          <div>
-            <h2 className="text-2xl font-bold sm:text-3xl">
-              Comprehensive trade solutions without the guesswork
-            </h2>
-            <p className="mt-4 text-primary-foreground/75">
-              Operating as a multisector trading hub, we work with buyers, suppliers, contractors,
-              and institutions across Nigeria and internationally. From feasibility studies to final
-              delivery, we verify counterparties, provide regulatory compliance guidance, negotiate
-              optimal terms in writing, and maintain comprehensive documentation from purchase order
-              to delivery.
-            </p>
-            <ul className="mt-6 space-y-2 text-sm font-medium text-primary-foreground/85">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Verified suppliers with due diligence and transparent pricing
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Logistics, clearing, regulatory compliance and documentation coordinated
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Trade consultancy: feasibility studies, market entry strategies, compliance advisory
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Registered company, RC 9295358 — contract-ready for corporate, NGO, and government
-                clients
-              </li>
-            </ul>
-          </div>
-          <img
-            src={tradeImg}
-            alt="Cargo ship and shipping containers at a commercial port"
-            width={1200}
-            height={900}
-            loading="lazy"
-            className="w-full rounded-xl object-cover shadow-elevated"
-          />
-        </div>
-      </section>
-
-      {/* Detailed Services */}
-      {services.map((service, i) => {
-        const Icon = icons[service.slug] ?? Briefcase;
-        const details = serviceDetails[service.slug as keyof typeof serviceDetails];
-        return (
-          <section
-            key={service.slug}
-            id={service.slug}
-            className={`scroll-mt-24 py-14 sm:py-16 ${i % 2 === 1 ? "bg-secondary/50" : "bg-background"}`}
-          >
-            <div className="container-page">
-              <div className="grid gap-6 md:grid-cols-[auto_1fr] md:gap-10">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary">
-                  <Icon className="h-7 w-7 text-accent" />
-                </div>
-                <div className="max-w-3xl">
-                  <h2 className="text-2xl font-bold text-primary sm:text-3xl">{service.title}</h2>
-                  <p className="mt-2 font-semibold text-accent-foreground/80">{service.summary}</p>
-                  <p className="mt-4 leading-relaxed text-muted-foreground">{service.detail}</p>
-                </div>
-              </div>
-
-              {details && (
-                <div className="mt-8 grid gap-6 lg:grid-cols-2">
-                  <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-accent" />
-                      <h3 className="font-bold text-primary">Categories we handle</h3>
-                    </div>
-                    <ul className="mt-4 space-y-2">
-                      {details.categories.map((item, idx) => (
-                        <li
-                          key={idx}
-                          className="flex items-start gap-2 text-sm text-muted-foreground"
-                        >
-                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-accent" />
-                        <h3 className="text-sm font-bold text-primary">How the process works</h3>
-                      </div>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+      <Section
+        id="services"
+        title="Service lines"
+        intro={`For corporate clients, contractors, NGOs and government projects. Registered company, RC ${site.rcNumber}.`}
+      >
+        <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {services.map((service, i) => {
+            const details = serviceDetails[service.slug as keyof typeof serviceDetails];
+            return (
+              <Reveal as="li" key={service.slug} delay={(i % 3) * 80}>
+                <InfoCard id={service.slug} icon={icons[service.slug] ?? Briefcase} title={service.title}>
+                  <p>{service.summary}</p>
+                  {details && (
+                    <details className="group mt-5 border-t border-border pt-4">
+                      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-primary [&::-webkit-details-marker]:hidden">
+                        Scope, process and lead time
+                        <ChevronDown className="h-4 w-4 transition-transform duration-200 group-open:rotate-180" strokeWidth={1.5} aria-hidden="true" />
+                      </summary>
+                      <ul className="space-y-2 pt-2 t-small">
+                        {details.categories.map((item) => (
+                          <li key={item} className="flex gap-2">
+                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" strokeWidth={1.5} aria-hidden="true" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="t-small mt-4">
+                        <span className="font-semibold text-primary">Process: </span>
                         {details.process}
                       </p>
-                    </div>
-
-                    <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-accent" />
-                        <h3 className="text-sm font-bold text-primary">Typical lead time</h3>
-                      </div>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      <p className="t-small mt-2">
+                        <span className="font-semibold text-primary">Typical lead time: </span>
                         {details.leadTime}
                       </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+                    </details>
+                  )}
+                </InfoCard>
+              </Reveal>
+            );
+          })}
+        </ul>
+      </Section>
 
-              {details?.example && (
-                <div className="mt-6 rounded-xl border-2 border-primary/20 bg-primary/5 p-6">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Example Scenario
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-foreground/80">
-                    {details.example}
-                  </p>
-                </div>
-              )}
+      <Section id="process" tone="navy" eyebrow="Process" title="How a deal runs">
+        <ol className="grid gap-px overflow-hidden rounded-lg border border-ivory/15 bg-ivory/15 md:grid-cols-5">
+          {dealSteps.map((step, i) => (
+            <li key={step.title} className="bg-primary p-7">
+              <p className="font-display text-2xl text-accent" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h3 className="mt-4 font-display text-xl text-ivory">{step.title}</h3>
+              <p className="t-small mt-2 text-on-navy-muted">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
 
-              {/* Supporting Images for Specific Services */}
-              {service.slug === "oil-and-gas-trade" && (
-                <div className="mt-8 grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-                  <div>
-                    <h3 className="text-lg font-bold text-primary">
-                      Energy sector expertise with compliance
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      From depot allocations to offshore operations, we facilitate petroleum product
-                      trading with transparent documentation, quality assurance, and verified supply
-                      chains. Our operations ensure compliance with local and international energy
-                      standards. Our relationships span refineries, depots, and industrial
-                      off-takers across the region, backed by logistics coordination and regulatory
-                      adherence.
-                    </p>
-                  </div>
-                  <div className="relative">
-                    <img
-                      src={oilGasImg}
-                      alt="Oil and gas operations"
-                      loading="lazy"
-                      className="h-64 w-full rounded-2xl object-cover shadow-card lg:h-80"
-                    />
-                  </div>
-                </div>
-              )}
+      <Section id="documents" tone="sand" title="Documentation we handle" intro="Paperwork is where trade goes wrong. These are prepared and checked before goods move.">
+        <ul className="grid gap-x-10 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+          {documents.map((doc) => (
+            <li key={doc} className="flex gap-3 border-t border-border pt-4 text-primary">
+              <FileCheck2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" strokeWidth={1.5} aria-hidden="true" />
+              {doc}
+            </li>
+          ))}
+        </ul>
+      </Section>
 
-              {service.slug === "import-export" && (
-                <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-center">
-                  <div className="relative lg:order-1">
-                    <img
-                      src={importExportImg}
-                      alt="Import export logistics"
-                      loading="lazy"
-                      className="h-64 w-full rounded-2xl object-cover shadow-card lg:h-80"
-                    />
-                  </div>
-                  <div className="lg:order-2">
-                    <h3 className="text-lg font-bold text-primary">
-                      Global logistics with comprehensive documentation
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      Whether you're importing machinery, electronics, or industrial equipment from
-                      Asia, or exporting agricultural produce to international markets, we
-                      coordinate the complete supply chain. Our services include supplier
-                      verification, freight booking and forwarding, customs clearing with SONCAP and
-                      SON certification, documentation support (Bill of Lading, FORM M), and final
-                      delivery coordination to your warehouse. We handle the complexity so you can
-                      focus on your business.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {service.slug === "sourcing-procurement" && (
-                <div className="mt-8 grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-                  <div>
-                    <h3 className="text-lg font-bold text-primary">
-                      Professional procurement with quality assurance
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      We provide tailored procurement solutions for corporate clients, NGOs,
-                      government projects, and SMEs. Our services include supplier identification
-                      and verification, bulk purchasing with price optimization, negotiation and
-                      quality assurance, comprehensive documentation and logistics support, and
-                      reliable delivery coordination. We source building materials, industrial
-                      equipment, agricultural inputs, and project consumables from vetted suppliers.
-                      Every procurement is backed by comparative quotes, transparent payment terms,
-                      quality inspection, and documented delivery — ensuring you receive exactly
-                      what you ordered, when you need it.
-                    </p>
-                  </div>
-                  <div className="relative">
-                    <img
-                      src={procurementImg}
-                      alt="Procurement and sourcing operations"
-                      loading="lazy"
-                      className="h-64 w-full rounded-2xl object-cover shadow-card lg:h-80"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        );
-      })}
-
-      {/* Interactive Trade Enquiry Form */}
-      <section id="inquiry-form" className="scroll-mt-20 bg-primary-deep py-16">
-        <div className="container-page max-w-3xl">
-          <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold text-primary-foreground sm:text-3xl">
-              Request a quote
-            </h2>
-            <p className="mt-2 text-sm text-primary-foreground/75">
-              Select the service you need and the form will adapt to collect the right information
-            </p>
+      <Section id="inquiry-form" tone="navy" eyebrow="Enquire" title="Request terms" intro={`Choose a service line and the form adapts. An advisor will reply ${brand.responseTime}.`}>
+        <div className="max-w-3xl">
+          <div role="group" aria-label="Service line" className="mb-8 flex flex-wrap gap-2">
+            {services.map((service) => (
+              <button
+                key={service.slug}
+                type="button"
+                aria-pressed={selectedService === service.slug}
+                onClick={() => setSelectedService(service.slug)}
+                className={`min-h-11 rounded-full border px-5 text-sm font-semibold transition-colors ${
+                  selectedService === service.slug
+                    ? "border-ivory bg-ivory text-primary"
+                    : "border-ivory/30 text-ivory hover:border-ivory"
+                }`}
+              >
+                {service.title}
+              </button>
+            ))}
           </div>
-
-          <div className="mb-6 flex flex-wrap justify-center gap-2">
-            {services.map((service) => {
-              const Icon = icons[service.slug] ?? Briefcase;
-              return (
-                <button
-                  key={service.slug}
-                  onClick={() => setSelectedService(service.slug)}
-                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-all ${
-                    selectedService === service.slug
-                      ? "bg-accent text-accent-foreground"
-                      : "border border-primary-foreground/30 text-primary-foreground hover:border-accent hover:text-accent"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {service.title}
-                </button>
-              );
-            })}
-          </div>
-
           <InquiryForm
             title="Trade enquiry"
             description="Share what you need supplied, sourced or shipped and we will respond with terms."
@@ -531,7 +378,7 @@ function TradePage() {
             fields={getFormFields()}
           />
         </div>
-      </section>
+      </Section>
     </>
   );
 }

@@ -23,6 +23,8 @@ import saudi from "@/assets/Saudi Arabia beauty.webp";
 import dubai from "@/assets/Dubai.webp";
 import turkey from "@/assets/Turkey.webp";
 import egypt from "@/assets/Egypt.webp";
+import qatar from "@/assets/qatar beuty.webp";
+import china from "@/assets/Chinese beauty.webp";
 import oilField from "@/assets/petroleum engineering.webp";
 import logisticsWide from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
 
@@ -55,6 +57,8 @@ export const images = {
   journeyDubai: placeholder(dubai, 736, 736, "Dubai skyline"),
   journeyIstanbul: placeholder(turkey, 735, 919, "Istanbul, Turkey"),
   journeyEgypt: placeholder(egypt, 736, 1104, "Egypt"),
+  destinationQatar: placeholder(qatar, 736, 1308, "Doha, Qatar"),
+  destinationChina: placeholder(china, 736, 1307, "China"),
 } satisfies Record<string, ResponsiveSource>;
 
 /**
