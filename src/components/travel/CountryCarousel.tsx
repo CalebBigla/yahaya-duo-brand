@@ -3,12 +3,12 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Import country images
-import turkeyImg from '@/assets/Turkey.jpg';
-import dubaiImg from '@/assets/Dubai.jpg';
-import egyptImg from '@/assets/Egypt.jpg';
-import qatarImg from '@/assets/qatar beuty.jpg';
-import chinaImg from '@/assets/Chinese beauty.jpg';
-import saudiImg from '@/assets/Saudi Arabia beauty.jpg';
+import turkeyImg from '@/assets/Turkey.webp';
+import dubaiImg from '@/assets/Dubai.webp';
+import egyptImg from '@/assets/Egypt.webp';
+import qatarImg from '@/assets/qatar beuty.webp';
+import chinaImg from '@/assets/Chinese beauty.webp';
+import saudiImg from '@/assets/Saudi Arabia beauty.webp';
 
 interface CountryDestination {
   name: string;

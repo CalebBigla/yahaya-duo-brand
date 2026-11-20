@@ -16,15 +16,15 @@ import { PageHero } from "@/components/site/PageHero";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { tradeServices } from "@/lib/site";
 import { getPublishedServices } from "@/lib/queries/website";
-import tradeImg from "@/assets/trade.jpg";
+import tradeImg from "@/assets/trade.webp";
 
 // Page hero image
-import heroImg from "@/assets/Import export training in karachi lahore islamabad pakistan.jpg";
+import heroImg from "@/assets/Import export training in karachi lahore islamabad pakistan.webp";
 
 // Service section images
-import oilGasImg from "@/assets/The Last Bow at Dusk.jpg";
-import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
-import procurementImg from "@/assets/petroleum engineering.jpg";
+import oilGasImg from "@/assets/The Last Bow at Dusk.webp";
+import importExportImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
+import procurementImg from "@/assets/petroleum engineering.webp";
 
 const title = "Procurement & Trading Services in Yola | Yahaya Travel & Trade";
 const description =
@@ -261,6 +261,7 @@ function TradePage() {
           src={heroImg}
           alt="Global logistics and trade operations"
           loading="eager"
+          fetchPriority="high"
           className="h-96 w-full object-cover lg:h-[28rem]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/85 to-primary-deep/70" />

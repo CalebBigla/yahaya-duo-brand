@@ -4,9 +4,9 @@ import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
 
 // Company story image
-import companyStoryImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
+import companyStoryImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
 // CEO image
-import ceoImg from "@/assets/YAHAYA.jpg";
+import ceoImg from "@/assets/YAHAYA.webp";
 
 const title = "About Yahaya Travel & Trade | Travel Agency in Yola, Adamawa";
 const description =

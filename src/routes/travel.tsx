@@ -20,10 +20,10 @@ import { CountryCarousel } from "@/components/travel/CountryCarousel";
 import { TourPackagesCards } from "@/components/travel/TourPackagesCards";
 import { travelServices, site } from "@/lib/site";
 import { getPublishedServices, getPublishedVisaDestinations } from "@/lib/queries/website";
-import travelImg from "@/assets/travel.jpg";
+import travelImg from "@/assets/travel.webp";
 
 // Page hero image
-import heroImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
+import heroImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
 
 const title = "Visa Processing & Travel Services in Yola | Yahaya Travel & Trade";
 const description =
@@ -203,6 +203,7 @@ function TravelPage() {
           src={heroImg}
           alt="Travel documents and passport"
           loading="eager"
+          fetchPriority="high"
           className="h-96 w-full object-cover lg:h-[28rem]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/85 to-primary-deep/70" />

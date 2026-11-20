@@ -25,39 +25,39 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 
 // Hero - Oil & Gas / Industrial focus
-import heroPetroleumImg from "@/assets/petroleum engineering.jpg";
-import heroOilRigImg from "@/assets/The Last Bow at Dusk.jpg";
+import heroPetroleumImg from "@/assets/petroleum engineering.webp";
+import heroOilRigImg from "@/assets/The Last Bow at Dusk.webp";
 
 // Bento grid - Travel & Trade split
-import bentoTravelCoupleImg from "@/assets/download (25).jpg";
-import bentoTravelLuggageImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.jpg";
-import bentoTradeLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
-import bentoTradeSupplyImg from "@/assets/Best Logistics Companies in India – Top Supply Chain Solutions for Business Growth 2026.jpg";
+import bentoTravelCoupleImg from "@/assets/download (25).webp";
+import bentoTravelLuggageImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
+import bentoTradeLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
+import bentoTradeSupplyImg from "@/assets/Best Logistics Companies in India – Top Supply Chain Solutions for Business Growth 2026.webp";
 
 // Trade gallery (mirroring hotel gallery)
-import tradeOilGasImg from "@/assets/The Last Bow at Dusk.jpg";
-import tradeOffshoreImg from "@/assets/download (24).jpg";
-import tradeOnsiteImg from "@/assets/Off shore rig worker.jpg";
-import tradeTechnicalImg from "@/assets/petroleum engineering.jpg";
+import tradeOilGasImg from "@/assets/The Last Bow at Dusk.webp";
+import tradeOffshoreImg from "@/assets/download (24).webp";
+import tradeOnsiteImg from "@/assets/Off shore rig worker.webp";
+import tradeTechnicalImg from "@/assets/petroleum engineering.webp";
 
 // Hotel gallery
-import hotel1Img from "@/assets/24 Small Guest Room Ideas for Compact Comfort and___.jpg";
-import hotel2Img from "@/assets/Borges 2129 I by depptö.jpg";
-import hotel3Img from "@/assets/Best Hotel Room in Jaipur.jpg";
-import hotel4Img from "@/assets/Akasha Beach Hotel.jpg";
+import hotel1Img from "@/assets/24 Small Guest Room Ideas for Compact Comfort and___.webp";
+import hotel2Img from "@/assets/Borges 2129 I by depptö.webp";
+import hotel3Img from "@/assets/Best Hotel Room in Jaipur.webp";
+import hotel4Img from "@/assets/Akasha Beach Hotel.webp";
 
 // Full-width banner
-import fullWidthBannerImg from "@/assets/Import export training in karachi lahore islamabad pakistan.jpg";
+import fullWidthBannerImg from "@/assets/Import export training in karachi lahore islamabad pakistan.webp";
 
 // Stats section lifestyle photo
-import statsLifestyleImg from "@/assets/download (25).jpg";
+import statsLifestyleImg from "@/assets/download (25).webp";
 
 // Key features composite
-import featuresPetroleumImg from "@/assets/petroleum engineering.jpg";
-import featuresLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.jpg";
+import featuresPetroleumImg from "@/assets/petroleum engineering.webp";
+import featuresLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
 
 // Trust section
-import trustWorkerImg from "@/assets/Off shore rig worker.jpg";
+import trustWorkerImg from "@/assets/Off shore rig worker.webp";
 
 import { site } from "@/lib/site";
 import {
@@ -382,13 +382,15 @@ function Index() {
               </div>
             </div>
 
-            {/* Floating Collage - Travel & Trade Focus */}
+            {/* Floating Collage - Travel & Trade Focus.
+                Desktop only, so lazy: phones and tablets never download these photos. */}
             <div className="relative hidden lg:block">
               <div className="animate-float-slow relative">
                 <img
                   src={bentoTravelLuggageImg}
                   alt="Travel services"
-                  loading="eager"
+                  loading="lazy"
+                  decoding="async"
                   className="h-72 w-full rounded-3xl object-cover shadow-elevated"
                 />
               </div>
@@ -396,7 +398,8 @@ function Index() {
                 <img
                   src={bentoTradeLogisticsImg}
                   alt="Trade and logistics"
-                  loading="eager"
+                  loading="lazy"
+                  decoding="async"
                   className="h-56 w-full rounded-2xl object-cover shadow-elevated"
                 />
               </div>
@@ -421,65 +424,67 @@ function Index() {
             </div>
           </AnimatedSection>
 
-          <div className="mt-12 grid gap-6 sm:gap-8 md:grid-cols-2 max-w-5xl mx-auto">
-            {/* Travel and Tour - Large Featured */}
-            <AnimatedSection animation="scale" delay={0}>
+          <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:gap-8 md:grid-cols-2">
+            <AnimatedSection animation="scale" delay={0} className="h-full">
               <Link
                 to="/travel"
-                className="card-interactive group relative overflow-hidden rounded-2xl sm:rounded-3xl"
+                className="card-interactive group relative block h-full overflow-hidden rounded-2xl sm:rounded-3xl"
               >
-                <div className="aspect-[3/4]">
+                {/* Text sits in the normal flow: the card keeps its 3:4 shape but grows
+                    if the text needs more room, so nothing can spill out on tablets. */}
+                <div className="relative flex h-full aspect-[3/4] flex-col justify-end">
                   <img
                     src={bentoTravelLuggageImg}
                     alt="Travel and tour services"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
-                    <Plane className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
-                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+                  <div className="relative p-5 text-primary-foreground sm:p-7 md:p-6 lg:p-8 xl:p-10">
+                    <Plane className="h-8 w-8 text-accent lg:h-10 lg:w-10 xl:h-12 xl:w-12" />
+                    <h3 className="mt-3 text-2xl font-bold leading-tight text-balance sm:text-3xl md:text-2xl lg:mt-4 lg:text-3xl xl:text-4xl">
                       Travel and Tour
                     </h3>
-                    <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
+                    <p className="mt-3 text-sm leading-relaxed text-primary-foreground/85 sm:text-base md:text-sm lg:text-base xl:text-lg">
                       Complete visa processing, flight bookings, hotel reservations, and tour
                       packages to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt
                       and more.
                     </p>
-                    <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-accent lg:mt-6 lg:text-base">
+                      Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 lg:h-5 lg:w-5" />
                     </div>
                   </div>
                 </div>
               </Link>
             </AnimatedSection>
 
-            {/* Sourcing & Procurement - Large Featured */}
-            <AnimatedSection animation="scale" delay={100}>
+            <AnimatedSection animation="scale" delay={100} className="h-full">
               <Link
                 to="/trade"
                 hash="sourcing-procurement"
-                className="card-interactive group relative overflow-hidden rounded-2xl sm:rounded-3xl"
+                className="card-interactive group relative block h-full overflow-hidden rounded-2xl sm:rounded-3xl"
               >
-                <div className="aspect-[3/4]">
+                {/* Text sits in the normal flow: the card keeps its 3:4 shape but grows
+                    if the text needs more room, so nothing can spill out on tablets. */}
+                <div className="relative flex h-full aspect-[3/4] flex-col justify-end">
                   <img
                     src={bentoTradeSupplyImg}
                     alt="Sourcing and procurement services"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-10 text-primary-foreground">
-                    <PackageSearch className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-accent" />
-                    <h3 className="mt-2 sm:mt-3 md:mt-4 lg:mt-5 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+                  <div className="relative p-5 text-primary-foreground sm:p-7 md:p-6 lg:p-8 xl:p-10">
+                    <PackageSearch className="h-8 w-8 text-accent lg:h-10 lg:w-10 xl:h-12 xl:w-12" />
+                    <h3 className="mt-3 text-2xl font-bold leading-tight text-balance sm:text-3xl md:text-2xl lg:mt-4 lg:text-3xl xl:text-4xl">
                       Sourcing and Procurement
                     </h3>
-                    <p className="mt-2 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-primary-foreground/85 line-clamp-3 sm:line-clamp-4">
+                    <p className="mt-3 text-sm leading-relaxed text-primary-foreground/85 sm:text-base md:text-sm lg:text-base xl:text-lg">
                       Direct international sourcing from trusted global suppliers — competitive
                       pricing, verified credentials, complete delivery management.
                     </p>
-                    <div className="mt-3 sm:mt-4 md:mt-6 lg:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm md:text-base font-bold text-accent">
-                      Learn more <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-accent lg:mt-6 lg:text-base">
+                      Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 lg:h-5 lg:w-5" />
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logoMark from "@/assets/Log.png";
+import logoMark from "@/assets/Log.webp";
 
 export function Logo({ variant = "light" }: { variant?: "light" | "dark" }) {
   return (
