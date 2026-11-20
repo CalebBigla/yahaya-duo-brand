@@ -237,28 +237,15 @@ function TravelPage() {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { name: "Umrah Visas", icon: "🕌" },
-              { name: "Study Visas", icon: "🎓" },
-              { name: "Tourism Visas", icon: "✈️" },
-              { name: "Hajj Visas", icon: "🕋" },
-              { name: "Work Visas", icon: "💼" },
-              { name: "Business Visas", icon: "🤝" },
-              { name: "Transit Visas", icon: "🌍" },
-            ].map((visa, index) => (
-              <div
-                key={index}
-                className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 text-center transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-1"
-              >
-                <div className="text-4xl mb-3">{visa.icon}</div>
-                <h3 className="font-bold text-primary group-hover:text-accent transition-colors">
-                  {visa.name}
-                </h3>
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-accent transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
-              </div>
+          {/* Text-only tiles: no emoji, which render differently on every device. */}
+          <ul className="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+            {["Umrah", "Hajj", "Tourism", "Study", "Work", "Business", "Transit"].map((visa) => (
+              <li key={visa} className="bg-card px-6 py-5">
+                <span className="block h-px w-6 bg-accent" aria-hidden="true" />
+                <p className="mt-3 font-display text-lg text-primary">{visa} visa</p>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 

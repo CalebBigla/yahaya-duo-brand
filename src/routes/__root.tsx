@@ -29,62 +29,49 @@ import { ThemeProvider } from "@/lib/theme";
 import { AdminAuthContext, type AdminAuthState } from "@/components/admin/AdminAuthContext";
 import { checkAdminAccess, InactivityManager } from "@/lib/auth";
 import { site } from "@/lib/site";
+import { brand } from "@/lib/brand";
+import { Compass, Home, MessageCircle } from "lucide-react";
 
 function NotFoundComponent() {
   return (
     <div className="site-public flex min-h-screen flex-col">
       <Navbar />
-      <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-secondary/30 via-background to-secondary/20 px-4 py-16">
-        <div className="max-w-2xl text-center">
-          <div className="mb-8 inline-flex items-center justify-center rounded-full bg-accent/10 p-6">
-            <svg className="h-24 w-24 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-            </svg>
-          </div>
-          <h1 className="font-display text-7xl font-extrabold text-primary sm:text-8xl">404</h1>
-          <h2 className="mt-4 text-2xl font-bold text-foreground sm:text-3xl">Page not found</h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            The page you're looking for doesn't exist or has been moved. You might have followed an outdated link or mistyped the URL.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground transition-opacity hover:opacity-90"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              Go to Homepage
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary/30 px-6 py-3.5 text-sm font-bold text-foreground transition-colors hover:border-accent hover:text-accent"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Contact Us
-            </Link>
-          </div>
-          <div className="mt-12 border-t border-border pt-8">
-            <p className="text-sm font-semibold text-foreground/80">Quick Links</p>
-            <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm">
-              <Link to="/travel" className="text-muted-foreground hover:text-accent underline underline-offset-4">
-                Travel Services
+      <main className="flex flex-1 items-center px-5 py-24 sm:py-32">
+        <div className="container-page">
+          <div className="mx-auto max-w-xl text-center">
+            <Compass className="mx-auto h-8 w-8 text-accent-ink" strokeWidth={1.5} aria-hidden="true" />
+            <p className="t-eyebrow mt-6 text-accent-ink">Error 404</p>
+            <h1 className="t-h2 mt-3 text-primary">This page has moved or no longer exists</h1>
+            <p className="t-body mt-4 text-muted-foreground">
+              The link may be out of date. Start from the homepage, or tell us what you were looking for.
+            </p>
+            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                to="/"
+                className="btn-interactive inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
+              >
+                <Home className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                Go to the homepage
               </Link>
-              <Link to="/trade" className="text-muted-foreground hover:text-accent underline underline-offset-4">
-                Trade Services
-              </Link>
-              <Link to="/about" className="text-muted-foreground hover:text-accent underline underline-offset-4">
-                About Us
-              </Link>
-              <Link to="/quote" className="text-muted-foreground hover:text-accent underline underline-offset-4">
-                Request Quote
+              <Link
+                to="/contact"
+                className="btn-interactive inline-flex min-h-11 items-center gap-2 rounded-full border border-primary/25 px-6 text-sm font-semibold text-primary hover:border-primary"
+              >
+                <MessageCircle className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                Contact us
               </Link>
             </div>
+            <nav aria-label="Popular pages" className="mt-14 border-t border-border pt-8">
+              <ul className="flex flex-wrap justify-center gap-x-6 gap-y-3 t-small">
+                <li><Link to={brand.desks.travel.path} className="link-draw text-primary">{brand.desks.travel.name}</Link></li>
+                <li><Link to={brand.desks.trade.path} className="link-draw text-primary">{brand.desks.trade.name}</Link></li>
+                <li><Link to="/about" className="link-draw text-primary">About</Link></li>
+                <li><Link to="/quote" className="link-draw text-primary">Enquire</Link></li>
+              </ul>
+            </nav>
           </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
