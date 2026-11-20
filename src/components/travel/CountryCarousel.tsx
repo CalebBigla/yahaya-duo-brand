@@ -45,7 +45,7 @@ export function CountryCarousel() {
         ref={rail}
         tabIndex={0}
         aria-label="Destinations"
-        className="-mx-5 flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-5 pb-4 [scrollbar-width:thin] sm:mx-0 sm:px-0 motion-reduce:scroll-auto"
+        className="-mx-5 flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth scroll-px-5 px-5 pb-4 [scrollbar-width:thin] sm:mx-0 sm:scroll-px-0 sm:px-0 motion-reduce:scroll-auto"
       >
         {destinations.map((d) => (
           <li key={d.name} className="w-[78%] shrink-0 snap-start sm:w-[44%] lg:w-[30%]">

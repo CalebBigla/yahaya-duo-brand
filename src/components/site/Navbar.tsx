@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Logo } from "./Logo";
 import { ButtonLink } from "./Button";
 import { brand } from "@/lib/brand";
@@ -12,12 +11,17 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 /** Pages whose first section is a full-bleed photo: the header sits transparently over it. */
 const OVERLAY_ROUTES = new Set(["/", "/travel", "/trade"]);
 
+// The dialog code loads on the first tap of the menu button, not with every page.
+const MobileMenu = lazy(() => import("./MobileMenu"));
+
 export const HEADER_HEIGHT = "4.5rem"; // 72px
 
 export function Header() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuLoaded, setMenuLoaded] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const settings = useSiteSettings();
 
   // Media appears in the navigation only once the gallery has something in it.
@@ -77,58 +81,32 @@ export function Header() {
           </ButtonLink>
         </nav>
 
-        <DialogPrimitive.Root open={menuOpen} onOpenChange={setMenuOpen}>
-          <DialogPrimitive.Trigger asChild>
-            <button
-              type="button"
-              className={`inline-flex h-11 w-11 items-center justify-center rounded-sm lg:hidden ${overlay ? "text-ivory" : "text-primary"}`}
-              aria-label="Open menu"
-            >
-              <Menu className="h-6 w-6" strokeWidth={1.5} />
-            </button>
-          </DialogPrimitive.Trigger>
-          <DialogPrimitive.Portal>
-            <DialogPrimitive.Content
-              aria-describedby={undefined}
-              className="fixed inset-0 z-50 flex flex-col bg-background outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2 data-[state=open]:duration-300 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:duration-200 lg:hidden"
-            >
-              <DialogPrimitive.Title className="sr-only">Menu</DialogPrimitive.Title>
-              <div className="container-page flex h-[4.5rem] items-center justify-between">
-                <Logo />
-                <DialogPrimitive.Close className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-primary" aria-label="Close menu">
-                  <X className="h-6 w-6" strokeWidth={1.5} />
-                </DialogPrimitive.Close>
-              </div>
-              <nav aria-label="Main" className="container-page flex flex-1 flex-col pb-10 pt-6">
-                <ul className="divide-y divide-border border-y border-border">
-                  {links.map((l) => (
-                    <li key={l.to}>
-                      <Link
-                        to={l.to}
-                        onClick={() => setMenuOpen(false)}
-                        className="flex min-h-16 items-center font-display text-2xl text-primary"
-                        activeProps={{ "aria-current": "page" }}
-                      >
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-auto space-y-4 pt-10">
-                  <ButtonLink to="/quote" className="w-full" onClick={() => setMenuOpen(false)}>
-                    {brand.advisorAction}
-                  </ButtonLink>
-                  <p className="t-small text-center text-muted-foreground">
-                    Or call{" "}
-                    <a href={settings.telHref} className="font-semibold text-primary underline underline-offset-4">
-                      {settings.primaryPhone}
-                    </a>
-                  </p>
-                </div>
-              </nav>
-            </DialogPrimitive.Content>
-          </DialogPrimitive.Portal>
-        </DialogPrimitive.Root>
+        <button
+          ref={menuButtonRef}
+          type="button"
+          onClick={() => {
+            setMenuLoaded(true);
+            setMenuOpen(true);
+          }}
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-sm lg:hidden ${overlay ? "text-ivory" : "text-primary"}`}
+          aria-label="Open menu"
+          aria-haspopup="dialog"
+          aria-expanded={menuOpen}
+        >
+          <Menu className="h-6 w-6" strokeWidth={1.5} />
+        </button>
+        {menuLoaded && (
+          <Suspense fallback={null}>
+            <MobileMenu
+              open={menuOpen}
+              onOpenChange={setMenuOpen}
+              links={links}
+              telHref={settings.telHref}
+              phone={settings.primaryPhone}
+              returnFocusTo={menuButtonRef.current}
+            />
+          </Suspense>
+        )}
       </div>
     </header>
   );
