@@ -197,7 +197,10 @@ function MediaPage() {
         published_at: publishNow ? new Date().toISOString() : null,
         updated_by: adminUser?.user_id ?? null,
       });
-      if (error) throw new Error('The image uploaded, but saving it to the library failed. Retry to save it.');
+      if (error) {
+        console.error('Saving the uploaded image to website_gallery failed:', error);
+        throw new Error(`Uploaded to Cloudinary, but the database refused to save it: ${error.message}${error.code ? ` (code ${error.code})` : ''}. Retry to save it.`);
+      }
       update(item.key, { status: 'done' });
       return true;
     } catch (err) {
