@@ -1,13 +1,20 @@
-import { Outlet, createFileRoute, useRouterState } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useRouterState } from "@tanstack/react-router";
 import { PageHero } from "@/components/site/PageHero";
-import { InquiryForm } from "@/components/forms/InquiryForm";
-import { travelServices, tradeServices } from "@/lib/site";
+import { ConciergeEnquiry, type Desk } from "@/components/forms/ConciergeEnquiry";
+import { brand } from "@/lib/brand";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
-const title = "Get a Quote | Yahaya Travel and Trade Co Ltd";
+const title = "Enquire | Yahaya Travel & Trade";
 const description =
-  "Request a quote for visa processing, flights, tour packages, oil and gas trade, import export or procurement from Yahaya Travel and Trade Co Ltd, Yola.";
+  "Start an enquiry with the Private Travel desk or the Trade & Energy desk. An advisor will reply within one business day.";
 
 export const Route = createFileRoute("/quote")({
+  // ?desk=travel|trade and ?topic=… pre-fill the flow from journey and destination cards.
+  validateSearch: (search: Record<string, unknown>): { desk?: Desk; topic?: string } => {
+    const desk = search["desk"] === "travel" || search["desk"] === "trade" ? (search["desk"] as Desk) : undefined;
+    const topic = typeof search["topic"] === "string" ? search["topic"].slice(0, 80) : undefined;
+    return { ...(desk ? { desk } : {}), ...(topic ? { topic } : {}) };
+  },
   head: () => ({
     meta: [
       { title },
@@ -25,7 +32,10 @@ export const Route = createFileRoute("/quote")({
 
 function QuotePage() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const { desk, topic } = Route.useSearch();
+  const settings = useSiteSettings();
 
+  // The public quote viewer (/quote/view/$token) renders inside this route.
   if (pathname.startsWith("/quote/view/")) {
     return <Outlet />;
   }
@@ -33,49 +43,42 @@ function QuotePage() {
   return (
     <>
       <PageHero
-        eyebrow="Get a quote"
-        title="Tell us what you need"
-        subtitle="One form for both divisions. Fill it in and submit — we will come back with requirements, timelines and pricing within 24 hours."
+        eyebrow="Enquire"
+        title={brand.advisorAction}
+        subtitle={`Three short steps. An advisor will reply ${brand.responseTime}.`}
       />
-
-      <section className="bg-secondary/50 py-16">
-        <div className="container-page max-w-3xl">
-          <InquiryForm
-            title="Request a quote"
-            formType="contact"
-            fields={[
-              {
-                name: "division",
-                label: "Division",
-                type: "select",
-                required: true,
-                options: ["Travel Services", "Trade & General Contracts"],
-              },
-              {
-                name: "service",
-                label: "Service needed",
-                type: "select",
-                required: true,
-                options: [
-                  ...travelServices.map((s) => `Travel — ${s.title}`),
-                  ...tradeServices.map((s) => `Trade — ${s.title}`),
-                ],
-              },
-              { name: "name", label: "Full name", required: true },
-              { name: "company", label: "Company (if applicable)" },
-              { name: "phone", label: "Phone number", type: "tel", required: true },
-              { name: "email", label: "Email address", type: "email" },
-              { name: "timeline", label: "Preferred date / timeline", type: "date" },
-              { name: "budget", label: "Budget range (optional)" },
-              {
-                name: "message",
-                label: "What do you need?",
-                type: "textarea",
-                required: true,
-                placeholder: "Destination and travel dates, or goods, volumes and delivery location",
-              },
-            ]}
-          />
+      <section className="bg-secondary py-[72px] md:py-24">
+        <div className="container-page grid gap-12 lg:grid-cols-[1.5fr_0.7fr] lg:gap-16">
+          <ConciergeEnquiry initialDesk={desk} topic={topic} />
+          <aside className="space-y-6 t-small text-muted-foreground">
+            <div>
+              <h2 className="t-eyebrow text-accent-ink">Prefer to talk now?</h2>
+              <p className="mt-3">
+                <a href={settings.whatsappUrl()} target="_blank" rel="noopener noreferrer" className="link-draw font-semibold text-primary">
+                  Message us on WhatsApp
+                </a>{" "}
+                or call{" "}
+                <a href={settings.telHref} className="link-draw font-semibold text-primary">
+                  {settings.primaryPhone}
+                </a>
+                .
+              </p>
+            </div>
+            <div>
+              <h2 className="t-eyebrow text-accent-ink">What happens next</h2>
+              <p className="mt-3">An advisor reads your enquiry, contacts you the way you prefer, and sends options and terms in writing before anything is booked or ordered.</p>
+            </div>
+            <div>
+              <h2 className="t-eyebrow text-accent-ink">Your information</h2>
+              <p className="mt-3">
+                Used only to answer your enquiry. See our{" "}
+                <Link to="/privacy" className="link-draw font-semibold text-primary">
+                  privacy notice
+                </Link>
+                .
+              </p>
+            </div>
+          </aside>
         </div>
       </section>
     </>
