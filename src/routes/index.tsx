@@ -1,75 +1,22 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  Plane,
-  Ship,
-  ShieldCheck,
-  Headphones,
-  Workflow,
-  Building2,
-  Quote,
-  ChevronDown,
-  CheckCircle2,
-  Globe,
-  MapPin,
-  Package,
-  PackageSearch,
-  Fuel,
-  FileCheck,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatedSection } from "@/components/ui/animated-section";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 
-// Hero - Oil & Gas / Industrial focus
-import heroPetroleumImg from "@/assets/petroleum engineering.webp";
-import heroOilRigImg from "@/assets/The Last Bow at Dusk.webp";
-
-// Bento grid - Travel & Trade split
-import bentoTravelCoupleImg from "@/assets/download (25).webp";
-import bentoTravelLuggageImg from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
-import bentoTradeLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
-import bentoTradeSupplyImg from "@/assets/Best Logistics Companies in India – Top Supply Chain Solutions for Business Growth 2026.webp";
-
-// Trade gallery (mirroring hotel gallery)
-import tradeOilGasImg from "@/assets/The Last Bow at Dusk.webp";
-import tradeOffshoreImg from "@/assets/download (24).webp";
-import tradeOnsiteImg from "@/assets/Off shore rig worker.webp";
-import tradeTechnicalImg from "@/assets/petroleum engineering.webp";
-
-// Hotel gallery
-import hotel1Img from "@/assets/24 Small Guest Room Ideas for Compact Comfort and___.webp";
-import hotel2Img from "@/assets/Borges 2129 I by depptö.webp";
-import hotel3Img from "@/assets/Best Hotel Room in Jaipur.webp";
-import hotel4Img from "@/assets/Akasha Beach Hotel.webp";
-
-// Full-width banner
-import fullWidthBannerImg from "@/assets/Import export training in karachi lahore islamabad pakistan.webp";
-
-// Stats section lifestyle photo
-import statsLifestyleImg from "@/assets/download (25).webp";
-
-// Key features composite
-import featuresPetroleumImg from "@/assets/petroleum engineering.webp";
-import featuresLogisticsImg from "@/assets/Vietnam needs to nurture efficient logistics sector, adapt modern tech.webp";
-
-// Trust section
-import trustWorkerImg from "@/assets/Off shore rig worker.webp";
-
+import { ButtonLink } from "@/components/site/Button";
+import { EditorialCard } from "@/components/site/EditorialCard";
+import { InfoCard } from "@/components/site/InfoCard";
+import { Reveal } from "@/components/site/Reveal";
+import { ResponsiveImage } from "@/components/site/ResponsiveImage";
+import { Section } from "@/components/site/Section";
+import { brand } from "@/lib/brand";
+import { credentials, discretionPromise, founder, howWeWork, registryUrl, signatureJourneys } from "@/lib/company";
+import { images } from "@/lib/images";
 import { site } from "@/lib/site";
-import {
-  getFeaturedTestimonials,
-  getPublishedFAQs,
-  getPublishedHomepage,
-  getPublishedSettings,
-} from "@/lib/queries/website";
+import { getFeaturedTestimonials, getPublishedHomepage, getPublishedSettings } from "@/lib/queries/website";
 
-const title = "Travel Agency in Yola, Adamawa | Yahaya Travel & Trade Co Ltd";
+const title = "Yahaya Travel & Trade | Private travel and trade, Yola";
 const description =
-  "Professional travel and trade services in Yola, Jimeta, Adamawa State. Visa processing, flight bookings, hotel reservations, tour packages, procurement, and import-export services. RC 9295358.";
+  "A private travel desk for Hajj, Umrah, family, business and medical travel, and a trade and energy desk for procurement, import and export, and petroleum products. Jimeta-Yola, Adamawa. RC 9295358.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -87,1227 +34,239 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-/* Statistics reflecting actual company operations. */
-const stats = [
-  { value: "500+", label: "Clients served" },
-  { value: "10+", label: "Countries" },
-  { value: "5+", label: "Years in operation" },
-  { value: "2", label: "Business divisions" },
-];
-
-const testimonials = [
-  {
-    division: "Travel",
-    quote:
-      "They handled my visa file from start to finish and told me exactly what to bring to the appointment. No guesswork, no wasted trips.",
-    name: "Aisha Bello",
-    role: "Yola",
-  },
-  {
-    division: "Trade",
-    quote:
-      "We needed a supplier verified and the consignment moved within a tight window. The documentation was clean and delivery was on schedule.",
-    name: "Ibrahim Musa",
-    role: "Procurement lead",
-  },
-  {
-    division: "Travel",
-    quote:
-      "Flights, hotel and transfers for a team of eight, all arranged in one conversation. Costs were itemised before we committed.",
-    name: "Fatima Abdullahi",
-    role: "Corporate client",
-  },
-];
-
-const travelSteps = [
-  {
-    number: 1,
-    title: "Tell us your destination",
-    description:
-      "Call, WhatsApp, or fill our form with your travel dates and visa type — tourist, business, medical, Hajj, Umrah, work, or study. We process visas for Saudi Arabia, Qatar, Turkey, UAE, China, Egypt and more.",
-  },
-  {
-    number: 2,
-    title: "We handle everything",
-    description:
-      "Complete travel package: visa application documentation, flight bookings with flexible fares, hotel reservations, airport transfers, market and tourist site connections. 50% deposit required on services.",
-  },
-  {
-    number: 3,
-    title: "You travel with confidence",
-    description:
-      "Receive your visa, confirmed tickets, and accommodation details with emergency travel assistance. Earn referral commission by connecting us with travelers — percentage paid after each transaction.",
-  },
-];
-
-const tradeSteps = [
-  {
-    number: 1,
-    title: "Share your requirement",
-    description:
-      "Tell us what products you need, target quantities, and delivery location. We identify manufacturers in China, Egypt, or Saudi Arabia offering the best prices for your specification.",
-  },
-  {
-    number: 2,
-    title: "We source and negotiate",
-    description:
-      "We verify suppliers, negotiate transparent pricing, and place orders directly. First order requires 50% deposit; oil & gas deals require 60% initial deposit. We handle all documentation.",
-  },
-  {
-    number: 3,
-    title: "Delivery and support",
-    description:
-      "Complete logistics coordination — shipping, customs clearing, and delivery to your location. Referral commission program available for clients who connect us with new business.",
-  },
-];
-
-const faqs = [
-  {
-    question: "What visa types do you process?",
-    answer:
-      "We process Tourist Visas, Business Visas, Medical Visas, Transit Visas, Hajj Visas, Umrah Visas, Work Visas, and Study Visas. Destination countries include Saudi Arabia, Qatar, Turkey, United Arab Emirates, China, Egypt and others. Contact us with your specific destination for processing timelines and document requirements.",
-  },
-  {
-    question: "How do your trade deposits work?",
-    answer:
-      "For general sourcing and procurement, we require 50% deposit on the first order to initiate the procurement process. For oil and gas deals (buying, selling, supplying petroleum products), we require 60% initial deposit. Subsequent orders may have different payment terms based on established business relationship. All deposits are applied toward the total cost with transparent itemized invoicing.",
-  },
-  {
-    question: "Do you source products internationally?",
-    answer:
-      "Yes. We source new products directly from manufacturers in China, Egypt, and Saudi Arabia at the lowest prices based on your order specifications. We handle supplier identification, price negotiation, order placement, shipping coordination, customs clearing, and delivery to your location in Nigeria. This includes building materials, equipment, consumables, and goods across sectors.",
-  },
-  {
-    question: "What's included in your travel packages?",
-    answer:
-      "Complete travel packages include: visa application support and documentation, airline ticket bookings (local and international with flexible fare options), hotel reservations, airport pick-up and drop-off, connections to affordable markets, hospitals, tourist attractions, and historical sites. We can arrange partial or complete packages depending on your needs. 50% deposit required to secure bookings.",
-  },
-  {
-    question: "How does your referral commission program work?",
-    answer:
-      "If you refer people to us for either travel or trade services, you earn a percentage commission after each completed transaction. Contact us directly to enroll in the referral program and get details on commission structure and payment terms. This applies to both travel bookings and trade deals.",
-  },
-  {
-    question: "Can you handle oil and gas investment deals?",
-    answer:
-      "Yes. Our oil and gas operations include buying, selling, supplying, and shipping petroleum products. We can order directly from refineries and handle complete logistics. Investment opportunities are available with 60% initial deposit. Contact us to discuss specific deal structures, volumes, and partnership terms.",
-  },
-];
-
-const trustPoints = [
-  {
-    icon: ShieldCheck,
-    title: "Security & Compliance",
-    body: "Registered Nigerian company (RC 9295358) with verifiable credentials and contract-ready documentation for both travel and trade operations.",
-  },
-  {
-    icon: Headphones,
-    title: "Dedicated Support",
-    body: "Multi-channel accessibility — phone, WhatsApp, email — with real people who know your file and respond within 24 hours.",
-  },
-  {
-    icon: Workflow,
-    title: "Transparent Documentation",
-    body: "Every transaction backed by clear paperwork: visa checklists, flight confirmations, purchase orders, delivery notes. Nothing left to memory.",
-  },
-  {
-    icon: Building2,
-    title: "Verified Partnerships",
-    body: "Vetted hotels, airlines, suppliers, and freight forwarders. We verify counterparties before you commit, reducing risk on both sides.",
-  },
-];
-
-const featuredHotels = [
-  {
-    image: hotel1Img,
-    title: "Comfort Stays",
-    description: "Cozy accommodations for budget-conscious travelers",
-  },
-  {
-    image: hotel2Img,
-    title: "Business Suites",
-    description: "Professional environments for corporate travelers",
-  },
-  {
-    image: hotel3Img,
-    title: "Premium Rooms",
-    description: "Luxury options for discerning guests",
-  },
-  {
-    image: hotel4Img,
-    title: "Beachfront Escapes",
-    description: "Seaside getaways and resort destinations",
-  },
-];
-
-const tradeGallery = [
-  {
-    image: tradeOilGasImg,
-    title: "Oil & Gas Trade",
-    description: "Petroleum products and energy sector brokerage",
-  },
-  {
-    image: tradeOffshoreImg,
-    title: "Offshore Operations",
-    description: "Marine logistics and offshore supply coordination",
-  },
-  {
-    image: tradeOnsiteImg,
-    title: "On-Site Expertise",
-    description: "Field operations and technical procurement support",
-  },
-  {
-    image: tradeTechnicalImg,
-    title: "Technical Sourcing",
-    description: "Specialized equipment and technical supplies",
-  },
-];
-
-const categoryCards = [
-  {
-    image: bentoTravelCoupleImg,
-    title: "Travel Services",
-    subtitle: "Visas & Flights",
-    link: "/travel" as const,
-    hash: undefined,
-  },
-  {
-    image: bentoTradeLogisticsImg,
-    title: "Import/Export",
-    subtitle: "Logistics & Trade",
-    link: "/trade" as const,
-    hash: undefined,
-  },
-  {
-    image: tradeOilGasImg,
-    title: "Oil & Gas",
-    subtitle: "Energy Trading",
-    link: "/trade" as const,
-    hash: "oil-and-gas-trade",
-  },
-  {
-    image: bentoTradeSupplyImg,
-    title: "Supply Chain",
-    subtitle: "Sourcing & Procurement",
-    link: "/trade" as const,
-    hash: "sourcing-procurement",
-  },
-];
+/** Keeps a CMS subtitle to one calm sentence or about 25 words. */
+function oneSentence(text: string | null | undefined, maxWords = 25): string | null {
+  if (!text?.trim()) return null;
+  const clean = text.trim().replace(/\s+/g, " ");
+  const firstSentence = clean.match(/^.+?[.!?](\s|$)/)?.[0]?.trim();
+  if (firstSentence && firstSentence.split(" ").length <= maxWords) return firstSentence;
+  const words = clean.split(" ");
+  return words.length <= maxWords ? clean : `${words.slice(0, maxWords).join(" ").replace(/[,;:]$/, "")}…`;
+}
 
 function Index() {
-  const [activeJourney, setActiveJourney] = useState<"travel" | "trade">("trade");
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const { data: homepage } = useQuery({
-    queryKey: ["website", "homepage"],
-    queryFn: getPublishedHomepage,
-    staleTime: 60_000,
-  });
-  const { data: settings } = useQuery({
-    queryKey: ["website", "settings"],
-    queryFn: getPublishedSettings,
-    staleTime: 60_000,
-  });
-  const { data: publishedTestimonials } = useQuery({
+  const { data: homepage } = useQuery({ queryKey: ["website", "homepage"], queryFn: getPublishedHomepage, staleTime: 60_000 });
+  const { data: settings } = useQuery({ queryKey: ["website", "settings"], queryFn: getPublishedSettings, staleTime: 60_000 });
+  const { data: testimonials } = useQuery({
     queryKey: ["website", "testimonials", "featured"],
     queryFn: getFeaturedTestimonials,
     staleTime: 60_000,
   });
-  const { data: publishedFaqs } = useQuery({
-    queryKey: ["website", "faqs"],
-    queryFn: getPublishedFAQs,
-    staleTime: 60_000,
-  });
 
-  const displayStats = homepage
-    ? [
-        { value: `${homepage.stats_clients_served ?? 500}+`, label: "Clients served" },
-        { value: `${homepage.stats_destinations ?? 10}+`, label: "Countries" },
-        { value: `${homepage.stats_years_experience ?? 5}+`, label: "Years in operation" },
-        { value: "2", label: "Business divisions" },
-      ]
-    : stats;
-  const displayTestimonials = publishedTestimonials?.length
-    ? publishedTestimonials.map((testimonial) => ({
-        division:
-          testimonial.service_division === "both"
-            ? "Travel & Trade"
-            : testimonial.service_division
-              ? testimonial.service_division.charAt(0).toUpperCase() +
-                testimonial.service_division.slice(1)
-              : "Client",
-        quote: testimonial.testimonial,
-        name: testimonial.client_name,
-        role: testimonial.client_title ?? "",
-      }))
-    : testimonials;
-  const displayFaqs = publishedFaqs?.length
-    ? publishedFaqs.map((faq) => ({ question: faq.question, answer: faq.answer }))
-    : faqs;
-  const companyRegistration = settings?.rc_number ?? site.rcNumber;
+  const heroTitle = homepage?.hero_title?.trim() || brand.promise;
+  const heroSubtitle = oneSentence(homepage?.hero_subtitle) ?? brand.intro;
+  const rcNumber = settings?.rc_number ?? site.rcNumber;
 
-  const steps = activeJourney === "travel" ? travelSteps : tradeSteps;
+  // Proof figures are shown only when the business has published them in the CMS.
+  const figures = [
+    homepage?.stats_years_experience ? { value: `${homepage.stats_years_experience}+`, label: "years in operation" } : null,
+    homepage?.stats_clients_served ? { value: `${homepage.stats_clients_served}+`, label: "clients served" } : null,
+    homepage?.stats_destinations ? { value: `${homepage.stats_destinations}+`, label: "destinations arranged" } : null,
+  ].filter((f): f is { value: string; label: string } => f !== null);
 
   return (
     <>
-      {/* Hero with Floating Collage */}
-      <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-24 sm:py-32 lg:py-40 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-deep via-primary to-primary-deep/90" />
-
-        <div className="container-page relative z-10">
-          <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-            <div>
-              <p className="animate-fade-up stagger-1 text-xs font-bold uppercase tracking-[0.3em] text-accent">
-                RC {companyRegistration} · Jimeta-Yola, Adamawa
-              </p>
-              <h1 className="animate-fade-up stagger-2 mt-4 text-4xl font-extrabold leading-tight text-primary-foreground sm:text-6xl">
-                {homepage?.hero_title ?? "Your Trusted Partner in Travel and Trade"}
-              </h1>
-              <p className="animate-fade-up stagger-3 mt-5 text-lg leading-relaxed text-primary-foreground/80">
-                {homepage?.hero_subtitle ??
-                  "We operate at the intersection of travel management, international consultancy, and global trade facilitation, offering a comprehensive suite of services that include visa processing, flight bookings, tour packages, hotel reservations, travel advisory, trade consultancy, general trading, oil & gas commodity supply, wholesale import and export, as well as sourcing and procurement services."}
-              </p>
-              <div className="animate-fade-up stagger-4 mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  to="/travel"
-                  className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
-                >
-                  <Plane className="h-4 w-4" /> Travel
-                </Link>
-                <Link
-                  to="/trade"
-                  className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:border-accent hover:text-accent"
-                >
-                  <Ship className="h-4 w-4" /> Trade
-                </Link>
-              </div>
-            </div>
-
-            {/* Floating Collage - Travel & Trade Focus.
-                Desktop only, so lazy: phones and tablets never download these photos. */}
-            <div className="relative hidden lg:block">
-              <div className="animate-float-slow relative">
-                <img
-                  src={bentoTravelLuggageImg}
-                  alt="Travel services"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-72 w-full rounded-3xl object-cover shadow-elevated"
-                />
-              </div>
-              <div className="animate-float-delayed absolute -bottom-8 -left-12 w-64">
-                <img
-                  src={bentoTradeLogisticsImg}
-                  alt="Trade and logistics"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-56 w-full rounded-2xl object-cover shadow-elevated"
-                />
-              </div>
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent/20 blur-3xl" />
-              <div className="absolute -bottom-12 left-0 h-40 w-40 rounded-full bg-accent/10 blur-3xl" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Objectives - Two Large Featured Cards */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <AnimatedSection animation="fade-up">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-                Core business divisions
-              </h2>
-              <p className="mt-3 text-muted-foreground">
-                Travel and Tour, sourcing and Procurement — Two pillars of our business
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:gap-8 md:grid-cols-2">
-            <AnimatedSection animation="scale" delay={0} className="h-full">
-              <Link
-                to="/travel"
-                className="card-interactive group relative block h-full overflow-hidden rounded-2xl sm:rounded-3xl"
-              >
-                {/* Text sits in the normal flow: the card keeps its 3:4 shape but grows
-                    if the text needs more room, so nothing can spill out on tablets. */}
-                <div className="relative flex h-full aspect-[3/4] flex-col justify-end">
-                  <img
-                    src={bentoTravelLuggageImg}
-                    alt="Travel and tour services"
-                    loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="relative p-5 text-primary-foreground sm:p-7 md:p-6 lg:p-8 xl:p-10">
-                    <Plane className="h-8 w-8 text-accent lg:h-10 lg:w-10 xl:h-12 xl:w-12" />
-                    <h3 className="mt-3 text-2xl font-bold leading-tight text-balance sm:text-3xl md:text-2xl lg:mt-4 lg:text-3xl xl:text-4xl">
-                      Travel and Tour
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-primary-foreground/85 sm:text-base md:text-sm lg:text-base xl:text-lg">
-                      Complete visa processing, flight bookings, hotel reservations, and tour
-                      packages to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt
-                      and more.
-                    </p>
-                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-accent lg:mt-6 lg:text-base">
-                      Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 lg:h-5 lg:w-5" />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </AnimatedSection>
-
-            <AnimatedSection animation="scale" delay={100} className="h-full">
-              <Link
-                to="/trade"
-                hash="sourcing-procurement"
-                className="card-interactive group relative block h-full overflow-hidden rounded-2xl sm:rounded-3xl"
-              >
-                {/* Text sits in the normal flow: the card keeps its 3:4 shape but grows
-                    if the text needs more room, so nothing can spill out on tablets. */}
-                <div className="relative flex h-full aspect-[3/4] flex-col justify-end">
-                  <img
-                    src={bentoTradeSupplyImg}
-                    alt="Sourcing and procurement services"
-                    loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-transparent" />
-                  <div className="relative p-5 text-primary-foreground sm:p-7 md:p-6 lg:p-8 xl:p-10">
-                    <PackageSearch className="h-8 w-8 text-accent lg:h-10 lg:w-10 xl:h-12 xl:w-12" />
-                    <h3 className="mt-3 text-2xl font-bold leading-tight text-balance sm:text-3xl md:text-2xl lg:mt-4 lg:text-3xl xl:text-4xl">
-                      Sourcing and Procurement
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-primary-foreground/85 sm:text-base md:text-sm lg:text-base xl:text-lg">
-                      Direct international sourcing from trusted global suppliers — competitive
-                      pricing, verified credentials, complete delivery management.
-                    </p>
-                    <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-accent lg:mt-6 lg:text-base">
-                      Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 lg:h-5 lg:w-5" />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Travels & Tours - Compact Section */}
-      <section className="border-y border-border bg-secondary/40 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-            <AnimatedSection animation="fade-up">
-              <div>
-                <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
-                  Supporting Service
-                </span>
-                <h2 className="mt-4 text-2xl font-bold text-primary sm:text-3xl">
-                  Travels & Tours
-                </h2>
-                <p className="mt-4 text-muted-foreground">
-                  Complete visa processing and travel packages for tourist, business, medical, Hajj,
-                  Umrah, work, and study visas to Saudi Arabia, Qatar, Turkey, UAE, China,
-                  Egypt and more. Flight bookings, hotel reservations, airport transfers,
-                  and guided tours.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-4">
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                    <span>Multiple Visa Types</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                    <span>Complete Travel Packages</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                    <span>Referral Commission Program</span>
-                  </div>
-                </div>
-                <Link
-                  to="/travel"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent-foreground underline underline-offset-4"
-                >
-                  View travel services <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection animation="scale" delay={100}>
-              <div className="relative overflow-hidden rounded-2xl">
-                <img
-                  src={bentoTravelCoupleImg}
-                  alt="Travel services"
-                  loading="lazy"
-                  className="h-64 w-full object-cover md:h-72 lg:h-80"
-                />
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Sourcing & Procurement Highlight */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-            <AnimatedSection animation="fade-up">
-              <div>
-                <span className="inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent">
-                  Procurement Excellence
-                </span>
-                <h2 className="mt-4 text-3xl font-bold text-primary sm:text-4xl">
-                  Direct sourcing and international procurement
-                </h2>
-                <p className="mt-5 text-muted-foreground leading-relaxed">
-                  We source new products directly from manufacturers in China, Egypt, and Saudi
-                  Arabia at the lowest prices. Complete order handling from supplier verification to
-                  delivery at your location.
-                </p>
-
-                <div className="mt-8 space-y-5">
-                  <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
-                      1
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-primary">Product Identification & Sourcing</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Tell us what you need. We identify manufacturers in China, Egypt, and Saudi
-                        Arabia offering the best prices based on your order specifications
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
-                      2
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-primary">
-                        Price Negotiation & Order Placement
-                      </h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        We negotiate transparent pricing and place orders directly with verified
-                        suppliers. 50% deposit required on first order to initiate procurement
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground font-bold">
-                      3
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-primary">Shipping & Delivery Coordination</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Complete logistics handling — freight coordination, customs clearing, and
-                        delivery to your specified location with full documentation
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <Link
-                  to="/trade"
-                  hash="sourcing-procurement"
-                  className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
-                >
-                  View Full Procurement Services <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection animation="scale" delay={200}>
-              <div className="relative">
-                <img
-                  src={bentoTradeLogisticsImg}
-                  alt="Supply chain operations"
-                  loading="lazy"
-                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px] lg:min-h-[500px]"
-                />
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Premium Services Showcase - Flip Cards */}
-      <section className="py-20 sm:py-24 lg:py-28 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <AnimatedSection animation="fade-up">
-            <div className="text-center">
-              <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent-foreground">
-                Premium Services
-              </span>
-              <h2 className="mt-4 text-3xl font-bold text-primary sm:text-4xl">What we deliver</h2>
-              <p className="mt-3 text-muted-foreground">
-                Hover over each card to explore our comprehensive service offerings
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <div className="mt-16 grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
-            {/* Travel */}
-            <AnimatedSection animation="scale" delay={0}>
-              <div className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 shadow-card transition-all duration-500 hover:shadow-elevated hover:border-accent/30">
-                {/* Icon with glow effect */}
-                <div className="relative p-8 pb-6">
-                  <div className="absolute inset-0 animate-pulse rounded-2xl bg-accent/10 blur-2xl transition-all duration-500 group-hover:bg-accent/20" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary-deep to-primary shadow-card transition-all duration-500 group-hover:scale-110">
-                    <Plane className="h-8 w-8 text-white" strokeWidth={2.5} />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="px-8 pb-8">
-                  <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-                    Complete Travel Services
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">Travel</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Complete visa processing, flight bookings, hotel reservations, and tour packages
-                    to Saudi Arabia, Qatar, Turkey, UAE, China, Egypt and more.
-                  </p>
-
-                  {/* Expandable details - visible on mobile, hover on desktop */}
-                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
-                    <div className="border-t border-border pt-4">
-                      <h4 className="text-sm font-bold text-primary mb-3">What We Offer</h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>All visa types processing</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Flight bookings & reservations</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Hotel accommodations</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Airport transfers & tours</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator - desktop only */}
-                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
-                    <span>Hover to explore</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-
-            {/* Sourcing & Procurement */}
-            <AnimatedSection animation="scale" delay={100}>
-              <div className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 shadow-card transition-all duration-500 hover:shadow-elevated hover:border-accent/30">
-                {/* Icon with glow effect */}
-                <div className="relative p-8 pb-6">
-                  <div className="absolute inset-0 animate-pulse rounded-2xl bg-accent/10 blur-2xl transition-all duration-500 group-hover:bg-accent/20" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent via-accent/90 to-accent shadow-card transition-all duration-500 group-hover:scale-110">
-                    <PackageSearch className="h-8 w-8 text-white" strokeWidth={2.5} />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="px-8 pb-8">
-                  <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-                    International Sourcing
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">Sourcing & Procurement</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Direct sourcing of new products from our international partners at lowest
-                    prices. We find suppliers, verify credentials, and manage complete delivery.
-                  </p>
-
-                  {/* Expandable details - visible on mobile, hover on desktop */}
-                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
-                    <div className="border-t border-border pt-4">
-                      <h4 className="text-sm font-bold text-primary mb-3">Our Process</h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Supplier identification & verification</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Price negotiation & ordering</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Complete logistics handling</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>50% deposit on first order</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator - desktop only */}
-                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
-                    <span>Hover to explore</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-
-            {/* Consultation & Referrals */}
-            <AnimatedSection animation="scale" delay={200}>
-              <div className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-secondary/30 shadow-card transition-all duration-500 hover:shadow-elevated hover:border-accent/30">
-                {/* Icon with glow effect */}
-                <div className="relative p-8 pb-6">
-                  <div className="absolute inset-0 animate-pulse rounded-2xl bg-accent/10 blur-2xl transition-all duration-500 group-hover:bg-accent/20" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary-deep to-primary shadow-card transition-all duration-500 group-hover:scale-110">
-                    <Users className="h-8 w-8 text-white" strokeWidth={2.5} />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="px-8 pb-8">
-                  <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-                    Expert Advisory
-                  </span>
-                  <h3 className="mt-4 text-2xl font-bold text-primary">Consultation & Referrals</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    Trade and travel consultation services plus referral commission opportunities
-                    for connecting us with new clients.
-                  </p>
-
-                  {/* Expandable details - visible on mobile, hover on desktop */}
-                  <div className="mt-6 max-h-96 overflow-visible md:max-h-0 md:overflow-hidden md:transition-all md:duration-500 md:group-hover:max-h-96">
-                    <div className="border-t border-border pt-4">
-                      <h4 className="text-sm font-bold text-primary mb-3">Advisory Services</h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Trade operations and logistics guidance</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Documentation and compliance support</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                          <span>Personalized travel planning</span>
-                        </li>
-                      </ul>
-                      <div className="mt-4 pt-3 border-t border-border/50">
-                        <h4 className="text-sm font-bold text-primary mb-2">Referral Program</h4>
-                        <p className="text-xs text-muted-foreground">
-                          Earn commission when you refer clients to us. Paid after each completed
-                          transaction.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator - desktop only */}
-                  <div className="mt-6 hidden md:flex items-center gap-2 text-xs font-bold text-accent">
-                    <span>Hover to explore</span>
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Full-Width Banner - Energy & Supply Chain */}
-      <section className="relative isolate overflow-hidden">
-        <img
-          src={fullWidthBannerImg}
-          alt="Global logistics"
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover"
+      {/* 1. Hero */}
+      <section aria-labelledby="hero-title" className="relative isolate flex min-h-[min(88svh,920px)] items-end overflow-hidden bg-primary-deep">
+        <ResponsiveImage
+          image={images.homeHero}
+          mobile={images.homeHeroMobile}
+          alt=""
+          priority
+          sizes="100vw"
+          className="absolute inset-0 -z-20"
+          imgClassName="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/95 via-primary-deep/80 to-transparent" />
-        <div className="relative z-10 py-16 sm:py-20 md:py-24 lg:py-32">
-          <div className="container-page">
-            <AnimatedSection animation="fade-up">
-              <div className="max-w-2xl">
-                <h2 className="text-2xl font-extrabold text-primary-foreground sm:text-3xl md:text-4xl lg:text-5xl">
-                  One partner for trade and travel
-                </h2>
-                <p className="mt-3 text-sm leading-relaxed text-primary-foreground/80 sm:mt-4 sm:text-base md:mt-5 md:text-lg">
-                  From sourcing products internationally to arranging complete travel packages — we
-                  manage logistics, documentation, and coordination. Oil & gas trading with refinery
-                  connections, import/export with full clearing, and visa processing with
-                  appointment booking all under one roof.
-                </p>
-                <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4">
-                  <Link
-                    to="/quote"
-                    className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-sm font-bold text-accent-foreground sm:w-auto sm:px-6 sm:py-3.5"
-                  >
-                    Request a Quote <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="btn-interactive inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/30 px-4 py-3 text-sm font-bold text-primary-foreground hover:border-accent sm:w-auto sm:px-6 sm:py-3.5"
-                  >
-                    Learn Our Story
-                  </Link>
-                </div>
-              </div>
-            </AnimatedSection>
+        {/* Scrim keeps the ivory text above 4.5:1 while leaving the photo visible. */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-primary-deep/95 via-primary-deep/80 to-primary-deep/35 lg:bg-gradient-to-r lg:from-primary-deep/85 lg:via-primary-deep/45 lg:to-transparent" />
+        <div className="container-page w-full pb-16 pt-32 md:pb-24 lg:pb-28">
+          <div className="max-w-2xl">
+            <p className="t-eyebrow animate-fade-up text-accent">Jimeta-Yola · RC {rcNumber}</p>
+            <h1 id="hero-title" className="t-h1 animate-fade-up stagger-2 mt-5 text-ivory">
+              {heroTitle}
+            </h1>
+            <p className="t-lead animate-fade-up stagger-3 mt-6 max-w-xl text-on-navy-muted">{heroSubtitle}</p>
+            <div className="animate-fade-up stagger-4 mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-8">
+              <ButtonLink to="/quote" variant="onDark">
+                {brand.advisorAction}
+              </ButtonLink>
+              <ButtonLink to={brand.desks.trade.path} variant="textOnDark">
+                {brand.desks.trade.name} desk <ArrowRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+              </ButtonLink>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section - Business Scale */}
-      <section className="gradient-mesh py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-            <AnimatedSection animation="fade-up">
+      {/* 2. Two desks */}
+      <Section id="desks" title="Two desks, one standard of care" intro={brand.intro}>
+        <div className="grid gap-12 md:grid-cols-2 md:gap-8">
+          <Reveal>
+            <EditorialCard
+              image={images.deskTravel}
+              eyebrow="For individuals and families"
+              title={brand.desks.travel.name}
+              description={brand.desks.travel.summary}
+              cta={`Explore ${brand.desks.travel.name}`}
+              to={brand.desks.travel.path}
+              sizes="(min-width: 768px) 50vw, 100vw"
+            />
+          </Reveal>
+          <Reveal delay={80}>
+            <EditorialCard
+              image={images.deskTrade}
+              eyebrow="For companies"
+              title={brand.desks.trade.name}
+              description={brand.desks.trade.summary}
+              cta={`Explore ${brand.desks.trade.name}`}
+              to={brand.desks.trade.path}
+              sizes="(min-width: 768px) 50vw, 100vw"
+            />
+          </Reveal>
+        </div>
+      </Section>
+
+      {/* 3. Signature journeys */}
+      <Section
+        id="journeys"
+        tone="sand"
+        eyebrow={brand.desks.travel.name}
+        title="Signature journeys"
+        intro="A few of the journeys we arrange most often. Each one is planned around the people travelling."
+        action={
+          <ButtonLink to={brand.desks.travel.path} variant="text">
+            All travel services <ArrowRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+          </ButtonLink>
+        }
+      >
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {signatureJourneys.map((journey, i) => (
+            <Reveal key={journey.key} delay={i * 80}>
+              <EditorialCard
+                image={images[journey.image]}
+                title={journey.title}
+                description={journey.description}
+                cta="Enquire"
+                to="/quote"
+                search={{ desk: "travel", topic: journey.title }}
+              />
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* 4. How we work */}
+      <Section id="how" title="How we work" intro={discretionPromise}>
+        <ol className="grid gap-6 md:grid-cols-3">
+          {howWeWork.map((step, i) => (
+            <Reveal as="li" key={step.title} delay={i * 80}>
+              <InfoCard index={i + 1} title={step.title}>
+                {step.body}
+              </InfoCard>
+            </Reveal>
+          ))}
+        </ol>
+      </Section>
+
+      {/* 5. Proof: only what can be verified or was published by the business */}
+      <Section id="proof" tone="navy" eyebrow="Credentials" title="A registered Nigerian company">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+          <div className="space-y-8">
+            <div className="flex gap-4">
+              <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-accent" strokeWidth={1.5} aria-hidden="true" />
               <div>
-                <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-                  Five years of trusted service
-                </h2>
-                <p className="mt-4 text-muted-foreground">
-                  Since 2020, we've been processing visas, arranging travel, sourcing products from
-                  China, Egypt, and Saudi Arabia, and facilitating oil & gas trade. Our clients
-                  trust us with their travel plans and their business deals.
+                <p className="font-display text-2xl text-ivory">RC {rcNumber}</p>
+                <p className="t-small mt-1 text-on-navy-muted">
+                  Registered with the Corporate Affairs Commission.{" "}
+                  <a href={registryUrl} target="_blank" rel="noopener noreferrer" className="link-draw font-semibold text-ivory">
+                    Verify on the CAC register
+                  </a>
                 </p>
-                <div className="mt-8 grid grid-cols-2 gap-6">
-                  {displayStats.map((stat, i) => (
-                    <div
-                      key={stat.label}
-                      className="rounded-2xl border border-border bg-card p-6 shadow-card"
-                    >
-                      <p className="font-display text-4xl font-extrabold text-accent">
-                        {stat.value}
-                      </p>
-                      <p className="mt-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                        {stat.label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection animation="scale" delay={200}>
-              <div className="relative">
-                <img
-                  src={bentoTravelCoupleImg}
-                  alt="Travel and business services"
-                  loading="lazy"
-                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px]"
-                />
-                <div className="absolute -bottom-6 -left-6 -right-6 h-32 bg-gradient-to-t from-background to-transparent" />
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works - Interactive Journey */}
-      <section className="border-y border-border bg-secondary/30 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">How it works</h2>
-            <p className="mt-3 text-muted-foreground">
-              From first contact to completion — here's what to expect
-            </p>
-          </div>
-
-          <div className="mt-8 flex justify-center">
-            <div className="inline-flex gap-2 rounded-full border border-border bg-card p-1.5 shadow-card">
-              <button
-                onClick={() => setActiveJourney("trade")}
-                className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all ${
-                  activeJourney === "trade"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground/70 hover:text-foreground"
-                }`}
-              >
-                <Ship className="h-4 w-4" /> Trade Journey
-              </button>
-              <button
-                onClick={() => setActiveJourney("travel")}
-                className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all ${
-                  activeJourney === "travel"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground/70 hover:text-foreground"
-                }`}
-              >
-                <Plane className="h-4 w-4" /> Travel Journey
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {steps.map((step) => (
-              <div key={step.number} className="relative">
-                <div className="flex flex-col items-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent font-display text-2xl font-extrabold text-accent-foreground">
-                    {step.number}
-                  </div>
-                  <h3 className="mt-5 text-xl font-bold text-primary">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {step.description}
-                  </p>
-                </div>
-                {step.number < 3 && (
-                  <div className="absolute left-1/2 top-7 hidden w-full md:block">
-                    <ArrowRight className="ml-8 h-5 w-5 text-accent" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Key Features with Composite Images */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-primary sm:text-4xl">
-                Why businesses trust our supply chain
-              </h2>
-              <div className="mt-8 space-y-6">
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
-                  <div>
-                    <h3 className="font-bold text-primary">Documentation discipline</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Purchase orders, delivery notes, quality certificates, customs clearance —
-                      every transaction tracked and documented from quote to delivery.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
-                  <div>
-                    <h3 className="font-bold text-primary">Logistics coordination</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Multi-vendor procurement with freight, clearing, and delivery requires project
-                      management. We coordinate timelines, manage dependencies, and keep you
-                      informed.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
-                  <div>
-                    <h3 className="font-bold text-primary">Supplier verification</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      We vet suppliers and freight forwarders — checking references, confirming
-                      terms in writing, and ensuring they can deliver to spec before you commit.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-accent" />
-                  <div>
-                    <h3 className="font-bold text-primary">One accountable relationship</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Corporate clients often need both procurement and travel services for the same
-                      project. Managing both through one vendor simplifies coordination and
-                      accountability.
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
-
-            <AnimatedSection animation="scale" delay={200}>
-              <div className="relative">
-                <img
-                  src={featuresPetroleumImg}
-                  alt="Trade operations"
-                  loading="lazy"
-                  className="h-80 w-full rounded-3xl object-cover shadow-elevated md:h-96"
-                />
-                <img
-                  src={featuresLogisticsImg}
-                  alt="Logistics network"
-                  loading="lazy"
-                  className="absolute -bottom-6 -left-6 h-40 w-56 rounded-2xl object-cover shadow-elevated md:-bottom-8 md:-left-8 md:h-48 md:w-64"
-                />
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Section with Worker Photo */}
-      <section className="border-y border-border bg-primary py-16 text-primary-foreground sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <div className="grid gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-            <AnimatedSection animation="scale" delay={0}>
-              <div className="relative">
-                <img
-                  src={trustWorkerImg}
-                  alt="Field operations"
-                  loading="lazy"
-                  className="h-full min-h-[300px] w-full rounded-3xl object-cover shadow-elevated md:min-h-[400px]"
-                />
-              </div>
-            </AnimatedSection>
-
-            <div>
-              <h2 className="text-3xl font-bold sm:text-4xl">Why clients keep coming back</h2>
-              <div className="mt-8 grid gap-6 sm:grid-cols-2">
-                {trustPoints.map((point) => (
-                  <div
-                    key={point.title}
-                    className="rounded-2xl border border-primary-foreground/10 bg-primary-deep p-6"
-                  >
-                    <point.icon className="h-7 w-7 text-accent" />
-                    <h3 className="mt-4 font-bold">{point.title}</h3>
-                    <p className="mt-2 text-sm text-primary-foreground/75">{point.body}</p>
+            {figures.length > 0 && (
+              <dl className="grid grid-cols-3 gap-6 border-t border-ivory/10 pt-8">
+                {figures.map((f) => (
+                  <div key={f.label} className="flex flex-col-reverse">
+                    <dt className="t-small text-on-navy-muted">{f.label}</dt>
+                    <dd className="font-display text-3xl text-ivory">{f.value}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
+            )}
+            {credentials.length > 0 && (
+              <ul className="space-y-3 border-t border-ivory/10 pt-8 t-small text-on-navy-muted">
+                {credentials.map((c) => (
+                  <li key={c.name}>
+                    <span className="text-ivory">{c.name}</span>
+                    {c.detail ? ` · ${c.detail}` : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {testimonials && testimonials.length > 0 ? (
+            <ul className="grid gap-8 md:grid-cols-2">
+              {testimonials.slice(0, 4).map((t, i) => (
+                <Reveal as="li" key={t.id} delay={i * 80}>
+                  <figure className="flex h-full flex-col border-l border-accent pl-6">
+                    <blockquote className="t-body text-ivory">“{t.testimonial}”</blockquote>
+                    <figcaption className="mt-5 t-small text-on-navy-muted">
+                      <span className="font-semibold text-ivory">{t.client_name}</span>
+                      {t.client_title ? `, ${t.client_title}` : ""}
+                    </figcaption>
+                  </figure>
+                </Reveal>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      </Section>
+
+      {/* 6. Founder's note */}
+      <Section id="founder">
+        <div className="grid items-center gap-12 md:grid-cols-[0.8fr_1fr] md:gap-16">
+          <Reveal>
+            <div className="overflow-hidden rounded-lg">
+              <ResponsiveImage
+                image={images.founder}
+                alt={`${founder.name}, ${founder.role}`}
+                sizes="(min-width: 768px) 40vw, 100vw"
+                imgClassName="aspect-[3/4] h-full w-full object-cover"
+              />
             </div>
-          </div>
+          </Reveal>
+          <Reveal delay={80}>
+            <h2 className="t-eyebrow text-accent-ink">From the founder</h2>
+            {founder.quote ? (
+              <blockquote className="t-h2 mt-5 text-primary">“{founder.quote}”</blockquote>
+            ) : (
+              <p className="t-h3 mt-5 text-primary">{founder.summary}</p>
+            )}
+            <p className="mt-8 font-semibold text-primary">{founder.name}</p>
+            <p className="t-small text-muted-foreground">{founder.role}</p>
+            <ButtonLink to="/about" variant="text" className="mt-6">
+              About the company <ArrowRight className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+            </ButtonLink>
+          </Reveal>
         </div>
-      </section>
+      </Section>
 
-      {/* Explore by Category Strip */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <AnimatedSection animation="fade-up">
-            <h2 className="text-center text-3xl font-bold text-primary sm:text-4xl">
-              Explore our services
+      {/* 7. Closing invitation */}
+      <section aria-labelledby="closing-title" className="border-t border-border bg-secondary py-[72px] md:py-28">
+        <div className="container-page text-center">
+          <Reveal>
+            <h2 id="closing-title" className="t-h2 mx-auto max-w-2xl text-primary">
+              Tell us where you are going, or what you need moved.
             </h2>
-          </AnimatedSection>
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Oil & Gas */}
-            <AnimatedSection animation="scale" delay={0}>
-              <Link
-                to="/trade"
-                hash="oil-and-gas-trade"
-                className="card-interactive group block overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={tradeOilGasImg}
-                    alt="Oil & Gas"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                      Energy Trading
-                    </p>
-                    <h3 className="mt-1 text-lg font-bold">Oil & Gas</h3>
-                  </div>
-                </div>
-              </Link>
-            </AnimatedSection>
-
-            {/* Sourcing & Procurement */}
-            <AnimatedSection animation="scale" delay={100}>
-              <Link
-                to="/trade"
-                hash="sourcing-procurement"
-                className="card-interactive group block overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={bentoTradeSupplyImg}
-                    alt="Sourcing & Procurement"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                      Supply Chain
-                    </p>
-                    <h3 className="mt-1 text-lg font-bold">Sourcing & Procurement</h3>
-                  </div>
-                </div>
-              </Link>
-            </AnimatedSection>
-
-            {/* Import/Export */}
-            <AnimatedSection animation="scale" delay={200}>
-              <Link
-                to="/trade"
-                hash="import-export"
-                className="card-interactive group block overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={bentoTradeLogisticsImg}
-                    alt="Import/Export"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                      Logistics & Trade
-                    </p>
-                    <h3 className="mt-1 text-lg font-bold">Import/Export</h3>
-                  </div>
-                </div>
-              </Link>
-            </AnimatedSection>
-
-            {/* Travel Services */}
-            <AnimatedSection animation="scale" delay={300}>
-              <Link
-                to="/travel"
-                className="card-interactive group block overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={bentoTravelCoupleImg}
-                    alt="Travel Services"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/40 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                      Visas & Flights
-                    </p>
-                    <h3 className="mt-1 text-lg font-bold">Travel Services</h3>
-                  </div>
-                </div>
-              </Link>
-            </AnimatedSection>
-          </div>
+            <p className="t-body mx-auto mt-5 max-w-xl text-muted-foreground">An advisor will reply {brand.responseTime}.</p>
+            <div className="mt-10 flex justify-center">
+              <ButtonLink to="/quote">{brand.advisorAction}</ButtonLink>
+            </div>
+          </Reveal>
         </div>
       </section>
-
-      {/* Testimonials */}
-      <section className="border-y border-border bg-secondary/50 py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page">
-          <AnimatedSection animation="fade-up">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">What clients say</h2>
-          </AnimatedSection>
-
-          <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
-            {displayTestimonials.map((t, i) => (
-              <AnimatedSection
-                key={i}
-                animation={i % 2 === 0 ? "slide-left" : "slide-right"}
-                delay={i * 100}
-                className="h-full"
-              >
-                <figure className="card-interactive flex h-full min-h-64 flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
-                  <div className="flex items-center justify-between">
-                    <Quote className="h-6 w-6 text-accent" />
-                    <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
-                      {t.division}
-                    </span>
-                  </div>
-                  <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-foreground/80">
-                    "{t.quote}"
-                  </blockquote>
-                  <figcaption className="mt-5 border-t border-border pt-4 text-sm">
-                    <span className="font-bold text-primary">{t.name}</span>
-                    <span className="block text-xs text-muted-foreground">{t.role}</span>
-                  </figcaption>
-                </figure>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page max-w-3xl">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-primary sm:text-4xl">Common questions</h2>
-            <p className="mt-3 text-muted-foreground">
-              Quick answers to questions we hear most often
-            </p>
-          </div>
-
-          <div className="mt-10 space-y-3">
-            {displayFaqs.map((faq, index) => (
-              <div
-                key={index}
-                className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
-              >
-                <button
-                  type="button"
-                  aria-expanded={openFaq === index}
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="group flex min-h-16 w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-secondary/50"
-                >
-                  <span className="font-bold leading-relaxed text-primary">{faq.question}</span>
-                  <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-accent transition-transform ${
-                      openFaq === index ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {openFaq === index && (
-                  <div className="border-t border-border bg-secondary/30 px-5 py-4">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            Don't see your question?{" "}
-            <Link
-              to="/contact"
-              className="font-bold text-accent-foreground underline underline-offset-4"
-            >
-              Contact us
-            </Link>{" "}
-            and we'll give you a specific answer.
-          </p>
-        </div>
-      </section>
-
-      {/* Closing CTA */}
-      <section className="bg-primary-deep py-16 sm:py-20 px-6 sm:px-10 md:px-16 lg:px-20">
-        <div className="container-page flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">
-              Ready to get started?
-            </h2>
-            <p className="mt-3 max-w-xl text-primary-foreground/75">
-              Whether you need international sourcing, oil & gas trading, or complete travel
-              packages — send us your requirements. We offer trade and travel consultation plus
-              referral commission opportunities.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/quote"
-              className="btn-interactive inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground"
-            >
-              Get a Quote <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/contact"
-              className="btn-interactive inline-flex items-center justify-center rounded-full border-2 border-primary-foreground/30 px-6 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:border-accent hover:text-accent"
-            >
-              Contact us
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Structured Data for Local SEO */}
-      <LocalBusinessSchema />
     </>
   );
 }

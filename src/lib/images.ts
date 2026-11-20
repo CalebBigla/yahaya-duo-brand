@@ -18,7 +18,7 @@ import founder from "@/assets/YAHAYA.webp";
 import travelWide from "@/assets/travel.webp";
 import tradeWide from "@/assets/trade.webp";
 import travelPortrait from "@/assets/Minimalist Travel Aesthetic _ Manifesting My Next Journey 🌍✨.webp";
-import cargoPortrait from "@/assets/download (25).webp";
+import travellersPortrait from "@/assets/download (25).webp";
 import saudi from "@/assets/Saudi Arabia beauty.webp";
 import dubai from "@/assets/Dubai.webp";
 import turkey from "@/assets/Turkey.webp";
@@ -39,15 +39,15 @@ export const images = {
   founder: { fallback: founder, width: 1086, height: 1448, alt: "Founder of Yahaya Travel and Trade", placeholder: false },
 
   // Wide slots (heroes). Need 2400px+ landscape originals.
-  homeHero: placeholder(travelWide, 1200, 912, "Traveller's view from an aircraft window"),
-  travelHero: placeholder(travelWide, 1200, 912, "Traveller's view from an aircraft window"),
+  homeHero: placeholder(travelWide, 1200, 912, "A hand holding a passport and boarding pass over a map"),
+  travelHero: placeholder(travelWide, 1200, 912, "A hand holding a passport and boarding pass over a map"),
   tradeHero: placeholder(tradeWide, 1200, 900, "Cargo containers at a port"),
   logistics: placeholder(logisticsWide, 736, 488, "Container ship and trucks at a port"),
 
   // Portrait slots (mobile hero crops and 4:5 editorial cards). Need 2400px+ portrait originals.
   homeHeroMobile: placeholder(travelPortrait, 736, 1104, "Aircraft window seat with passport and boarding pass"),
-  deskTravel: placeholder(travelPortrait, 736, 1104, "Aircraft window seat with passport and boarding pass"),
-  deskTrade: placeholder(cargoPortrait, 736, 1104, "Port cranes and cargo at sunset"),
+  deskTravel: placeholder(travellersPortrait, 736, 1104, "Two travellers holding their passports in an airport"),
+  deskTrade: placeholder(tradeWide, 1200, 900, "Cargo containers stacked at a port"),
   energy: placeholder(oilField, 736, 736, "Petroleum engineering site"),
 
   // Signature journeys.

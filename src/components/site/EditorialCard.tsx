@@ -15,6 +15,7 @@ export function EditorialCard({
   cta,
   to,
   hash,
+  search,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   aspect = "aspect-[4/5]",
   eyebrow,
@@ -26,6 +27,8 @@ export function EditorialCard({
   /** Route path, e.g. "/travel". */
   to: string;
   hash?: string;
+  /** Query string values, e.g. to pre-fill the enquiry flow. */
+  search?: Record<string, string>;
   sizes?: string;
   aspect?: string;
   eyebrow?: string;
@@ -34,6 +37,7 @@ export function EditorialCard({
     <Link
       to={to}
       {...(hash ? { hash } : {})}
+      {...(search ? { search: search as never } : {})}
       className="group block rounded-lg focus-visible:outline-offset-4"
     >
       <div className={`overflow-hidden rounded-lg bg-secondary ${aspect}`}>

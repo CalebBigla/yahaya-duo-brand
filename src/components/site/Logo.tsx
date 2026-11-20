@@ -19,7 +19,8 @@ export function Logo({ variant = "light" }: { variant?: "light" | "dark" }) {
         alt=""
         width={240}
         height={175}
-        className="h-10 w-auto object-contain sm:h-11"
+        // On navy the mark is shown in ivory so it stays visible; on light it keeps its colours.
+        className={`h-10 w-auto object-contain sm:h-11 ${variant === "dark" ? "brightness-0 invert" : ""}`}
         decoding="async"
       />
       <span className="leading-none">
