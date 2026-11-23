@@ -25,6 +25,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 
 // Hero - Oil & Gas / Industrial focus
+import { HeroBackdrop } from "@/components/site/HeroBackdrop";
 import heroPetroleumImg from "@/assets/petroleum engineering.webp";
 import heroOilRigImg from "@/assets/The Last Bow at Dusk.webp";
 
@@ -390,8 +391,8 @@ function Index() {
   return (
     <>
       {/* Hero with Floating Collage */}
-      <section className="gradient-mesh noise-texture relative isolate overflow-hidden bg-primary-deep py-16 sm:py-20 lg:py-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-deep via-primary to-primary-deep/90" />
+      <section className="relative isolate overflow-hidden bg-primary-deep pb-20 pt-16 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
+        <HeroBackdrop />
 
         <div className="container-page relative z-10">
           <div className="grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:items-center xl:gap-16">

@@ -488,6 +488,48 @@
     animation: settle 0.9s var(--ease-out, ease-out) both;
   }
 
+  /* Home hero backdrop: crossfading photos with a slow zoom, plus a flight route.
+     The looping parts only run when the visitor has not asked for reduced motion. */
+  .hero-slide {
+    transition: opacity 1.4s ease-in-out;
+  }
+
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.12) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.02) translate3d(-1.5%, -1%, 0);
+    }
+  }
+
+  @keyframes hero-route {
+    to {
+      stroke-dashoffset: -48;
+    }
+  }
+
+  @keyframes hero-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-slide[data-active="true"] img {
+      animation: hero-zoom 9s ease-out both;
+    }
+    .hero-route {
+      animation: hero-route 2.4s linear infinite;
+    }
+    .hero-progress[data-active="true"] {
+      animation: hero-progress var(--hero-interval, 7s) linear both;
+    }
+  }
+
   /* Form input focus */
   .input-focus {
     transition: border-color 200ms ease, box-shadow 200ms ease;
